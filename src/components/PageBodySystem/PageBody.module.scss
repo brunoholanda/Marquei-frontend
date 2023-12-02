@@ -1,0 +1,93 @@
+.footer {
+    display: flex;
+    margin: 13rem 0 0 0;
+    background-color: #001529;
+    padding: 2rem 0;
+    
+
+    &__topicos {
+        flex: 1;
+        margin-right: 20px;
+        margin: 0 5rem;
+        color: var(--branco);
+
+        a {
+            text-decoration: none;
+            color: var(--branco);
+            margin-bottom: .5rem;
+        }
+
+        h3 {
+            color: var(--branci);
+        }
+
+        a:hover {
+            color: var(--gold-black);
+        }
+    }
+
+    &__dev {
+        background-color: #212322;
+        padding: .5rem;
+        text-align: center;
+
+        p {
+            color: #607D8B;
+            margin: .1rem 0;
+            
+        }
+
+    }
+
+}
+
+.content {
+    flex-grow: 500; // Isso garante que o conteúdo ocupe o espaço restante ao lado do sidebar
+    /* ... outros estilos para o seu conteúdo ... */
+  
+}
+
+.link {
+    display: flex;
+    flex-direction: column;
+
+    a {
+        text-decoration: none;
+        color: var(--branco);
+        font-weight: 300;
+    }
+
+    a:hover {
+        color: var(--gold-black);
+    }
+}
+
+@media screen and (max-width: 768px) {
+    
+.footer {
+    display: flex;
+    flex-direction: column;
+    margin: 10rem 0 0 0;
+    padding: 1rem 0;
+    
+
+    &__topicos {
+        flex: 1;
+        margin-right: 2px;
+        margin: 0 2rem;
+        color: var(--branco);
+    }
+
+    &__dev {
+        background-color: #212322;
+        padding: .5rem;
+        text-align: center;
+
+        p {
+          font-size: 10px;
+            
+        }
+
+    }
+}
+}

@@ -1,0 +1,71 @@
+.protese {
+    margin: 5rem 6rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+
+    img {
+        width: 34rem;
+        border-radius: 8px;
+    }
+
+    h2 {
+        font-size: 3rem;
+        color: var(--gold-black);
+    }
+
+    p {
+        font-size: 1.2rem;
+        color: var(--cinza-texto);
+    }
+
+    &__texto {
+        margin-left: 6rem;
+    }
+}
+
+@media screen and (max-width: 1024px) {
+    .protese {
+        margin: 3rem 2rem;
+    
+        img {
+            width: 28rem;
+        }
+    
+        h2 {
+            font-size: 2.5rem;
+        }
+    
+        p {
+            font-size: 1rem;
+        }
+    
+        &__texto {
+            margin-left: 3rem;
+        }
+    }
+}
+
+@media screen and (max-width: 768px) {
+    .protese {
+        margin: 1.5rem;
+        display: flex;
+        flex-direction: column;
+
+        img {
+            width: 100%;
+        }
+
+        h2 {
+            font-size: 1.5rem;
+        }
+
+        p {
+            font-size: 1rem;
+        }
+
+        &__texto {
+            margin-left: 0;
+        }
+    }
+}

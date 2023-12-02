@@ -1,0 +1,165 @@
+.menuLinks {
+    display: flex;
+    align-items: center;
+    a {
+        text-decoration: none;
+        color: var(--cinza-texto);
+        margin-left: 3em;
+        font-family: var(--fonte-secundaria);
+        font-size: 1.25rem;
+        font-weight: 500;
+        cursor: pointer;
+    }
+
+    a:hover {
+        color: #02075d;
+        font-weight: 700;
+    }
+}
+
+.header {
+    display: flex;
+    align-items: center;
+    justify-content: space-around;
+    margin: 2rem;
+
+    img {
+        width: 174px;
+        height: 50px;
+    }
+
+    &__mobile {
+        display: none;
+    }
+
+    button {
+        width: 13rem;
+    }
+}
+
+.arrow {
+    margin-left: 5px;
+}
+
+.subMenuContainer {
+    position: relative;
+}
+
+.subMenu {
+    position: absolute;
+    top: 100%; /* Isso coloca o submenu logo abaixo do link "Serviços" */
+    left: 50px;
+    display: flex;
+    flex-direction: column;
+    background-color: white;
+    box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2); /* Isso adiciona uma sombra ao submenu */
+    padding: 10px 20px; /* Isso adiciona um pouco de espaço ao redor dos itens do submenu */
+    z-index: 100; 
+    border-radius: 8px;
+   
+    a {
+        font-size: 18px;
+        white-space: nowrap;
+        margin: 0;
+        padding-top: .3rem;
+        cursor: pointer;
+    }
+    /* Adicione mais estilos conforme necessário */
+}
+
+.socialLinks {
+
+    display: flex;
+
+    &__wp, &__git, &__li {
+        width: 30px;
+        height: 30px;
+        background-size: cover;
+        transition: background-image 0.5s ease;
+        margin-right: 1em;
+    }
+
+   
+    &__li {
+        background-image: url('../../../public/icons/insta.png');
+    }
+
+    &__li:hover {
+        background-image: url('../../../public/icons/insta-hover.png');
+        cursor: pointer;
+    }
+
+    &__wp {
+        background-image: url('../../../public/icons/wp.png');
+    }
+
+    &__wp:hover {
+        background-image: url('../../../public/icons/wp-hover.png');
+        cursor: pointer;
+    }
+}
+
+@media screen and (max-width: 1024px) {
+    .menuLinks {
+        display: flex;
+        
+        a {
+            margin-left: 1.5em;
+        }
+    }
+    
+    .header {
+        display: flex;
+        align-items: center;
+        justify-content: space-around;
+        margin: 2rem;
+    
+        img {
+            display: none;
+        }
+    
+        &__mobile {
+            display: none;
+        }
+    }
+}
+
+
+@media screen and (max-width: 768px) {
+    .socialLinks {
+
+        img {
+            margin: 0 .8em;
+
+        }
+    }
+
+    .socialLinks__wp {
+        display: none;
+    }
+
+    .header {
+        flex-direction: row;
+        justify-content: space-around;
+        margin: 1.5em 2em;
+
+        img {
+            display: none;
+        }
+
+        &__mobile {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            
+        }
+
+        &__social {
+            display: flex;
+            margin: 0em 1em;
+        }
+        &__links {
+            display: none;
+        }
+    }
+}

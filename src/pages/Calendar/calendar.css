@@ -1,0 +1,75 @@
+.calendario {
+    margin: 1rem 4rem;
+}
+
+.calendario  h1 {
+   color: var(--cinza-texto);
+}
+
+.status-indicators {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 1rem ;
+}
+
+.indicator {
+    display: flex;
+    align-items: center;
+    gap: 5px; 
+}
+
+.square {
+    width: 20px;
+    height: 20px; 
+    border-radius: 6px;
+}
+
+.yellow {
+    background-color: #EEAD2D;
+}
+
+.red {
+    background-color: red;
+}
+
+.green {
+    background-color: green;
+}
+
+
+.rbc-header {
+    font-weight: bold;
+    font-size: 16px; 
+    height: 30px; 
+    line-height: 30px; 
+
+
+}
+
+.rbc-date-cell {
+    font-weight: bold;
+    font-size: 16px; 
+}
+
+.custom-tooltip {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    width: 200px;
+}
+
+.custom-tooltip button {
+    margin: 6px 0;
+}
+
+.calendar-controls {
+    margin-bottom: 1rem;
+}
+
+.calendar-controls button {
+    margin-right: 1rem;
+    margin-bottom: .3rem;
+}
+

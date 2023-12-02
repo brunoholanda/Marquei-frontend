@@ -1,0 +1,108 @@
+.planos {
+    text-align: center;
+    align-items: center;
+    justify-content: center;
+    display: flex;
+    flex-direction: row;
+    padding: 20px;
+    flex-wrap: wrap;
+
+    h2 {
+        font-size: 2.8rem;
+        color: #30455c;
+      }
+    
+      p {
+        font-size: 1.2rem;
+        color: #5f748b;
+      }
+    
+      ul {
+        font-size: 1.2rem;
+        color: #5f748b;
+      }
+    
+      li {
+        margin-bottom: .4rem;
+      }
+    
+      button {
+        width: 18rem;
+        margin: 1rem 0;
+    
+      }
+    
+      img {
+        width: 20rem;
+      }
+
+    button {
+        background-color: transparent;
+        background-image: linear-gradient(160deg, #E44D7A 22%, #CE0058 100%);
+        color: white;
+        border: none;
+        padding: 10px 20px;
+        cursor: pointer;
+    }
+}
+
+.plansGrid {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+    flex-wrap: wrap;
+
+
+}
+
+.planCard {
+    border: 2px solid #ccc;
+    border-radius: 10px;
+    padding: 20px;
+    margin: 10px;
+    text-align: center;
+    position: relative;
+    transition: 0.5s ease;
+
+
+    &.mostSold {
+        border-color: #000;
+    }
+
+    &:hover {
+        transform: scale(1.03);
+    }
+}
+
+.mostSoldLabel {
+    position: absolute;
+    top: -10px;
+    left: -10px;
+    background: #e9b311;
+    border-radius: 8px;
+    color: white;
+    padding: 5px;
+    font-weight: bold;
+}
+
+.price {
+    font-size: 24px;
+    font-weight: bold;
+}
+
+.originalPrice {
+    text-decoration: line-through;
+    margin-right: 5px;
+}
+
+.perMonth {
+    font-size: 14px;
+}
+
+.duration {
+    margin: 10px 0;
+    font-size: 14px;
+    color: #666;
+}

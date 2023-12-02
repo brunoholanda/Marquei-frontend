@@ -1,0 +1,145 @@
+.home {
+
+  h2 {
+    font-size: 2.8rem;
+    color: #30455c;
+  }
+
+  p {
+    font-size: 1.2rem;
+    color: #5f748b;
+  }
+
+  ul {
+    font-size: 1.2rem;
+    color: #5f748b;
+  }
+
+  li {
+    margin-bottom: .4rem;
+  }
+
+  button {
+    width: 18rem;
+    margin: 1rem 0;
+
+  }
+
+  img {
+    width: 20rem;
+  }
+}
+
+.analogica {
+  background-color: #f4f7fb;
+  display: flex;
+  justify-content: space-around;
+
+  &__texto {
+    margin: 2rem 10rem;
+  }
+
+  &__img {
+    margin: 2rem 10rem 2rem 0;
+  }
+}
+
+.controle {
+  background-color: #fff;
+  display: flex;
+  justify-content: space-around;
+
+  &__texto {
+    margin: 2rem 10rem;
+  }
+
+  &__img {
+    margin: 2rem 0rem 2rem 10rem;
+  }
+}
+
+.solucao {
+  background-color: var(--azul);
+  height: 8rem;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  h3 {
+    color: #f4f7fb;
+    font-size: 1.6rem;
+  }
+}
+
+.planos {
+  text-align: center;
+  align-items: center;
+  justify-content: center; 
+}
+
+.cards {
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+.faq {
+  text-align: center;  
+
+  h2 {
+    font-size: 2.8rem;
+    color: #30455c;
+  }
+}
+
+.accordion {
+  margin: 4rem 15rem;
+  .accordionItem {
+    border-bottom: 1px solid #ccc;
+    margin-bottom: 1rem;
+  }
+
+  .title {
+    cursor: pointer;
+    padding: 15px;
+    font-size: 1.4rem;
+    background-color: #fff;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+
+
+    span {
+      color: var(--azul);
+      font-weight: bold;
+      transition: 0.5s ease;
+
+
+      &:hover {
+        color: var(--azul-forte);
+        transform: scale(1.03);
+      }
+    }
+  }
+
+
+  .iconPlus {
+    color: var(--azul-forte);
+  }
+
+  .iconMinus {
+    color: var(--azul-forte);
+  }
+
+  .content {
+      background-color: #fff;
+      color: var(--cinza-texto);
+      font-size: 1.3rem;
+      text-align: left;
+      line-height: 1.5rem;
+      overflow: hidden;
+      transition: max-height 0.3s ease-in-out, padding 0.3s ease-in-out;
+      max-height: 0;
+      padding: 0;
+  }
+}

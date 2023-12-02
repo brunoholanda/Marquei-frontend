@@ -1,0 +1,38 @@
+.clienteDetails {
+    margin: 2rem 4rem;
+
+}
+
+.clienteDetails h1 {
+    color: var(--cinza-texto);
+}
+
+.search-results-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    border: 1px solid #ccc;
+    max-height: 200px; 
+    overflow-y: auto; 
+}
+
+.search-results-list li {
+    padding: 5px 10px;
+    cursor: pointer;
+    border-bottom: 1px solid #eee;
+}
+
+.search-results-list li:hover {
+    background-color: #f0f0f0;
+}
+
+.atestados-botoes {
+    display: flex;
+    flex-direction: column;
+    width: 200px;
+    margin: 1rem 0;
+}
+
+.atestados-botoes button {
+    margin: 1rem 0;
+}

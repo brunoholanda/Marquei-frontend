@@ -1,0 +1,133 @@
+.certificate-page {
+    width: 215mm;
+    height: 276mm;
+    padding: 20mm;
+    background-color: white;
+    margin: 20px 80px;
+    box-sizing: border-box;
+    font-family:  var(--fonte-principal);
+    padding: 50px;
+    line-height: 1.6;
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    justify-content: start;
+    align-items: center;
+    margin: 0 auto;
+}
+
+
+.cabecalho {
+    display: flex;
+    justify-content: space-between;
+    flex-direction: column;
+    align-items: center;
+}
+
+.company-logo img {
+    width: 45px;
+}
+
+.certificate-page p {
+    font-size: 22px;
+    color: var(--cinza-texto);
+
+}
+
+.certificate-title h1 {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 30px;
+    font-size: 40px;
+    font-weight: bold;
+    color: var(--cinza-texto);
+    text-align: center;
+}
+
+.certificate-body {
+    margin-bottom: 20px;
+}
+
+.indented-text {
+    text-indent: 55px; 
+}
+
+.indented-text li {
+    font-size: 14px;
+    list-style-type: none;
+}
+
+.certificate-signature {
+    text-align: right;
+    margin-top: 40px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+.certificate-signature img {
+    width: 50%;
+    height: auto;
+}
+
+.signature-line {
+    border-top: 1px solid black;
+    width: 200px;
+    margin-top: 20px;
+    font-size: 18px;
+}
+
+.doctor-info {
+    margin-top: 10px;
+    font-style: italic;
+    text-align: center;
+    /* Centralize o conteúdo horizontalmente */
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+    /* Defina a altura como 100% para centralizar verticalmente */
+}
+
+.certificate-contato{
+    padding: 0;  
+    display: flex;  
+    justify-content: center;
+}
+
+.certificate-itens {
+    display: flex;
+    flex-direction: row;
+    justify-content: left;
+    align-items: center;
+    margin: 0 2rem;
+}
+
+.certificate-itens img {
+    width: 20px;
+    height: 20px;
+    margin-right: 10px;
+}
+
+.certificate-endereco p {
+    font-size: 14px;
+    margin: 0;
+}
+
+.footer {
+    position: absolute;
+    bottom: -10px;
+    /* Posiciona o rodapé na parte inferior da página */
+    width: 100%;
+    /* O rodapé deve ter a largura total da página */
+    text-align: center;
+    /* Centraliza o texto do rodapé */
+    background-image: url(../../../public/bg-rodape.png);
+    background-repeat: no-repeat;
+    background-position: center calc(100% + 10px);
+    /* Ajuste 10px para deslocar a imagem mais para baixo */
+    padding-bottom: 80px;
+    background-size: contain;
+}

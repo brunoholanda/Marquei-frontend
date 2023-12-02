@@ -1,0 +1,76 @@
+.autenticar {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 100vh;
+    background: #f7f7f7;
+}
+
+.formulario {
+    background: #ffffff;
+    padding: 2rem;
+    border-radius: 8px;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
+    width: 100%;
+    max-width: 400px;
+    margin: auto;
+
+    h1 {
+        color: var(--cinza-texto);
+        margin-bottom: 2rem;
+        text-align: center;
+    }
+
+    .inputContainer {
+        margin-bottom: 2rem;
+    }
+
+    label {
+        display: block;
+        color: var(--cinza-texto);
+        margin-bottom: 0.5rem;
+    }
+
+    .inputField {
+        width: 100%;
+        padding: 10px;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+        box-sizing: border-box;
+
+        &::placeholder {
+            color: #aaa;
+        }
+    }
+
+
+
+    .forgotPassword {
+        text-align: center;
+        color: var(--azul);
+        margin-top: 3rem;
+        margin-bottom: 1rem;
+        cursor: pointer;
+
+        a {
+            text-decoration: none;
+        }
+    }
+
+    .registerPrompt {
+        text-align: center;
+        margin-top: 20px;
+        background-color: var(--cor-de-fundo);
+        padding: 1rem;
+        border-radius: 8px;
+
+        a {
+            color: var(--azul);
+            cursor: pointer;
+            text-decoration: none;
+
+        }
+    }
+}
+

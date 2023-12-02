@@ -1,0 +1,42 @@
+.dashboard {
+    margin: 3rem 2.5rem;
+}
+
+.dashboard-buttons {
+   margin-bottom: 1rem;
+}
+
+.dashboard-button {
+    margin-right: .8rem;
+}
+
+.dashboard-radials {
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    flex-wrap: wrap;
+}
+
+.chartContainer {
+    width: 500px;
+    height: 300px;
+    margin: 0; 
+}
+
+.chartContainerLeftAlign {
+    margin-left: 0;
+    padding-left: 0;
+}
+
+
+@media only screen and (max-width: 768px) {
+    .chartContainer {
+        width: 100%; 
+        height: auto;
+    }
+
+    .legendStyle {
+        top: 0;
+        left: 0; 
+    }
+}

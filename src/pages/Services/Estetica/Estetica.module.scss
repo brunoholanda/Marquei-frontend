@@ -1,0 +1,155 @@
+.estetica {
+    margin: 5rem 6rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+
+    img {
+        width: 34rem;
+        border-radius: 8px;
+    }
+
+    h2 {
+        font-size: 3rem;
+        color: var(--gold-black);
+    }
+
+    p {
+        font-size: 1.2rem;
+        color: var(--cinza-texto);
+    }
+
+    &__clareamento {
+        margin-left: 6rem;
+    }
+
+    &__resina {
+        margin-right: 6rem;
+    }
+}
+
+.resina {
+    margin: 5rem 6rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+
+    img {
+        width: 34rem;
+        border-radius: 8px;
+    }
+
+    h2 {
+        font-size: 3rem;
+        color: var(--gold-black);
+    }
+
+    p {
+        font-size: 1.2rem;
+        color: var(--cinza-texto);
+    }
+
+    &__resina {
+        margin-right: 6rem;
+    }
+}
+
+@media screen and (max-width: 1024px) {
+    .estetica {
+        margin: 3rem 2rem;
+    
+        img {
+            width: 28rem;
+        }
+    
+        h2 {
+            font-size: 2.5rem;
+        }
+    
+        p {
+            font-size: 1rem;
+        }
+    
+        &__clareamento {
+            margin-left: 3rem;
+        }
+    
+        &__resina {
+            margin-right: 3rem;
+        }
+    }
+    
+    .resina {
+        margin: 3rem 2rem;
+
+        img {
+            width: 28rem;
+            border-radius: 8px;
+        }
+    
+        h2 {
+            font-size: 2.5rem;
+        }
+    
+        p {
+            font-size: 1rem;
+        }
+    
+        &__resina {
+            margin-right: 3rem;
+        }
+    }
+}
+
+@media screen and (max-width: 768px) {
+    .estetica {
+        margin: 1.5rem;
+        display: flex;
+        flex-direction: column;
+
+        img {
+            width: 100%;
+        }
+
+        h2 {
+            font-size: 1.5rem;
+            text-align: center;
+        }
+
+        p {
+            font-size: 1rem;
+        }
+
+        &__clareamento {
+            margin-left: 0;
+        }
+
+        &__resina {
+            margin-right: 0;
+        }
+    }
+
+    .resina {
+        display: flex;
+        flex-direction: column-reverse;
+        margin: 1.5rem;
+
+        img {
+            width: 100%;
+        }
+    
+        h2 {
+            font-size: 1.5rem;
+        }
+    
+        p {
+            font-size: 1rem;
+
+        }
+    
+        &__resina {
+            margin-right: 0;
+        }
+      }
+      
+}
