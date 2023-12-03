@@ -128,10 +128,8 @@ const CertificatePage = React.forwardRef(({ nome, days, date, reason, profession
                             <div className='certificate-endereco'>
                                 <p><CompassOutlined /> {companyDetails.endereco}<br /></p>
                                 <p>Emitido em, {getCurrentDateFormatted()}</p>
-
                             </div>
                         )}
-
                     </>
                 )}
             </div>

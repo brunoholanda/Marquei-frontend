@@ -175,13 +175,18 @@ const CompanyDataModal = ({ isVisible, onClose }) => {
                     <Input style={{ marginBottom: '15px' }} name="nome" value={editedData.nome} onChange={handleInputChange} placeholder="Nome" />
                     <Input style={{ marginBottom: '15px' }} name="telefone" value={editedData.telefone} onChange={handleInputChange} placeholder="WhatsApp" />
                     <Input style={{ marginBottom: '15px' }} name="instagram" value={editedData.instagram} onChange={handleInputChange} placeholder="Instagram" />
+                    <label>Digite o CEP para atualizar o endereço:</label>
                     <Input style={{ marginBottom: '15px' }} name="cep" value={cep} onChange={(e) => setCep(e.target.value)} placeholder="CEP" />
                     <Input style={{ marginBottom: '15px' }} name="numero" value={numero} onChange={(e) => setNumero(e.target.value)} placeholder="Número" />
                     <Input style={{ marginBottom: '15px' }} name="referencia" value={referencia} onChange={(e) => setReferencia(e.target.value)} placeholder="Referência" />
-                    <label>Novo Endereço:</label>
-                    <Input style={{ marginBottom: '15px' }} name="endereco" value={enderecoCompleto} onChange={handleInputChange} placeholder="Endereço Completo" />
+                    {cep &&
+                        <>
+                            <label>Novo Endereço:</label>
+                            <Input style={{ marginBottom: '15px' }} name="endereco" value={enderecoCompleto} onChange={handleInputChange} placeholder="Endereço Completo" />
+                        </>
+                    }
                     <label>Endereço Atual:</label>
-                    <Input style={{ marginBottom: '15px' }} name="enderecoEmpresa" value={enderecoEmpresa} onChange={handleInputChange} placeholder="Endereço da Empresa" disabled/>
+                    <Input style={{ marginBottom: '15px' }} name="enderecoEmpresa" value={enderecoEmpresa} onChange={handleInputChange} placeholder="Endereço da Empresa" disabled />
 
                     <Input
                         name="cnpj"

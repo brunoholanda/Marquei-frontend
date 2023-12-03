@@ -329,7 +329,7 @@ const ScheduleModal = ({ isModalAgendaVisible, handleCancel }) => {
         try {
             const response = await api.get(`/professionals/${professionalId}/planos`);
             if (response.status === 200) {
-                return response.data; // Supondo que a resposta seja um array de planos de saúde
+                return response.data; 
             } else {
                 throw new Error('Falha ao buscar planos de saúde do profissional');
             }
@@ -339,8 +339,6 @@ const ScheduleModal = ({ isModalAgendaVisible, handleCancel }) => {
             return [];
         }
     };
-
-
 
 
     return (

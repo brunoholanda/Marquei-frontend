@@ -241,12 +241,10 @@ const AdminSc = () => {
             <p>Aqui você inclui datas ou horários em que não poderá atender seus clientes. <WarningFilled /></p>
             <Select
                 showSearch
-                style={{ width: 200, marginBottom: 20,  marginRight: 20 }}
+                style={{ width: 200, marginBottom: 20, marginRight: 20 }}
                 placeholder="Selecione um profissional"
                 optionFilterProp="children"
-                onChange={
-                    (value) => setSelectedProfessional(value)
-                }
+                onChange={(value) => setSelectedProfessional(value)}
                 filterOption={(input, option) =>
                     option.children.toLowerCase().indexOf(input.toLowerCase()) >= 0
                 }
@@ -258,9 +256,14 @@ const AdminSc = () => {
                     </Option>
                 ))}
             </Select>
-            <Button type="primary" onClick={showWeeklyModal}>
+            <Button
+                type="primary"
+                onClick={showWeeklyModal}
+                disabled={!selectedProfessional} // Botão habilitado apenas se um profissional estiver selecionado
+            >
                 Padrão Semanal
             </Button>
+
             <Modal
                 title="Desabilitar Data ou Horário"
                 visible={isModalVisible}

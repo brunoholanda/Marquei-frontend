@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { Input, Button, DatePicker, Select, Form, message, Modal } from 'antd';
+import { Input, Button, DatePicker, Select, Form, message } from 'antd';
 import ReactSignatureCanvas from 'react-signature-canvas';
 import ReactInputMask from 'react-input-mask';
 import { useForm } from 'antd/es/form/Form';
@@ -22,7 +22,6 @@ function ProfessionalModal({ isVisible, onClose, initialData }) {
     const [login, setLogin] = useState("");
     const [senha, setSenha] = useState("");
     const [confirmacaoSenha, setConfirmacaoSenha] = useState("");
-    const [planosSaudeSelecionados, setPlanosSaudeSelecionados] = useState([]);
     const [planosDeSaude, setPlanosDeSaude] = useState([]);
     const [selectedPlanosIds, setSelectedPlanosIds] = useState([]);
     const [loginExistente, setLoginExistente] = useState(false);
@@ -172,9 +171,12 @@ function ProfessionalModal({ isVisible, onClose, initialData }) {
                             label="Registro"
                             rules={[{ required: true, message: 'Por favor, selecione o registro!' }]}
                         >
-                            <Select onChange={setRegistro} placeholder="Selecione CRM ou CRO">
+                            <Select onChange={setRegistro} placeholder="Selecione Tipo de Registro">
                                 <Select.Option value="CRM">CRM</Select.Option>
                                 <Select.Option value="CRO">CRO</Select.Option>
+                                <Select.Option value="CREFITO">CREFITO</Select.Option>
+                                <Select.Option value="CRP">CRP</Select.Option>
+                                <Select.Option value="CRN">CRN</Select.Option>
                             </Select>
                         </Form.Item>
 
@@ -248,8 +250,8 @@ function ProfessionalModal({ isVisible, onClose, initialData }) {
                                 value={login}
                                 onChange={e => {
                                     setLogin(e.target.value);
-                                    setLoginExistente(false);  // Resetar o estado de erro
-                                    form.validateFields(['login']);  // Revalidar o campo de login
+                                    setLoginExistente(false);  
+                                    form.validateFields(['login']);  
                                 }}
                                 onBlur={() => verificarLoginExistente(login)}
                             />
