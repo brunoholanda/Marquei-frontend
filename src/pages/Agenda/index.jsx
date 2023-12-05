@@ -6,6 +6,7 @@ import { ControlOutlined, DeleteOutlined, EditOutlined, PlusCircleFilled, Warnin
 import 'moment/locale/pt-br';
 import '../Appointments/Appointments.css';
 import WeeklyModal from '../../components/Modals/WeeklyModal ';
+import ScheduleLinkModal from 'components/Modals/ScheduleLinkModal';
 const { Option } = Select;
 
 const AdminSc = () => {
@@ -19,7 +20,8 @@ const AdminSc = () => {
     const [isWeeklyModalVisible, setIsWeeklyModalVisible] = useState(false);
     const [professionals, setProfessionals] = useState([]);
     const [selectedProfessional, setSelectedProfessional] = useState(null);
-
+    const [isLinkModalVisible, setIsLinkModalVisible] = useState(false);
+    const companyID = localStorage.getItem('companyID');
 
     useEffect(() => {
         const fetchProfessionals = async () => {
@@ -259,7 +261,7 @@ const AdminSc = () => {
             <Button
                 type="primary"
                 onClick={showWeeklyModal}
-                disabled={!selectedProfessional} // Botão habilitado apenas se um profissional estiver selecionado
+                disabled={!selectedProfessional}
             >
                 Padrão Semanal
             </Button>
@@ -320,7 +322,16 @@ const AdminSc = () => {
                     </Button>
                 </div>
                 <p>Feriados locais precisam ser incluídos manualmente <WarningTwoTone twoToneColor="#ff0000" /></p>
-
+                <Button style={{ marginBottom: '20px' }} type="primary" onClick={() => setIsLinkModalVisible(true)}>
+                    Gerar Link de Agendamento
+                </Button>
+                {isLinkModalVisible && (
+                    <ScheduleLinkModal
+                        isLinkModalVisible={isLinkModalVisible}
+                        onLinkModalClose={() => setIsLinkModalVisible(false)}
+                        companyID={companyID}
+                    />
+                )}
                 <Table dataSource={disabledDates} columns={columns} rowKey="id" />
             </div>
         </div>

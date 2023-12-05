@@ -4,7 +4,7 @@ import moment from 'moment';
 import ReactInputMask from 'react-input-mask';
 import './schedule.css';
 import api from 'components/api/api';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import Holidays from 'date-holidays';
 
 
@@ -16,11 +16,12 @@ const Schedule = () => {
   const [loading, setLoading] = useState(false);
   const [diasSemana, setDiasSemana] = useState([]);
   const [disabledHours, setDisabledHours] = useState([]);
-  const [bookedHours, setBookedHours] = useState([]);
   const [professionals, setProfessionals] = useState([]);
   const [selectedProfessional, setSelectedProfessional] = useState(null);
-  const [companyID, setCompanyID] = useState(null);
   const [planosSaude, setPlanosSaude] = useState([]);
+  const [professionalInterval, setProfessionalInterval] = useState(0);
+  const { company_id } = useParams();
+
 
   const hd = new Holidays();
   hd.init('BR');
@@ -46,7 +47,7 @@ const Schedule = () => {
   };
 
   useEffect(() => {
-    if (selectedProfessional) { // Apenas prosseguir se selectedProfessional não for null
+    if (selectedProfessional) {
       const fetchDiasSemana = async () => {
         try {
           const response = await api.get(`/dias-semanais?professional_id=${selectedProfessional}`);
@@ -58,7 +59,7 @@ const Schedule = () => {
 
       fetchDiasSemana();
     }
-  }, [selectedProfessional]); // Dependência para o useEffect, reagindo às mudanças de selectedProfessional
+  }, [selectedProfessional]);
 
 
   const isWeekend = (date) => {
@@ -68,7 +69,23 @@ const Schedule = () => {
     return isHoliday(date);
   };
 
-  const getDisabledHours = (selectedDate, bookedHours) => {
+  useEffect(() => {
+    if (selectedProfessional) {
+      const fetchProfessionalInterval = async () => {
+        try {
+          const response = await api.get(`/professional-intervals/professional/${selectedProfessional}`);
+          console.log(response.data.intervalo)
+          setProfessionalInterval(response.data.intervalo);
+        } catch (error) {
+          console.error('Erro ao buscar intervalo do profissional', error);
+        }
+      };
+
+      fetchProfessionalInterval();
+    }
+  }, [selectedProfessional]);
+
+  const getDisabledHours = (selectedDate, bookedHours, professionalInterval) => {
     if (!selectedDate) return [];
 
     const dayOfWeek = selectedDate.day();
@@ -79,7 +96,6 @@ const Schedule = () => {
       return [...Array(24).keys()];
     }
 
-    // Define as horas de funcionamento com base nas informações do dia
     const startAM = dia.startam ? parseInt(dia.startam.split(":")[0], 10) : 0;
     const endAM = dia.endam ? parseInt(dia.endam.split(":")[0], 10) : 11;
     const startPM = dia.startpm ? parseInt(dia.startpm.split(":")[0], 10) : 12;
@@ -91,40 +107,56 @@ const Schedule = () => {
       }
     }
 
-    // Desabilita as horas dos agendamentos já existentes
-    bookedHours.forEach(hour => {
-      if (!disabledHours.includes(hour)) {
-        disabledHours.push(hour);
+    bookedHours.forEach(bookedHour => {
+      console.log(`Hora agendada: ${bookedHour}, Intervalo: ${professionalInterval}`);
+
+      if (!disabledHours.includes(bookedHour)) {
+        disabledHours.push(bookedHour);
+      }
+      // Desabilitar horas dentro do intervalo
+      for (let i = 1; i < professionalInterval; i++) {
+        const intervalHour = bookedHour + i;
+        console.log(`Adicionando hora desabilitada: ${intervalHour}`);
+
+        if (intervalHour < 24 && !disabledHours.includes(intervalHour)) {
+          disabledHours.push(intervalHour);
+        }
       }
     });
 
+    console.log(`Horas desabilitadas: ${disabledHours}`);
     return disabledHours;
   };
 
 
   const handleDateChange = async (date) => {
-    const formattedDate = date.format('DD/MM/YYYY'); // Formato da data ajustado para corresponder ao banco de dados
+    const formattedDate = date.format('DD/MM/YYYY');
 
     if (selectedProfessional) {
       try {
-        const response = await api.get('/agendamentos', {
+        const intervalResponse = await api.get(`/professional-intervals/professional/${selectedProfessional}`);
+        const intervalString = intervalResponse.data.intervalo; // "02:00"
+        const professionalInterval = parseInt(intervalString.split(":")[0], 10); // Converte "02:00" para 2
+
+        const appointmentsResponse = await api.get('/agendamentos', {
           params: {
             data: formattedDate,
             professional_id: selectedProfessional
           }
         });
-        const hours = response.data.map(item => moment(item.horario, 'HH:mm').hour());
-        setBookedHours(hours);
-        setDisabledHours(getDisabledHours(date, hours)); // Atualiza as horas desabilitadas com as horas agendadas
+        const hours = appointmentsResponse.data.map(item => moment(item.horario, 'HH:mm').hour());
+        setDisabledHours(getDisabledHours(date, hours, professionalInterval));
       } catch (error) {
-        console.error('Erro ao buscar horários agendados', error);
-        message.error('Erro ao buscar horários agendados');
+        console.error('Erro ao buscar horários agendados ou intervalo do profissional', error);
+        message.error('Erro ao buscar horários agendados ou intervalo do profissional');
       }
     }
   };
 
+
   const onFinish = async (values) => {
     setLoading(true);
+    const desiredCompanyID = '1';
 
     try {
 
@@ -132,7 +164,9 @@ const Schedule = () => {
         nome: values.nome,
         cpf: values.cpf.replace(/\D/g, ''),
         celular: values.celular.replace(/\D/g, ''),
-        planodental: values.planodental,
+        planodental: values.planodental, 
+        company_id: company_id, 
+
       };
 
       const data = values.data.format('DD/MM/YYYY');
@@ -142,11 +176,11 @@ const Schedule = () => {
         data,
         horario,
         professional_id: selectedProfessional,
-        company_id: 1
+        company_id: company_id,
       };
 
       // Verificar se o cliente já existe
-      let clientResponse = await api.get(`/clients/cpf/${clientData.cpf}`).catch(error => error.response);
+      let clientResponse = await api.get(`/clients/cpf/${clientData.cpf}?company_id=${clientData.company_id}`).catch(error => error.response);
 
       // Se o cliente não existir, criar um novo
       if (clientResponse && clientResponse.status === 404) {
@@ -254,10 +288,9 @@ const Schedule = () => {
 
   useEffect(() => {
     const fetchProfessionals = async () => {
-      const desiredCompanyID = '1';
 
       try {
-        const response = await api.get(`/professionals?company_id=${desiredCompanyID}`);
+        const response = await api.get(`/professionals?company_id=${company_id}`);
 
         if (response.status !== 200) {
           throw new Error('Falha ao buscar dados dos profissionais');
@@ -275,7 +308,7 @@ const Schedule = () => {
     try {
       const response = await api.get(`/professionals/${professionalId}/planos`);
       if (response.status === 200) {
-        return response.data; // Supondo que a resposta seja um array de planos de saúde
+        return response.data;
       } else {
         throw new Error('Falha ao buscar planos de saúde do profissional');
       }
@@ -324,7 +357,6 @@ const Schedule = () => {
             setSelectedProfessional(value);
             const planos = await fetchPlanosSaude(value);
             setPlanosSaude(planos);
-            // Reset o campo do plano de saúde no formulário, se necessário
             form.setFieldsValue({ planodental: '' });
           }
         }}
@@ -360,7 +392,7 @@ const Schedule = () => {
         <TimePicker
           format="HH:mm"
           minuteStep={15}
-          disabledHours={() => getDisabledHours(form.getFieldValue('data'), bookedHours)}
+          disabledHours={() => disabledHours}
         />
       </Form.Item>
 

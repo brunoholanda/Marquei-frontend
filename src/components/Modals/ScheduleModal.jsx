@@ -12,6 +12,8 @@ import {
     StyledTimePicker,
     StyledDateTime,
 } from './Styles';
+import { UserAddOutlined } from '@ant-design/icons';
+import ProfessionalModal from './registerModal';
 
 const { Option } = Select;
 const { TextArea } = Input;
@@ -28,6 +30,7 @@ const ScheduleModal = ({ isModalAgendaVisible, handleCancel }) => {
     const [patientSuggestions, setPatientSuggestions] = useState([]);
     const [selectedPatient, setSelectedPatient] = useState(null);
     const [planosSaude, setPlanosSaude] = useState([]);
+    const [isModalProfessionalVisible, setIsModalProfessionalVisible] = useState(false);
 
     const onSearchPatientName = async (searchText) => {
         if (searchText.length < 4) {
@@ -43,7 +46,7 @@ const ScheduleModal = ({ isModalAgendaVisible, handleCancel }) => {
             const suggestions = filteredPatients.map(patient => ({
                 label: patient.nome,
                 value: patient.nome,
-                data: patient                // Outros dados do paciente, se necessário
+                data: patient
             }));
             setPatientSuggestions(suggestions);
         } catch (error) {
@@ -329,7 +332,7 @@ const ScheduleModal = ({ isModalAgendaVisible, handleCancel }) => {
         try {
             const response = await api.get(`/professionals/${professionalId}/planos`);
             if (response.status === 200) {
-                return response.data; 
+                return response.data;
             } else {
                 throw new Error('Falha ao buscar planos de saúde do profissional');
             }
@@ -338,6 +341,15 @@ const ScheduleModal = ({ isModalAgendaVisible, handleCancel }) => {
             message.error('Erro ao buscar planos de saúde');
             return [];
         }
+    };
+
+    const openModalProfessional = () => {
+        setIsModalProfessionalVisible(true);
+    };
+
+    const closeModalProfessional = () => {
+        setIsModalProfessionalVisible(false);
+        setSelectedProfessional(null);
     };
 
 
@@ -368,7 +380,7 @@ const ScheduleModal = ({ isModalAgendaVisible, handleCancel }) => {
                     rules={[{ required: true, message: 'Por favor, insira o nome do paciente!' }]}
                 >
                     <AutoComplete
-                        placeholder="&#128269; Nome do paciente" // Entidade HTML para lupa
+                        placeholder="&#128269; Nome do paciente" 
                         onSearch={onSearchPatientName}
                         onSelect={onSelectPatient}
                         options={patientSuggestions}
@@ -411,6 +423,14 @@ const ScheduleModal = ({ isModalAgendaVisible, handleCancel }) => {
                         </Option>
                     ))}
                 </StyledSelect>
+                <Button style={{ margin: '0 10px 10px 10px' }} type="primary" onClick={openModalProfessional}>
+                    <UserAddOutlined />Adicionar Profissional
+                </Button>
+                <ProfessionalModal
+                    isVisible={isModalProfessionalVisible}
+                    onClose={closeModalProfessional}
+                    initialData={selectedProfessional}
+                />
                 <StyledFormItem
                     name="ignoreDisabledHours"
                     valuePropName="checked"

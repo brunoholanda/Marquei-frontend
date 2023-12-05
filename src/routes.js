@@ -44,16 +44,14 @@ function AppRoutes() {
     }
 
 
-
-
     return (
         <HashRouter>
             <ScrollToTop />
             <Routes>
                 <Route path="/" element={<PageBody />}>
                     <Route index element={<Home />} />
-                    <Route path="/agendar" element={<Schedule />} />
                     <Route path="/cadastro" element={<RegisterScreen />} />
+                    <Route path="/agendar/:company_id" element={<Schedule />} />
                     <Route path="*" element={<NotFound />} />
                 </Route>
                 <Route element={<PageBodySystem />}>
