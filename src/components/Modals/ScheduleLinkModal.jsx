@@ -1,6 +1,7 @@
 // ScheduleLinkModal.js
 import React, { useState } from 'react';
 import { Modal, Button, Input, message } from 'antd';
+import { LinkOutlined } from '@ant-design/icons';
 
 const ScheduleLinkModal = ({ isLinkModalVisible, onLinkModalClose, companyID }) => {
     const generateScheduleLink = () => {
@@ -35,7 +36,7 @@ const ScheduleLinkModal = ({ isLinkModalVisible, onLinkModalClose, companyID }) 
       ]}
     >
       <p>O link a seguir pode ser compartilhado com seus clientes após a configuração da agenda.</p>
-      <p>Copie e compartilhe este link para permitir o agendamento:</p>
+      <p><LinkOutlined /> Copie e compartilhe este link para permitir o agendamento:</p>
       <Input value={generateScheduleLink()} readOnly />
     </Modal>
   );

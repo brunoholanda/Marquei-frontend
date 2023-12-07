@@ -17,6 +17,8 @@ import DoctorDetails from "pages/Professional/ProfessionalDetails";
 import RegisterScreen from "pages/RegisterScreen";
 import ResetPassword from "pages/ResetPassword";
 import DashboardPanel from "pages/DashboardPanel";
+import Clients from "pages/Clients";
+import StockControlPage from "pages/Estoque";
 
 function ScrollToTop() {
     const { pathname } = useLocation();
@@ -66,6 +68,9 @@ function AppRoutes() {
                     <Route path="/configs" element={<ProtectedRoute element={<Configs />} />} />
                     <Route path="/professionals/:id" element={<ProtectedRoute element={<DoctorDetails />} />} />
                     <Route path="/painel" element={<ProtectedRoute element={<DashboardPanel/>} />} />
+                    <Route path="/clientes" element={<ProtectedRoute element={<Clients/>} />} />
+                    <Route path="/estoque" element={<ProtectedRoute element={<StockControlPage/>} />} />
+
 
                     <Route path="*" element={<NotFound />} />
                 </Route>

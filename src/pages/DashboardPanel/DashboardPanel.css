@@ -2,8 +2,12 @@
     margin: 3rem 2.5rem;
 }
 
+.dashboard h1 {
+    color: var(--cinza-texto);
+}
+
 .dashboard-buttons {
-   margin-bottom: 1rem;
+    margin-bottom: 1rem;
 }
 
 .dashboard-button {
@@ -20,7 +24,7 @@
 .chartContainer {
     width: 500px;
     height: 300px;
-    margin: 0; 
+    margin: 0;
 }
 
 .chartContainerLeftAlign {
@@ -31,12 +35,12 @@
 
 @media only screen and (max-width: 768px) {
     .chartContainer {
-        width: 100%; 
+        width: 100%;
         height: auto;
     }
 
     .legendStyle {
         top: 0;
-        left: 0; 
+        left: 0;
     }
 }

@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { DatePicker, Button, Table, message, Modal, TimePicker, Select } from 'antd';
 import api from 'components/api/api';
 import moment from 'moment';
-import { ControlOutlined, DeleteOutlined, EditOutlined, PlusCircleFilled, WarningFilled, WarningTwoTone } from '@ant-design/icons';
+import { ControlOutlined, DeleteOutlined, EditOutlined, LinkOutlined, PlusCircleFilled, WarningFilled, WarningTwoTone } from '@ant-design/icons';
 import 'moment/locale/pt-br';
 import '../Appointments/Appointments.css';
 import WeeklyModal from '../../components/Modals/WeeklyModal ';
@@ -323,7 +323,7 @@ const AdminSc = () => {
                 </div>
                 <p>Feriados locais precisam ser incluídos manualmente <WarningTwoTone twoToneColor="#ff0000" /></p>
                 <Button style={{ marginBottom: '20px' }} type="primary" onClick={() => setIsLinkModalVisible(true)}>
-                    Gerar Link de Agendamento
+                <LinkOutlined /> Gerar Link de Agendamento
                 </Button>
                 {isLinkModalVisible && (
                     <ScheduleLinkModal

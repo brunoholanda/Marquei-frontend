@@ -5,6 +5,7 @@ import api from 'components/api/api';
 import './DashboardPanel.css';
 import { Select } from 'antd';
 import { Checkbox } from 'antd';
+import { DashboardOutlined } from '@ant-design/icons';
 
 const { Option } = Select;
 
@@ -201,6 +202,7 @@ const DashboardPanel = () => {
     return (
         <div>
             <div className='dashboard'>
+            <h1>Gestão e Acompanhamento <DashboardOutlined/></h1>
                 <div className='dashboard-buttons'>
                     <Button
                         type={timeFilter === 'Esta semana' ? 'primary' : 'default'}

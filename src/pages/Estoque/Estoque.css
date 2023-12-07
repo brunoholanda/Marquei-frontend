@@ -1,0 +1,12 @@
+.estoque {
+    margin: 2rem 4rem;
+}
+
+.estoque h1,
+p {
+    color: var(--cinza-texto);
+}
+
+.low-stock {
+    background-color: #f15a5a; /* Cor de fundo vermelha clara */
+}
