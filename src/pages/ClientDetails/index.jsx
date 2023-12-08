@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { message, Button, Tabs, Input, InputNumber, DatePicker, Modal, Table, TimePicker } from 'antd';
 import api from 'components/api/api';
-import { useParams, useNavigate } from 'react-router-dom';
+import { useParams, useNavigate, useLocation } from 'react-router-dom';
 import './ClientDetails.css';
 import CertificatePage from './Atestado';
 import ReactToPrint from 'react-to-print';
@@ -13,10 +13,12 @@ import ReceitaPage from './Receita';
 const { TabPane } = Tabs;
 
 const ClientDetails = () => {
+    const [isLoading, setIsLoading] = useState(true);
     const { id } = useParams();
     const navigate = useNavigate();
-    const [appointmentDetails, setAppointmentDetails] = useState(null);
-    const [editedDetails, setEditedDetails] = useState({});
+    const [appointmentDetails, setAppointmentDetails] = useState({ nome: '' });
+    const [editedDetails, setEditedDetails] = useState({ nome: '' });
+
     const [isModalVisible, setIsModalVisible] = useState(false);
     const [certificateData, setCertificateData] = useState({
         date: null,
@@ -46,6 +48,7 @@ const ClientDetails = () => {
     const certificatePageRef = useRef(null);
     const declarationPageRef = useRef(null);
     const receitaPageRef = useRef(null);
+    const location = useLocation();
 
 
     const handleOpenModal = () => {
@@ -104,28 +107,39 @@ const ClientDetails = () => {
     useEffect(() => {
         const fetchDetails = async () => {
             try {
-                const appointmentResponse = await api.get(`/agendamentos/${id}`);
-                const appointmentData = appointmentResponse.data;
+                console.log('Fetching details for ID:', id);
+                const isFromPacientes = location.state?.from === 'Pacientes';
+                let clientId = id;
 
-                const clientId = appointmentData.client_id;
-                setClientId(clientId);
+                if (!isFromPacientes) {
+                    const appointmentResponse = await api.get(`/agendamentos/${id}`);
+                    const appointmentData = appointmentResponse.data;
+                    clientId = appointmentData.client_id;
+                    setAppointmentDetails(appointmentData);
+                    console.log('Fetched appointment data:', appointmentData);
+                }
 
                 const clientResponse = await api.get(`/clients/${clientId}`);
                 const clientData = clientResponse.data;
+                setClientId(clientId);
+                setEditedDetails(clientData);
+                console.log('Fetched client data:', clientData);
 
                 const clientNotesResponse = await api.get(`/clients/${clientId}/notes`);
                 const clientNotesData = clientNotesResponse.data;
                 setClientNotes(clientNotesData.notes || '');
-
-                setAppointmentDetails(appointmentData);
-                setEditedDetails(clientData);
             } catch (error) {
-                console.error("Erro ao buscar detalhes", error);
-                message.error("Erro ao buscar detalhes");
+                console.error("Error fetching details:", error);
+                message.error("Error fetching details");
+            } finally {
+                setIsLoading(false); // Indica que o carregamento dos dados está completo
             }
         };
+
         fetchDetails();
-    }, [id]);
+    }, [id, location.state]);
+
+
 
 
     const convertDate = (dateStr) => {
@@ -143,47 +157,66 @@ const ClientDetails = () => {
             });
         };
 
+
         const fetchAppointmentHistory = async () => {
-            if (appointmentDetails && appointmentDetails.client_id) {
-                try {
-                    const storedCompanyID = localStorage.getItem('companyID');
-                    const historyResponse = await api.get(`/todos-agendamentos?client_id=${appointmentDetails.client_id}&company_id=${storedCompanyID}`);
+            console.log("Iniciando fetchAppointmentHistory com clientId:", clientId);
 
-                    const filteredAppointments = historyResponse.data.filter(appointment => appointment.status === 1);
+            // Verifica se clientId é definido
+            if (!clientId) {
+                console.error("clientId não está definido.");
+                return;
+            }
 
-                    const appointmentsWithProfessionalNames = await Promise.all(filteredAppointments.map(async (appointment) => {
-                        const professionalResponse = await api.get(`/professionals/${appointment.professional_id}`);
-                        appointment.professionalName = professionalResponse.data.nome; // Supondo que a resposta tenha um campo 'nome'
-                        return appointment;
-                    }));
+            try {
+                const storedCompanyID = localStorage.getItem('companyID');
+                console.log("Utilizando companyID:", storedCompanyID);
 
-                    const sortedAppointments = orderByDate(appointmentsWithProfessionalNames);
-                    setAppointmentHistory(sortedAppointments);
-                } catch (error) {
-                    console.error("Erro ao buscar histórico de atendimentos", error);
-                    message.error("Erro ao buscar histórico de atendimentos");
-                }
+                const historyResponse = await api.get(`/todos-agendamentos?client_id=${clientId}&company_id=${storedCompanyID}`);
+                console.log("Resposta da API para o histórico de agendamentos:", historyResponse.data);
+
+                const filteredAppointments = historyResponse.data.filter(appointment => appointment.status === 1);
+
+                const appointmentsWithProfessionalNames = await Promise.all(filteredAppointments.map(async (appointment) => {
+                    const professionalResponse = await api.get(`/professionals/${appointment.professional_id}`);
+                    appointment.professionalName = professionalResponse.data.nome; // Supondo que a resposta tenha um campo 'nome'
+                    return appointment;
+                }));
+
+                const sortedAppointments = orderByDate(appointmentsWithProfessionalNames);
+                console.log("Compromissos ordenados:", sortedAppointments);
+                setAppointmentHistory(sortedAppointments);
+            } catch (error) {
+                console.error("Erro ao buscar histórico de agendamentos:", error);
             }
         };
         fetchAppointmentHistory();
-    }, [appointmentDetails]);
+    }, [clientId]);
 
 
 
     const handleSaveChanges = async () => {
         try {
-            if (!appointmentDetails.client_id) {
+            // Use clientId, que é definido para ambos os casos
+            if (!clientId) {
                 throw new Error("ID do cliente não encontrado");
             }
 
-            await api.put(`/clients/${appointmentDetails.client_id}`, editedDetails);
-            message.success("Detalhes atualizados com sucesso!");
-            setAppointmentDetails(editedDetails);
+            // Use clientId para a chamada da API
+            const response = await api.put(`/clients/${clientId}`, editedDetails);
+            if (response.status === 200) {
+                message.success("Detalhes atualizados com sucesso!");
+                // Atualize o estado com os detalhes editados
+                setAppointmentDetails(prevState => ({ ...prevState, ...editedDetails }));
+                // Se você também precisa atualizar clientId aqui, faça-o da mesma forma
+            } else {
+                throw new Error("Falha ao atualizar detalhes do cliente");
+            }
         } catch (error) {
             console.error("Erro ao atualizar detalhes", error);
-            message.error("Erro ao atualizar detalhes");
+            message.error(`Erro ao atualizar detalhes: ${error.message || error}`);
         }
     }
+
 
     const handleInputChange = (key, value) => {
         setEditedDetails(prevDetails => ({
@@ -196,7 +229,15 @@ const ClientDetails = () => {
         navigate(-1);
     }
 
-    if (!appointmentDetails) return <p>Carregando...</p>;
+    if (isLoading) {
+        return <p>Carregando...</p>;
+    }
+
+    if (!appointmentDetails || !editedDetails) {
+        return <p>Detalhes do cliente não disponíveis.</p>;
+    }
+
+    // Renderização normal com os detalhes do cliente aqui
 
     const handleCertificateInputChange = (key, value) => {
         setCertificateData(prevData => ({
@@ -251,11 +292,11 @@ const ClientDetails = () => {
                 login: professionalCredentials.matricula,
                 senha: professionalCredentials.senha
             });
-    
+
             if (response.data.autenticado) {
                 setProfessionalId(response.data.professional_id);
                 handleAuthModalClose();
-    
+
                 if (actionType === 'certificate') {
                     handleOpenModal(); // Abre o modal de atestado
                 } else if (actionType === 'declaration') {
@@ -271,7 +312,7 @@ const ClientDetails = () => {
             message.error("Erro na autenticação");
         }
     };
-    
+
 
 
     const handleSaveNotes = async () => {
@@ -308,7 +349,7 @@ const ClientDetails = () => {
             <Button onClick={handleGoBack}>Voltar</Button>
             <div style={{ display: 'none' }}>
                 <CertificatePage
-                    nome={appointmentDetails.nome}
+                    nome={editedDetails.nome}
                     days={certificateData.days}
                     date={certificateData.date}
                     reason={certificateData.reason}
@@ -318,7 +359,7 @@ const ClientDetails = () => {
             </div>
             <div style={{ display: 'none' }}>
                 <DeclarationPage
-                    nome={appointmentDetails.nome}
+                    nome={editedDetails.nome}
                     date={declarationData.date}
                     startTime={declarationData.startTime}
                     endTime={declarationData.endTime}
@@ -328,7 +369,7 @@ const ClientDetails = () => {
             </div>
             <div style={{ display: 'none' }}>
                 <ReceitaPage
-                    nome={appointmentDetails.nome}
+                    nome={editedDetails.nome}
                     medicamentos={receitaData.medicamentos}
                     professionalId={professionalId}
                     ref={receitaPageRef}
@@ -479,10 +520,13 @@ const ClientDetails = () => {
                         ))}
                         <Button onClick={addMedicamentoField}>Adicionar Medicamento</Button>
                     </Modal>
-
-
                 </TabPane>
-                <TabPane tab="Anotações" key="4">
+                <TabPane tab="Orçamentos" key="4">
+                    <div className='atestados-botoes'>
+                        <Button onClick={handleEmitirAtestado}>Novo Orçamento</Button>
+                    </div>
+                </TabPane>
+                <TabPane tab="Anotações" key="5">
                     <div style={{ marginBottom: '16px' }}>
                         <Input.TextArea
                             rows={4}

@@ -324,9 +324,9 @@ const Contabilidade = () => {
           <Row gutter={16}>
             <Col xs={24} md={13}>
               <Card title="Resumo do Mês">
-                <p>Entradas: R$ {currentMonthIncome.toFixed(2)}</p>
-                <p>Saídas: R$ {currentMonthExpense.toFixed(2)}</p>
-                <p>Saldo: R$ {balance.toFixed(2)}</p>
+                <p style={{ color: '#32CD32' }}>Entradas: R$ {currentMonthIncome.toFixed(2)}</p>
+                <p style={{ color: '#FF6347' }}>Saídas: R$ {currentMonthExpense.toFixed(2)}</p>
+                <p style={{ color: '#8884d8' }}>Saldo: R$ {balance.toFixed(2)}</p>
                 <div className="chartContainer">
                   <ResponsiveContainer width="100%" height={400}>
                     <RadialBarChart

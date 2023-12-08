@@ -17,6 +17,21 @@ const RegisterScreen = () => {
   const [documentType, setDocumentType] = useState('cpf');
   const [documentTypeLabel, setDocumentTypeLabel] = useState('Digite o CPF');
   const [namePlaceholder, setNamePlaceholder] = useState('Nome completo');
+  const [selectedSpecialties, setSelectedSpecialties] = useState([]);
+
+const handleSpecialtyChange = selected => {
+  setSelectedSpecialties(selected);
+};
+
+
+  const specialtyOptions = {
+    'medico': 1,
+    'dentista': 2,
+    'psicologo': 3,
+    'fisioterapeuta': 4,
+    'nutricionista': 5,
+  };
+
 
   const getDocumentMask = (type) => {
     return type === 'cnpj' ? '99.999.999/9999-99' : '999.999.999-99';
@@ -120,20 +135,41 @@ const RegisterScreen = () => {
     return Promise.resolve();
   };
 
+  const associateSpecialtiesToUser = async (userId, specialties) => {
+    const response = await fetch(`${BASE_URL}/user-specialty/associate`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ userId, specialties }),
+    });
+  
+    if (!response.ok) {
+      // Tratar os erros aqui
+      const errorData = await response.json();
+      throw new Error(errorData.message || 'Erro ao associar especialidades');
+    }
+    // Processamento adicional conforme necessário
+  };
+
+
 
   const onFinish = async (values) => {
-    const { idNumber, nome, email, phone, address, password, confirmPassword } = values;
+    const { idNumber, nome, email, phone, address, password, confirmPassword, profession } = values;
+    const specialtiesIds = profession.map(p => specialtyOptions[p]);
+  
     const companyData = {
       nome: nome,
       cnpj: idNumber,
       telefone: phone,
       endereco: address,
     };
+  
     const userData = {
       email,
       password,
     };
-
+  
     try {
       if (password !== confirmPassword) {
         throw new Error('As senhas não coincidem.');
@@ -142,6 +178,7 @@ const RegisterScreen = () => {
         message.error('Por favor, insira um email válido.');
         return;
       }
+  
       const response = await fetch(`${BASE_URL}/companies`, {
         method: 'POST',
         headers: {
@@ -149,15 +186,21 @@ const RegisterScreen = () => {
         },
         body: JSON.stringify({ companyData, userData }),
       });
-
+  
       if (!response.ok) {
         const errorData = await response.json();
         const errorMessage = errorData.error || 'Erro no registro';
         throw new Error(errorMessage);
       }
-
+  
+      const userResponse = await response.json();
+      const userId = userResponse.user.id; // Ajuste a chave para corresponder à estrutura da sua resposta
+      
+      await associateSpecialtiesToUser(userId, specialtiesIds);
+      
       message.success('Registro bem-sucedido!');
 
+      // Requisição para gerar token temporário
       const tokenResponse = await fetch(`${BASE_URL}/auth/generate-temp-token`, {
         method: 'POST',
         headers: {
@@ -181,6 +224,8 @@ const RegisterScreen = () => {
   };
 
 
+
+
   const onAgreementChange = (e) => {
     setIsAgreed(e.target.checked);
   };
@@ -191,12 +236,41 @@ const RegisterScreen = () => {
   };
 
 
+  useEffect(() => {
+    form.setFieldsValue({ profession: selectedSpecialties });
+  }, [selectedSpecialties, form]);
+  
+
   return (
     <div className='register'>
       <div className='formulario'>
         <h2>Experimentar gratuitamente 😊</h2>
-        <p>Não solicitamos metodo de pagamento 💰</p>
+        <p  >Não solicitamos metodo de pagamento 💰</p>
         <Form form={form} onFinish={onFinish}>
+          <Form.Item
+            name="profession"
+            label=""
+            rules={[{ required: true, message: 'Por favor, selecione sua profissão!' }]}
+          >
+            <p style={{ fontSize: '1rem'}}>Você ou sua clínica é composta por?</p>
+            <Select
+              mode="multiple"
+              placeholder="Selecione a especialidade"
+              onChange={handleSpecialtyChange}
+              maxTagCount={5} // Número máximo de itens visíveis
+              className="dynamic-width-select"
+              style={{ minHeight: 'auto' }}
+            >
+              <Option value="medico">Médico</Option>
+              <Option value="dentista">Dentista</Option>
+              <Option value="psicologo">Psicólogo</Option>
+              <Option value="fisioterapeuta">Fisioterapeuta</Option>
+              <Option value="nutricionista">Nutricionista</Option>
+              {/* Adicione mais opções conforme necessário */}
+            </Select>
+          </Form.Item>
+
+
           <Form.Item
             {...formItemLayout}
             name="idType"
@@ -264,7 +338,7 @@ const RegisterScreen = () => {
             rules={[{ required: true, message: 'Por favor, insira seu telefone!' }]}
           >
             <Input placeholder="Telefone" />
-          </Form.Item>
+          </Form.Item>8
 
           <Form.Item
             {...formItemLayout}
