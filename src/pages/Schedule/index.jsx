@@ -156,7 +156,6 @@ const Schedule = () => {
 
   const onFinish = async (values) => {
     setLoading(true);
-    const desiredCompanyID = '1';
 
     try {
 

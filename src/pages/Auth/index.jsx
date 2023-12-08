@@ -51,7 +51,7 @@ const Authentication = () => {
 
         setUsername('');
         setPassword('');
-        navigate('/painel');
+        navigate('/calendario');
       }
     } catch (error) {
       message.error(error.message);

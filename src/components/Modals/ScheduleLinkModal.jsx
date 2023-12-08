@@ -1,12 +1,12 @@
 // ScheduleLinkModal.js
-import React, { useState } from 'react';
+import React from 'react';
 import { Modal, Button, Input, message } from 'antd';
 import { LinkOutlined } from '@ant-design/icons';
 
 const ScheduleLinkModal = ({ isLinkModalVisible, onLinkModalClose, companyID }) => {
     const generateScheduleLink = () => {
         const companyID = localStorage.getItem('companyID');
-        return `${window.location.origin}/agendar/${companyID}`;
+        return `${window.location.origin}/#/agendar/${companyID}`;
       };
       
 

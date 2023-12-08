@@ -1,0 +1,16 @@
+.contabilidade {
+    margin: 2rem 3rem;
+}
+
+.contabilidade h1, h2 {
+    color: var(--cinza-texto);
+}
+
+.transaction-buttons {
+    margin-bottom: 1rem;
+}
+
+.transaction-buttons button {
+    margin-right: 1rem;
+    width: 10rem;
+}

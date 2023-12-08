@@ -46,12 +46,12 @@ const Sidebar = () => {
     }
   };
 
-  const iconSize = 22; // Defina o tamanho desejado dos ícones
+  const iconSize = 22;
 
 
   const items = [
-    getItem('DashBoards', '1', <DashboardOutlined style={{ fontSize: iconSize }} />, null, '/painel'),
-    getItem('Calendário', '2', <CalendarOutlined style={{ fontSize: iconSize }} />, null, '/calendario'),
+    getItem('Calendário', '1', <CalendarOutlined style={{ fontSize: iconSize }} />, null, '/calendario'),
+    getItem('DashBoards', '2', <DashboardOutlined style={{ fontSize: iconSize }} />, null, '/painel'),
     getItem('Agendamentos', '3', <ScheduleOutlined style={{ fontSize: iconSize }} />, null, '/agendamentos'),
     getItem('Histórico', '4', <HistoryOutlined style={{ fontSize: iconSize }} />, null, '/allagendamentos'),
     getItem('Cleintes', '5', <TeamOutlined style={{ fontSize: iconSize }} />, null, '/clientes'),
