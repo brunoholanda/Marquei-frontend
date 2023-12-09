@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import { Button, Input, Table, message, notification } from 'antd';
 import api from 'components/api/api';
-import { EyeOutlined, TeamOutlined, WarningFilled } from '@ant-design/icons';
-import debounce from 'lodash/debounce'; 
+import { EyeOutlined, TeamOutlined, WarningFilled, WhatsAppOutlined } from '@ant-design/icons';
+import debounce from 'lodash/debounce';
 
 import '../ClientDetails/ClientDetails.css';
 import { useNavigate } from 'react-router-dom';
@@ -15,7 +15,7 @@ const Pacientes = () => {
     const [setAppointmentHistory] = useState([]);
     const [initialLoad, setInitialLoad] = useState(true);
 
-  
+
     const navigate = useNavigate();
 
     const showNotification = (type, message) => {
@@ -27,7 +27,7 @@ const Pacientes = () => {
     const onSearch = debounce(async (value) => {
         const cleanedValue = value.replace(/[^a-zA-Z0-9]/g, '');
 
-        if (!cleanedValue.trim()) return; 
+        if (!cleanedValue.trim()) return;
         setLoading(true);
 
         const companyID = localStorage.getItem('companyID');
@@ -41,7 +41,7 @@ const Pacientes = () => {
         try {
             const response = await api.get('/clients/search', {
                 params: {
-                    searchTerm: cleanedValue.trim(), 
+                    searchTerm: cleanedValue.trim(),
                     company_id: companyID,
                 },
             });
@@ -60,7 +60,7 @@ const Pacientes = () => {
 
 
 
-   const handleViewDetails = (clienteId) => {
+    const handleViewDetails = (clienteId) => {
         navigate(`/client-details/${clienteId}`, { state: { from: 'Pacientes' } });
     };
 
@@ -92,7 +92,7 @@ const Pacientes = () => {
             key: 'action',
             render: (text, record) => (
                 <span>
-                <Button type='primary' onClick={() => handleViewDetails(record.id)}><EyeOutlined />Detalhes</Button>
+                    <Button type='primary' onClick={() => handleViewDetails(record.id)}><EyeOutlined />Detalhes</Button>
                     <Button
                         key={`whatsapp-${record.id}`}
                         className="button-whats modal-btn"
@@ -102,7 +102,7 @@ const Pacientes = () => {
                             window.open(`https://api.whatsapp.com/send?phone=+55${phoneNumber}&text=${encodeURIComponent(message)}`, '_blank');
                         }}
                     >
-                        Enviar WhatsApp
+                        <WhatsAppOutlined /> Conversar
                     </Button>
                 </span>
             ),
@@ -117,35 +117,35 @@ const Pacientes = () => {
     useEffect(() => {
         if (initialLoad) {
             setLoading(true);
-    
+
             const companyID = localStorage.getItem('companyID');
-    
+
             if (!companyID) {
                 setLoading(false);
                 showNotification('error', 'Erro ao identificar a empresa. Por favor, faça login novamente.');
                 return;
             }
-    
+
             api.get('/clients', {
                 params: {
                     company_id: companyID,
                 },
             })
-            .then((response) => {
-                const sortedClients = [...response.data].sort((a, b) => a.nome.localeCompare(b.nome));
-                setClientes(sortedClients);
-            })
-            .catch((error) => {
-                console.error('Erro ao buscar clientes:', error);
-                showNotification('error', 'Erro ao buscar clientes.');
-            })
-            .finally(() => {
-                setLoading(false);
-                setInitialLoad(false); 
-            });
+                .then((response) => {
+                    const sortedClients = [...response.data].sort((a, b) => a.nome.localeCompare(b.nome));
+                    setClientes(sortedClients);
+                })
+                .catch((error) => {
+                    console.error('Erro ao buscar clientes:', error);
+                    showNotification('error', 'Erro ao buscar clientes.');
+                })
+                .finally(() => {
+                    setLoading(false);
+                    setInitialLoad(false);
+                });
         }
     }, [initialLoad]);
-    
+
     useEffect(() => {
         const fetchAppointmentHistory = async () => {
             if (selectedClient && selectedClient.id) {

@@ -30,6 +30,9 @@ function ScrollToTop() {
 
     return null;
 }
+
+const storedSpecialties = JSON.parse(localStorage.getItem('userSpecialties') || '[]');
+
 function AppRoutes() {
     const [isAuthenticated, setIsAuthenticated] = useState(false);
 
@@ -65,7 +68,7 @@ function AppRoutes() {
                     <Route path="/allagendamentos" element={<ProtectedRoute element={<AllAppointments />} />} />
                     <Route path="/calendario" element={<ProtectedRoute element={<CalendarPage />} />} />
                     <Route path="/admagenda" element={<ProtectedRoute element={<AdminSc />} />} />
-                    <Route path="/client-details/:id" element={<ProtectedRoute element={<ClientDetails />} />} />
+                    <Route path="/client-details/:id" element={<ProtectedRoute element={<ClientDetails userSpecialties={storedSpecialties}/>} />} />
                     <Route path="/configs" element={<ProtectedRoute element={<Configs />} />} />
                     <Route path="/professionals/:id" element={<ProtectedRoute element={<DoctorDetails />} />} />
                     <Route path="/painel" element={<ProtectedRoute element={<DashboardPanel/>} />} />

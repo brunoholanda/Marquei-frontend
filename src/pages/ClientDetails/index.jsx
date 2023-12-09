@@ -12,7 +12,7 @@ import ReceitaPage from './Receita';
 
 const { TabPane } = Tabs;
 
-const ClientDetails = () => {
+const ClientDetails = ({ userSpecialties = [] }) => {
     const [isLoading, setIsLoading] = useState(true);
     const { id } = useParams();
     const navigate = useNavigate();
@@ -50,6 +50,7 @@ const ClientDetails = () => {
     const receitaPageRef = useRef(null);
     const location = useLocation();
 
+    const canEmitCertificateOrRecipe = userSpecialties.includes(1) || userSpecialties.includes(2);
 
     const handleOpenModal = () => {
         setIsModalVisible(true);
@@ -407,11 +408,14 @@ const ClientDetails = () => {
                 </TabPane>
 
                 <TabPane tab="Atestados e Receitas" key="3">
-                    <div className='atestados-botoes'>
-                        <Button onClick={handleEmitirAtestado}>Emitir Atestado</Button>
+                <div className='atestados-botoes'>
+                        {canEmitCertificateOrRecipe && (
+                            <>
+                                <Button onClick={handleEmitirAtestado}>Emitir Atestado</Button>
+                                <Button onClick={handleEmitirReceita}>Emitir Receita</Button>
+                            </>
+                        )}
                         <Button onClick={handleEmitirDeclaracao}>Emitir Declaração</Button>
-                        <Button onClick={handleEmitirReceita}>Emitir Receita</Button>
-
                     </div>
                     <Modal
                         title="Emitir Atestado"

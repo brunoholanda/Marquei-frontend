@@ -145,11 +145,9 @@ const handleSpecialtyChange = selected => {
     });
   
     if (!response.ok) {
-      // Tratar os erros aqui
       const errorData = await response.json();
       throw new Error(errorData.message || 'Erro ao associar especialidades');
     }
-    // Processamento adicional conforme necessário
   };
 
 

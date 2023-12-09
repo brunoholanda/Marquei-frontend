@@ -20,7 +20,7 @@ const Authentication = () => {
 
   const handleLogin = async (e) => {
     e.preventDefault();
-
+  
     try {
       const response = await fetch(`${BASE_URL}/auth/login`, {
         method: 'POST',
@@ -29,7 +29,7 @@ const Authentication = () => {
         },
         body: JSON.stringify({ username, password }),
       });
-
+  
       if (!response.ok) {
         const error = await response.json();
         if (error.message === "Token inválido ou expirado") {
@@ -39,16 +39,17 @@ const Authentication = () => {
           throw new Error(error.message || 'Erro ao fazer login.');
         }
       } else {
-        const { token, company_id } = await response.json();
+        const { token, company_id, user_specialties } = await response.json();
         console.log('Logged in company ID:', company_id);
-
+  
         if (typeof company_id === 'undefined') {
           throw new Error('Informações do usuário ou da empresa não estão disponíveis.');
         }
-
+  
         localStorage.setItem('authToken', token);
         localStorage.setItem('companyID', company_id);
-
+        localStorage.setItem('userSpecialties', JSON.stringify(user_specialties)); // Armazenando especialidades do usuário
+  
         setUsername('');
         setPassword('');
         navigate('/calendario');
@@ -57,6 +58,7 @@ const Authentication = () => {
       message.error(error.message);
     }
   };
+  
 
   const showPasswordResetModal = () => {
     setPasswordResetModalVisible(true);

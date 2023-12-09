@@ -9,8 +9,8 @@ import {
   CalculatorOutlined,
   TeamOutlined,
   BarChartOutlined,
-  UserOutlined,
   IdcardOutlined,
+  AppleOutlined,
 } from '@ant-design/icons';
 import { Link, useNavigate } from 'react-router-dom';
 import { Layout, Menu, theme } from 'antd';
@@ -34,6 +34,7 @@ const Sidebar = () => {
   } = theme.useToken();
 
   const isAuthenticated = !!localStorage.getItem('authToken');
+  const userSpecialties = JSON.parse(localStorage.getItem('userSpecialties') || '[]');
 
   const handleLogout = () => {
     localStorage.removeItem('authToken');
@@ -59,6 +60,7 @@ const Sidebar = () => {
     getItem('Profissionais', '7', <IdcardOutlined style={{ fontSize: iconSize }} />, null, '/configs'),
     getItem('Estoque', '8', <BarChartOutlined style={{ fontSize: iconSize }} />, null, '/estoque'),
     getItem('Contabilidade', '9', <CalculatorOutlined style={{ fontSize: iconSize }} />, null, '/contabilidade'),
+    userSpecialties.includes(5) && getItem('Plano Alimentar', '10', <AppleOutlined style={{ fontSize: iconSize }} />, null, '/plano_alimentar'),
     isAuthenticated && getItem('Sair do Sistema', 'logout', <LogoutOutlined style={{ fontSize: iconSize }} />, null, null), // Conditional item
   ].filter(Boolean);
 

@@ -6,7 +6,7 @@ import { useForm } from 'antd/es/form/Form';
 import api from '../api/api';
 import { StyledFormItem, StyledModal } from './Styles';
 
-function ProfessionalModal({ isVisible, onClose, initialData }) {
+function ProfessionalModal({ isVisible, onClose, initialData, userSpecialties }) {
     const [isEditMode, setIsEditMode] = useState(false);
 
     const [nome, setNome] = useState("");
@@ -25,11 +25,29 @@ function ProfessionalModal({ isVisible, onClose, initialData }) {
     const [planosDeSaude, setPlanosDeSaude] = useState([]);
     const [selectedPlanosIds, setSelectedPlanosIds] = useState([]);
     const [loginExistente, setLoginExistente] = useState(false);
-
-
     const [currentStep, setCurrentStep] = useState(0);
     const [isModalVisible, setIsModalVisible] = useState(isVisible);
     const [form] = useForm();
+
+    const getRegistroOptions = () => {
+        const options = [];
+        if (userSpecialties.includes(1)) {
+            options.push(<Select.Option value="CRM">CRM</Select.Option>);
+        }
+        if (userSpecialties.includes(2)) {
+            options.push(<Select.Option value="CRO">CRO</Select.Option>);
+        }
+        if (userSpecialties.includes(3)) {
+            options.push(<Select.Option value="CRP">CRP</Select.Option>);
+        }
+        if (userSpecialties.includes(4)) {
+            options.push(<Select.Option value="CREFITO">CREFITO</Select.Option>);
+        }
+        if (userSpecialties.includes(5)) {
+            options.push(<Select.Option value="CRN">CRN</Select.Option>);
+        }
+        return options;
+    };
 
     const nextStep = () => {
         if (currentStep < 3) {
@@ -83,17 +101,17 @@ function ProfessionalModal({ isVisible, onClose, initialData }) {
             setLoginExistente(false);
             return;
         }
-    
+
         try {
             const response = await api.get(`/professionals/check-login/${login}`);
             setLoginExistente(response.data.existe);
         } catch (error) {
             console.error('Erro ao verificar o login:', error);
         } finally {
-            form.validateFields(['login']); 
+            form.validateFields(['login']);
         }
     };
-    
+
 
     const renderStepContent = () => {
         switch (currentStep) {
@@ -172,11 +190,7 @@ function ProfessionalModal({ isVisible, onClose, initialData }) {
                             rules={[{ required: true, message: 'Por favor, selecione o registro!' }]}
                         >
                             <Select onChange={setRegistro} placeholder="Selecione Tipo de Registro">
-                                <Select.Option value="CRM">CRM</Select.Option>
-                                <Select.Option value="CRO">CRO</Select.Option>
-                                <Select.Option value="CREFITO">CREFITO</Select.Option>
-                                <Select.Option value="CRP">CRP</Select.Option>
-                                <Select.Option value="CRN">CRN</Select.Option>
+                                {getRegistroOptions()}
                             </Select>
                         </Form.Item>
 
@@ -250,8 +264,8 @@ function ProfessionalModal({ isVisible, onClose, initialData }) {
                                 value={login}
                                 onChange={e => {
                                     setLogin(e.target.value);
-                                    setLoginExistente(false);  
-                                    form.validateFields(['login']);  
+                                    setLoginExistente(false);
+                                    form.validateFields(['login']);
                                 }}
                                 onBlur={() => verificarLoginExistente(login)}
                             />

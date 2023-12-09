@@ -14,6 +14,7 @@ function Configs() {
     const [selectedProfessional, setSelectedProfessional] = useState(null);
     const [isCompanyModalVisible, setIsCompanyModalVisible] = useState(false);
     const [companyData, setCompanyData] = useState(null); 
+    const userSpecialties = JSON.parse(localStorage.getItem('userSpecialties') || '[]');
 
     useEffect(() => {
         const fetchCompanyData = async () => {
@@ -159,6 +160,7 @@ function Configs() {
                 isVisible={isModalVisible}
                 onClose={closeModal}
                 initialData={selectedProfessional}
+                userSpecialties={userSpecialties} // Passando as especialidades para ProfessionalModal
             />
             <CompanyDataModal
                 isVisible={isCompanyModalVisible}

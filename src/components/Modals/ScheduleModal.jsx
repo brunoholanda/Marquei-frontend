@@ -31,6 +31,7 @@ const ScheduleModal = ({ isModalAgendaVisible, handleCancel }) => {
     const [selectedPatient, setSelectedPatient] = useState(null);
     const [planosSaude, setPlanosSaude] = useState([]);
     const [isModalProfessionalVisible, setIsModalProfessionalVisible] = useState(false);
+    const userSpecialties = JSON.parse(localStorage.getItem('userSpecialties') || '[]');
 
     const onSearchPatientName = async (searchText) => {
         if (searchText.length < 4) {
@@ -430,6 +431,8 @@ const ScheduleModal = ({ isModalAgendaVisible, handleCancel }) => {
                     isVisible={isModalProfessionalVisible}
                     onClose={closeModalProfessional}
                     initialData={selectedProfessional}
+                    userSpecialties={userSpecialties} 
+
                 />
                 <StyledFormItem
                     name="ignoreDisabledHours"
