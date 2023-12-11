@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import './Atestado.css';
-import { message } from 'antd';
+import { QRCode, message } from 'antd';
 import api from 'components/api/api';
 import { BASE_URL } from 'config';
 import insta from '../../../public/icons/insta.png';
@@ -8,11 +8,10 @@ import wp from '../../../public/icons/wp-hover.png';
 import { CompassOutlined } from '@ant-design/icons';
 
 
-const CertificatePage = React.forwardRef(({ nome, days, date, reason, professionalId }, ref) => {
+const CertificatePage = React.forwardRef(({ nome, days, date, reason, professionalId, qrCodeUrl }, ref) => {
     const [professionalDetails, setProfessionalDetails] = useState(null);
     const [companyDetails, setCompanyDetails] = useState(null);
     const [logoUrl, setLogoUrl] = useState(null);
-
 
     const getCurrentDateFormatted = () => {
         const today = new Date();
@@ -45,6 +44,7 @@ const CertificatePage = React.forwardRef(({ nome, days, date, reason, profession
             fetchDetails();
         }
     }, [professionalId]);
+    
 
     useEffect(() => {
         let isMounted = true;
@@ -59,7 +59,6 @@ const CertificatePage = React.forwardRef(({ nome, days, date, reason, profession
                     setCompanyDetails(prevDetails => ({ ...prevDetails }));
                 }
             };
-
             img.onerror = (e) => {
                 console.error("Erro ao carregar a imagem:", e);
             };
@@ -89,14 +88,13 @@ const CertificatePage = React.forwardRef(({ nome, days, date, reason, profession
                     Informo para os devidos fins que {nome} precisa ficar afastado(a) de suas atividades por um período de {days} dia(s) a partir de {date}. Motivo: {reason}
                 </p>
             </div>
-
             <div className="certificate-signature">
                 {professionalDetails && professionalDetails.assinatura && (
                     <img src={`data:image/png;base64,${professionalDetails.assinatura}`} alt="Assinatura" />
                 )}
                 <div className="doctor-info">
                     {professionalDetails && (
-                        <>
+                        <>professionalDetails
                             {professionalDetails.nome}<br />
                             {professionalDetails.titulo}<br />
                             {professionalDetails.registro_profissional}<br /><br />
@@ -124,6 +122,8 @@ const CertificatePage = React.forwardRef(({ nome, days, date, reason, profession
                                 </div>
                             )}
                         </div>
+                        {qrCodeUrl && <QRCode value={qrCodeUrl} />}
+
                         {companyDetails && (
                             <div className='certificate-endereco'>
                                 <p><CompassOutlined /> {companyDetails.endereco}<br /></p>

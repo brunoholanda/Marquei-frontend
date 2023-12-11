@@ -4,12 +4,12 @@ import api from 'components/api/api';
 import moment from 'moment';
 import { ControlOutlined, DeleteOutlined, EditOutlined, LinkOutlined, PlusCircleFilled, WarningFilled, WarningTwoTone } from '@ant-design/icons';
 import 'moment/locale/pt-br';
-import '../Appointments/Appointments.css';
-import WeeklyModal from '../../components/Modals/WeeklyModal ';
+import '../Configs.css'
+import WeeklyModal from '../../../components/Modals/WeeklyModal ';
 import ScheduleLinkModal from 'components/Modals/ScheduleLinkModal';
 const { Option } = Select;
 
-const AdminSc = () => {
+const ControleAgenda = () => {
     moment.locale('pt-br');
     const [isModalVisible, setIsModalVisible] = useState(false);
     const [startTime, setStartTime] = useState(null);
@@ -238,7 +238,7 @@ const AdminSc = () => {
         }
     };
     return (
-        <div className='desabilitar'>
+        <div>
             <h1>Controle da Agenda <ControlOutlined /></h1>
             <p>Aqui você inclui datas ou horários em que não poderá atender seus clientes. <WarningFilled /></p>
             <Select
@@ -338,4 +338,4 @@ const AdminSc = () => {
     );
 }
 
-export default AdminSc;
+export default ControleAgenda;

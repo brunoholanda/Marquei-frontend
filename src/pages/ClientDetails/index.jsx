@@ -44,6 +44,7 @@ const ClientDetails = ({ userSpecialties = [] }) => {
     const [isReceitaModalVisible, setIsReceitaModalVisible] = useState(false);
 
     const [actionType, setActionType] = useState(null);
+    const [professionalDetails, setProfessionalDetails] = useState([]);
 
     const certificatePageRef = useRef(null);
     const declarationPageRef = useRef(null);
@@ -87,6 +88,50 @@ const ClientDetails = ({ userSpecialties = [] }) => {
         setActionType('recipe');
         handleAuthModalOpen();
     };
+
+    const sendLogToBackend = async (professionalDetails, patientName, days, date) => {
+        const logText = `${professionalDetails.nome} emitiu o atestado para ${patientName} de ${days} dias a partir de ${date}`;
+
+        try {
+            await api.post('/logs_atestados', { text: logText });
+            console.log('Log registrado com sucesso');
+        } catch (error) {
+            console.error('Erro ao registrar log:', error);
+            message.error("Erro ao enviar log para o backend");
+        }
+    };
+
+    useEffect(() => {
+        const fetchProfessionalDetails = async () => {
+            if (professionalId) {
+                try {
+                    const response = await api.get(`/professionals/${professionalId}`);
+                    setProfessionalDetails(response.data);
+                } catch (error) {
+                    console.error("Erro ao buscar detalhes do profissional:", error);
+                    message.error("Erro ao buscar detalhes do profissional");
+                }
+            }
+        };
+    
+        fetchProfessionalDetails();
+    }, [professionalId]);
+    
+    const onAtestadoEmitido = async () => {
+        const patientName = editedDetails.nome;
+        const days = certificateData.days;
+        const date = certificateData.date;
+
+        const response = await sendLogToBackend(professionalDetails, patientName, days, date);
+        const logId = response.data.id; // Supondo que a resposta inclua um ID
+        const qrCodeUrl = `https://seusite.com/verificar-atestado/${logId}`;
+        
+        // Passa a URL para o CertificatePage
+        // Você pode precisar ajustar como isso é feito com base na sua estrutura atual
+        certificatePageRef.current.setQrCodeUrl(qrCodeUrl);
+        sendLogToBackend(professionalDetails, patientName, days, date);
+    };
+    
 
     const handleMedicamentoChange = (index, value) => {
         const newMedicamentos = [...receitaData.medicamentos];
@@ -408,7 +453,7 @@ const ClientDetails = ({ userSpecialties = [] }) => {
                 </TabPane>
 
                 <TabPane tab="Atestados e Receitas" key="3">
-                <div className='atestados-botoes'>
+                    <div className='atestados-botoes'>
                         {canEmitCertificateOrRecipe && (
                             <>
                                 <Button onClick={handleEmitirAtestado}>Emitir Atestado</Button>
@@ -426,6 +471,7 @@ const ClientDetails = ({ userSpecialties = [] }) => {
                             <ReactToPrint
                                 trigger={() => <Button type="primary">Emitir</Button>}
                                 content={() => certificatePageRef.current}
+                                onAfterPrint={onAtestadoEmitido} // Chama a função após a impressão bem-sucedida
                             />
                         ]}
                     >

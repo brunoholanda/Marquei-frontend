@@ -11,6 +11,7 @@ import {
   BarChartOutlined,
   IdcardOutlined,
   AppleOutlined,
+  SettingOutlined,
 } from '@ant-design/icons';
 import { Link, useNavigate } from 'react-router-dom';
 import { Layout, Menu, theme } from 'antd';
@@ -56,10 +57,9 @@ const Sidebar = () => {
     getItem('Agendamentos', '3', <ScheduleOutlined style={{ fontSize: iconSize }} />, null, '/agendamentos'),
     getItem('Histórico', '4', <HistoryOutlined style={{ fontSize: iconSize }} />, null, '/allagendamentos'),
     getItem('Cleintes', '5', <TeamOutlined style={{ fontSize: iconSize }} />, null, '/clientes'),
-    getItem('Agenda', '6', <ControlOutlined style={{ fontSize: iconSize }} />, null, '/admagenda'),
-    getItem('Profissionais', '7', <IdcardOutlined style={{ fontSize: iconSize }} />, null, '/configs'),
-    getItem('Estoque', '8', <BarChartOutlined style={{ fontSize: iconSize }} />, null, '/estoque'),
-    getItem('Contabilidade', '9', <CalculatorOutlined style={{ fontSize: iconSize }} />, null, '/contabilidade'),
+    getItem('Configurações', '6', <SettingOutlined style={{ fontSize: iconSize }} />, null, '/configs'),
+    getItem('Estoque', '7', <BarChartOutlined style={{ fontSize: iconSize }} />, null, '/estoque'),
+    getItem('Contabilidade', '8', <CalculatorOutlined style={{ fontSize: iconSize }} />, null, '/contabilidade'),
     userSpecialties.includes(5) && getItem('Plano Alimentar', '10', <AppleOutlined style={{ fontSize: iconSize }} />, null, '/plano_alimentar'),
     isAuthenticated && getItem('Sair do Sistema', 'logout', <LogoutOutlined style={{ fontSize: iconSize }} />, null, null), // Conditional item
   ].filter(Boolean);

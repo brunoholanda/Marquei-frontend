@@ -1,11 +1,14 @@
 import React, { useState, useEffect } from 'react';
-import { Table, Button, Spin, message, Modal } from 'antd';
-import api from '../../components/api/api'; // Assuming you're using Axios for API calls
+import { Table, Button, Spin, message, Modal, Tabs } from 'antd';
+import api from '../../components/api/api';
 import ProfessionalModal from '../../components/Modals/registerModal';
 import { Link } from 'react-router-dom';
-import { EyeOutlined, SolutionOutlined, UserAddOutlined, UserDeleteOutlined, UserSwitchOutlined } from '@ant-design/icons';
+import { IdcardOutlined, UserAddOutlined, UserDeleteOutlined, UserSwitchOutlined } from '@ant-design/icons';
 import '../Appointments/Appointments.css';
 import CompanyDataModal from '../../components/Modals/companyModal';
+import { TabPane } from 'react-bootstrap';
+import CompanyData from './CmpanyData';
+import ControleAgenda from './ControleAgenda';
 
 function Configs() {
     const [isModalVisible, setIsModalVisible] = useState(false);
@@ -13,13 +16,13 @@ function Configs() {
     const [professionals, setProfessionals] = useState([]);
     const [selectedProfessional, setSelectedProfessional] = useState(null);
     const [isCompanyModalVisible, setIsCompanyModalVisible] = useState(false);
-    const [companyData, setCompanyData] = useState(null); 
+    const [companyData, setCompanyData] = useState(null);
     const userSpecialties = JSON.parse(localStorage.getItem('userSpecialties') || '[]');
 
     useEffect(() => {
         const fetchCompanyData = async () => {
             try {
-                const response = await api.get('/companies/1'); 
+                const response = await api.get('/companies/1');
                 setCompanyData(response.data);
             } catch (error) {
                 console.error("Erro ao buscar dados da empresa:", error);
@@ -30,10 +33,6 @@ function Configs() {
         fetchCompanyData();
     }, []);
 
-    const openCompanyModal = () => {
-        setIsCompanyModalVisible(true);
-    };
-
     const closeCompanyModal = () => {
         setIsCompanyModalVisible(false);
     };
@@ -41,7 +40,7 @@ function Configs() {
         const fetchProfessionals = async () => {
             const storedCompanyID = localStorage.getItem('companyID');
             const token = localStorage.getItem('authToken');
-    
+
             if (storedCompanyID && token) {
                 setLoading(true);
                 try {
@@ -50,8 +49,8 @@ function Configs() {
                             'Authorization': `Bearer ${token}`
                         },
                     });
-    
-                    setProfessionals(response.data); 
+
+                    setProfessionals(response.data);
                 } catch (error) {
                     if (error.response) {
                         console.error('API response error:', error.response);
@@ -66,7 +65,7 @@ function Configs() {
             }
         };
         fetchProfessionals();
-    }, []);    
+    }, []);
 
     const openModal = () => {
         setSelectedProfessional(null);
@@ -148,31 +147,38 @@ function Configs() {
 
     return (
         <div className='tabela'>
-            <h1>Controle de Profissionais <SolutionOutlined /></h1>
-            <p>Aqui você pode adicionar profissionais ou atualizar seus dados.</p>
-            <Button style={{ marginBottom: '10px' }} type="primary" onClick={openModal}>
-                <UserAddOutlined />Adicionar Profissional
-            </Button>
-            <Button style={{ margin: '0 0 10px 10px' }} type="primary" onClick={openCompanyModal}>
-                <EyeOutlined />Dados da Empresa
-            </Button>
-            <ProfessionalModal
-                isVisible={isModalVisible}
-                onClose={closeModal}
-                initialData={selectedProfessional}
-                userSpecialties={userSpecialties} // Passando as especialidades para ProfessionalModal
-            />
-            <CompanyDataModal
-                isVisible={isCompanyModalVisible}
-                onClose={closeCompanyModal}
-                company={companyData}
-            />
+            <Tabs>
+                <TabPane tab="Controle de Profissionais" key="1">
+                    <h1>Controle de Profissionais <IdcardOutlined /></h1>
+                    <p>Aqui você pode adicionar profissionais ou atualizar seus dados.</p>
+                    <Button style={{ marginBottom: '10px' }} type="primary" onClick={openModal}>
+                        <UserAddOutlined />Adicionar Profissional
+                    </Button>
+                    <ProfessionalModal
+                        isVisible={isModalVisible}
+                        onClose={closeModal}
+                        initialData={selectedProfessional}
+                        userSpecialties={userSpecialties} 
+                    />
+                    <CompanyDataModal
+                        isVisible={isCompanyModalVisible}
+                        onClose={closeCompanyModal}
+                        company={companyData}
+                    />
 
-            {loading ? (
-                <Spin size="large" />
-            ) : (
-                <Table dataSource={professionals} columns={columns} rowKey="id" />
-            )}
+                    {loading ? (
+                        <Spin size="large" />
+                    ) : (
+                        <Table dataSource={professionals} columns={columns} rowKey="id" />
+                    )}
+                </TabPane>
+                <TabPane tab="Controle da Agenda " key="2">
+                    <ControleAgenda />
+                </TabPane>
+                <TabPane tab="Dados da Empresa " key="3">
+                        <CompanyData />
+                </TabPane>
+            </Tabs>
         </div>
     );
 }
