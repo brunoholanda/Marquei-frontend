@@ -44,7 +44,7 @@ const CertificatePage = React.forwardRef(({ nome, days, date, reason, profession
             fetchDetails();
         }
     }, [professionalId]);
-    
+
 
     useEffect(() => {
         let isMounted = true;
@@ -68,6 +68,7 @@ const CertificatePage = React.forwardRef(({ nome, days, date, reason, profession
             isMounted = false;
         };
     }, [companyDetails]);
+    console.log(qrCodeUrl);
 
 
     return (
@@ -94,7 +95,7 @@ const CertificatePage = React.forwardRef(({ nome, days, date, reason, profession
                 )}
                 <div className="doctor-info">
                     {professionalDetails && (
-                        <>professionalDetails
+                        <>
                             {professionalDetails.nome}<br />
                             {professionalDetails.titulo}<br />
                             {professionalDetails.registro_profissional}<br /><br />
@@ -122,7 +123,10 @@ const CertificatePage = React.forwardRef(({ nome, days, date, reason, profession
                                 </div>
                             )}
                         </div>
-                        {qrCodeUrl && <QRCode value={qrCodeUrl} />}
+                        <div key={qrCodeUrl}>
+
+                            {qrCodeUrl && <QRCode value={qrCodeUrl} />}
+                        </div>
 
                         {companyDetails && (
                             <div className='certificate-endereco'>

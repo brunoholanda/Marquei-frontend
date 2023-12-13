@@ -10,7 +10,6 @@ import AllAppointments from "pages/History";
 import Authentication from "pages/Auth";
 import PageBodySystem from "components/PageBodySystem";
 import CalendarPage from "pages/Calendar";
-import AdminSc from "pages/Professional/ControleAgenda";
 import ClientDetails from "pages/ClientDetails";
 import Configs from "pages/Professional";
 import DoctorDetails from "pages/Professional/ProfessionalDetails";
@@ -20,7 +19,7 @@ import DashboardPanel from "pages/DashboardPanel";
 import StockControlPage from "pages/Estoque";
 import Contabilidade from "pages/Contabilidade";
 import Pacientes from "pages/Pacientes";
-import ControleAgenda from "pages/Professional/ControleAgenda";
+import AtestadoInfoPage from "pages/ConfirmCertificate";
 
 function ScrollToTop() {
     const { pathname } = useLocation();
@@ -59,6 +58,8 @@ function AppRoutes() {
                     <Route index element={<Home />} />
                     <Route path="/cadastro" element={<RegisterScreen />} />
                     <Route path="/agendar/:company_id" element={<Schedule />} />
+                    <Route path="/confirm-certificate/:id" element={<AtestadoInfoPage />} />
+
                     <Route path="*" element={<NotFound />} />
                 </Route>
                 <Route element={<PageBodySystem />}>
@@ -68,7 +69,6 @@ function AppRoutes() {
                     <Route path="/agendamentos" element={<ProtectedRoute element={<Appointments />} />} />
                     <Route path="/allagendamentos" element={<ProtectedRoute element={<AllAppointments />} />} />
                     <Route path="/calendario" element={<ProtectedRoute element={<CalendarPage />} />} />
-                    <Route path="/admagenda" element={<ProtectedRoute element={<ControleAgenda />} />} />
                     <Route path="/client-details/:id" element={<ProtectedRoute element={<ClientDetails userSpecialties={storedSpecialties}/>} />} />
                     <Route path="/configs" element={<ProtectedRoute element={<Configs />} />} />
                     <Route path="/professionals/:id" element={<ProtectedRoute element={<DoctorDetails />} />} />

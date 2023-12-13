@@ -42,6 +42,7 @@ const ClientDetails = ({ userSpecialties = [] }) => {
         medicamentos: ['']
     });
     const [isReceitaModalVisible, setIsReceitaModalVisible] = useState(false);
+    const [qrCodeUrl, setQrCodeUrl] = useState(null); // Estado para armazenar o URL do QR Code
 
     const [actionType, setActionType] = useState(null);
     const [professionalDetails, setProfessionalDetails] = useState([]);
@@ -90,16 +91,19 @@ const ClientDetails = ({ userSpecialties = [] }) => {
     };
 
     const sendLogToBackend = async (professionalDetails, patientName, days, date) => {
-        const logText = `${professionalDetails.nome} emitiu o atestado para ${patientName} de ${days} dias a partir de ${date}`;
+        const logText = `${professionalDetails.nome} para ${patientName} de ${days} dias a partir de ${date}!`;
 
         try {
-            await api.post('/logs_atestados', { text: logText });
+            const response = await api.post('/logs_atestados', { text: logText });
             console.log('Log registrado com sucesso');
+            return response;
         } catch (error) {
             console.error('Erro ao registrar log:', error);
             message.error("Erro ao enviar log para o backend");
+            throw error;
         }
     };
+
 
     useEffect(() => {
         const fetchProfessionalDetails = async () => {
@@ -113,25 +117,26 @@ const ClientDetails = ({ userSpecialties = [] }) => {
                 }
             }
         };
-    
+
         fetchProfessionalDetails();
     }, [professionalId]);
-    
+
     const onAtestadoEmitido = async () => {
         const patientName = editedDetails.nome;
         const days = certificateData.days;
         const date = certificateData.date;
 
-        const response = await sendLogToBackend(professionalDetails, patientName, days, date);
-        const logId = response.data.id; // Supondo que a resposta inclua um ID
-        const qrCodeUrl = `https://seusite.com/verificar-atestado/${logId}`;
-        
-        // Passa a URL para o CertificatePage
-        // Você pode precisar ajustar como isso é feito com base na sua estrutura atual
-        certificatePageRef.current.setQrCodeUrl(qrCodeUrl);
-        sendLogToBackend(professionalDetails, patientName, days, date);
+        try {
+            const response = await sendLogToBackend(professionalDetails, patientName, days, date);
+            const logId = response.data.id;
+            setQrCodeUrl(`http://localhost:3000/#/confirm-certificate/${logId}`); // Atualiza qrCodeUrl
+        } catch (error) {
+            console.error("Erro ao emitir atestado:", error);
+            message.error("Ocorreu um erro ao emitir o atestado. Por favor, tente novamente.");
+        }
     };
-    
+
+
 
     const handleMedicamentoChange = (index, value) => {
         const newMedicamentos = [...receitaData.medicamentos];
@@ -346,9 +351,9 @@ const ClientDetails = ({ userSpecialties = [] }) => {
                 if (actionType === 'certificate') {
                     handleOpenModal(); // Abre o modal de atestado
                 } else if (actionType === 'declaration') {
-                    handleOpenDeclarationModal(); // Abre o modal de declaração
+                    handleOpenDeclarationModal();
                 } else if (actionType === 'recipe') {
-                    handleOpenReceitaModal(); // Abre o modal de receita
+                    handleOpenReceitaModal();
                 }
             } else {
                 message.error("Credenciais inválidas");
@@ -395,6 +400,7 @@ const ClientDetails = ({ userSpecialties = [] }) => {
             <Button onClick={handleGoBack}>Voltar</Button>
             <div style={{ display: 'none' }}>
                 <CertificatePage
+                    qrCodeUrl={qrCodeUrl}
                     nome={editedDetails.nome}
                     days={certificateData.days}
                     date={certificateData.date}
