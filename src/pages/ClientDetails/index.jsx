@@ -18,7 +18,7 @@ const ClientDetails = ({ userSpecialties = [] }) => {
     const navigate = useNavigate();
     const [appointmentDetails, setAppointmentDetails] = useState({ nome: '' });
     const [editedDetails, setEditedDetails] = useState({ nome: '' });
-
+    const [qrCodeUrl, setQrCodeUrl] = useState(null); 
     const [isModalVisible, setIsModalVisible] = useState(false);
     const [certificateData, setCertificateData] = useState({
         date: null,
@@ -42,7 +42,6 @@ const ClientDetails = ({ userSpecialties = [] }) => {
         medicamentos: ['']
     });
     const [isReceitaModalVisible, setIsReceitaModalVisible] = useState(false);
-    const [qrCodeUrl, setQrCodeUrl] = useState(null); // Estado para armazenar o URL do QR Code
 
     const [actionType, setActionType] = useState(null);
     const [professionalDetails, setProfessionalDetails] = useState([]);
@@ -121,22 +120,6 @@ const ClientDetails = ({ userSpecialties = [] }) => {
         fetchProfessionalDetails();
     }, [professionalId]);
 
-    const onAtestadoEmitido = async () => {
-        const patientName = editedDetails.nome;
-        const days = certificateData.days;
-        const date = certificateData.date;
-
-        try {
-            const response = await sendLogToBackend(professionalDetails, patientName, days, date);
-            const logId = response.data.id;
-            setQrCodeUrl(`http://localhost:3000/#/confirm-certificate/${logId}`); // Atualiza qrCodeUrl
-        } catch (error) {
-            console.error("Erro ao emitir atestado:", error);
-            message.error("Ocorreu um erro ao emitir o atestado. Por favor, tente novamente.");
-        }
-    };
-
-
 
     const handleMedicamentoChange = (index, value) => {
         const newMedicamentos = [...receitaData.medicamentos];
@@ -212,7 +195,6 @@ const ClientDetails = ({ userSpecialties = [] }) => {
         const fetchAppointmentHistory = async () => {
             console.log("Iniciando fetchAppointmentHistory com clientId:", clientId);
 
-            // Verifica se clientId é definido
             if (!clientId) {
                 console.error("clientId não está definido.");
                 return;
@@ -247,18 +229,14 @@ const ClientDetails = ({ userSpecialties = [] }) => {
 
     const handleSaveChanges = async () => {
         try {
-            // Use clientId, que é definido para ambos os casos
             if (!clientId) {
                 throw new Error("ID do cliente não encontrado");
             }
 
-            // Use clientId para a chamada da API
             const response = await api.put(`/clients/${clientId}`, editedDetails);
             if (response.status === 200) {
                 message.success("Detalhes atualizados com sucesso!");
-                // Atualize o estado com os detalhes editados
                 setAppointmentDetails(prevState => ({ ...prevState, ...editedDetails }));
-                // Se você também precisa atualizar clientId aqui, faça-o da mesma forma
             } else {
                 throw new Error("Falha ao atualizar detalhes do cliente");
             }
@@ -288,7 +266,6 @@ const ClientDetails = ({ userSpecialties = [] }) => {
         return <p>Detalhes do cliente não disponíveis.</p>;
     }
 
-    // Renderização normal com os detalhes do cliente aqui
 
     const handleCertificateInputChange = (key, value) => {
         setCertificateData(prevData => ({
@@ -349,7 +326,7 @@ const ClientDetails = ({ userSpecialties = [] }) => {
                 handleAuthModalClose();
 
                 if (actionType === 'certificate') {
-                    handleOpenModal(); // Abre o modal de atestado
+                    handleOpenModal(); 
                 } else if (actionType === 'declaration') {
                     handleOpenDeclarationModal();
                 } else if (actionType === 'recipe') {
@@ -394,6 +371,28 @@ const ClientDetails = ({ userSpecialties = [] }) => {
         setSearchResults([]);
     };
 
+        const onAtestadoEmitido = async () => {
+        const patientName = editedDetails.nome;
+        const days = certificateData.days;
+        const date = certificateData.date;
+
+        try {
+            const response = await sendLogToBackend(professionalDetails, patientName, days, date);
+            const logId = response.data.id;
+            setQrCodeUrl(`http://localhost:3000/#/confirm-certificate/${logId}`); // Atualiza qrCodeUrl
+        } catch (error) {
+            console.error("Erro ao emitir atestado:", error);
+            message.error("Ocorreu um erro ao emitir o atestado. Por favor, tente novamente.");
+        }
+    };
+
+    const printCertificate = () => {
+        onAtestadoEmitido().then(() => {
+            certificatePageRef.current.handlePrint(); // Supondo que `handlePrint` seja o método de `CertificatePage` que dispara a impressão
+        });
+    };
+
+    
     return (
         <div className='clienteDetails'>
             <h1>Detalhes do Cliente</h1>
@@ -475,7 +474,7 @@ const ClientDetails = ({ userSpecialties = [] }) => {
                         footer={[
                             <Button key="back" onClick={handleCloseModal}>Cancelar</Button>,
                             <ReactToPrint
-                                trigger={() => <Button type="primary">Emitir</Button>}
+                                trigger={() =>  <Button key="emit" type="primary" onClick={printCertificate}>Emitir</Button>}
                                 content={() => certificatePageRef.current}
                                 onAfterPrint={onAtestadoEmitido} // Chama a função após a impressão bem-sucedida
                             />

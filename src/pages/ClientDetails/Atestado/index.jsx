@@ -12,6 +12,14 @@ const CertificatePage = React.forwardRef(({ nome, days, date, reason, profession
     const [professionalDetails, setProfessionalDetails] = useState(null);
     const [companyDetails, setCompanyDetails] = useState(null);
     const [logoUrl, setLogoUrl] = useState(null);
+    const [qrKey, setQrKey] = useState(Date.now());
+
+    useEffect(() => {
+        if (qrCodeUrl) {
+            setQrKey(Date.now());
+        }
+    }, [qrCodeUrl]);
+
 
     const getCurrentDateFormatted = () => {
         const today = new Date();
@@ -68,7 +76,6 @@ const CertificatePage = React.forwardRef(({ nome, days, date, reason, profession
             isMounted = false;
         };
     }, [companyDetails]);
-    console.log(qrCodeUrl);
 
 
     return (
@@ -123,10 +130,7 @@ const CertificatePage = React.forwardRef(({ nome, days, date, reason, profession
                                 </div>
                             )}
                         </div>
-                        <div key={qrCodeUrl}>
 
-                            {qrCodeUrl && <QRCode value={qrCodeUrl} />}
-                        </div>
 
                         {companyDetails && (
                             <div className='certificate-endereco'>
@@ -137,6 +141,16 @@ const CertificatePage = React.forwardRef(({ nome, days, date, reason, profession
                     </>
                 )}
             </div>
+            <div className="qr-code-container">
+                <p>Confirme o atestado acessando o QrCode</p>
+                {qrCodeUrl && (
+                    <>
+                        <QRCode size={100} key={qrCodeUrl} value={qrCodeUrl} />
+                    </>
+                )}
+            </div>
+
+
         </div>
     );
 });

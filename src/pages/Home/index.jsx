@@ -22,7 +22,7 @@ const Accordion = ({ items }) => {
     const isActive = index === activeIndex;
     const contentStyle = {
       maxHeight: isActive ? `${contentRef.current[index].current.scrollHeight}px` : "0px",
-      padding: isActive ? "1.5rem" : "0" // Adicionando padding aqui
+      padding: isActive ? "1.5rem" : "0" 
     };
 
     return (
@@ -39,7 +39,7 @@ const Accordion = ({ items }) => {
         <div
           className={styles.content}
           style={contentStyle}
-          ref={contentRef.current[index]} // Adicionando a referência aqui
+          ref={contentRef.current[index]} 
         >
           {item.content}
         </div>
@@ -128,28 +128,7 @@ function Home() {
         <section className={styles.planos}>
           <h2>Temos o plano certo para o seu consultório médico</h2>
           <div className={styles.cards}>
-            <PlanCard
-              title="Plus"
-              price="69,99"
-              originalPrice="119"
-              quantity="1"
-              duration="1"
-              mostSold
-            />
-            <PlanCard
-              title="Pro"
-              price="99,99"
-              originalPrice="159"
-              quantity="5"
-              duration="1"
-            />
-            <PlanCard
-              title="Premium"
-              price="189,99"
-              originalPrice="299"
-              quantity="10"
-              duration="1"
-            />
+            <PlanCard />
           </div>
           <Link to="/cadastro">
             <Btn>Experimente grátis</Btn>
