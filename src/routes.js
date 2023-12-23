@@ -20,6 +20,7 @@ import StockControlPage from "pages/Estoque";
 import Contabilidade from "pages/Contabilidade";
 import Pacientes from "pages/Pacientes";
 import AtestadoInfoPage from "pages/ConfirmCertificate";
+import CheckoutPage from "pages/CheckoutPage";
 
 function ScrollToTop() {
     const { pathname } = useLocation();
@@ -58,6 +59,8 @@ function AppRoutes() {
                     <Route index element={<Home />} />
                     <Route path="/cadastro" element={<RegisterScreen />} />
                     <Route path="/agendar/:company_id" element={<Schedule />} />
+                    <Route path="/checkout" element={<CheckoutPage />} />
+
                     <Route path="/confirm-certificate/:id" element={<AtestadoInfoPage />} />
 
                     <Route path="*" element={<NotFound />} />
