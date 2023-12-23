@@ -8,7 +8,7 @@ import { Option } from 'antd/es/mentions';
 
 const CheckoutPage = () => {
     const location = useLocation();
-    const { planPrice } = location.state || { planPrice: 0 };
+    const { planTitle, planPrice } = location.state || { planTitle: '', planPrice: 0 };
     const [form] = Form.useForm();
     const [preferenceId, setPreferenceId] = useState(null);
 
@@ -52,7 +52,7 @@ const CheckoutPage = () => {
     ));
     
     return (
-        <StyledCard title="Método de pagamento" bordered={false}>
+        <StyledCard title={`Finalizar Compra - Plano ${planTitle}`} bordered={false}>
         <StyledForm form={form} layout="vertical" onFinish={onFinish}>
             <Row gutter={8}>
                 <Col span={16}>
