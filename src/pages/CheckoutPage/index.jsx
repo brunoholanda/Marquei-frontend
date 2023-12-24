@@ -1,120 +1,111 @@
 import React, { useState, useEffect } from 'react';
 import api from '../../components/api/api';
 import { useLocation } from 'react-router-dom';
-import { Col, Form, Input, Row, Select } from 'antd';
-import { StyledCard, StyledForm, StyledInput, StyledButton } from './styles';
+import { Form } from 'antd';
+import { StyledCard, StyledForm, StyledPlanCard, StyledPlanContainer } from './styles';
 import { initMercadoPago, Wallet } from '@mercadopago/sdk-react';
 import { Option } from 'antd/es/mentions';
 
 const CheckoutPage = () => {
     const location = useLocation();
-    const { planTitle, planPrice } = location.state || { planTitle: '', planPrice: 0 };
+    const { serviceId } = location.state || { serviceId: null };
     const [form] = Form.useForm();
+    const [paymentType, setPaymentType] = useState(null); // Estado para o tipo de pagamento (mensal ou anual)
+    const [paymentMethod, setPaymentMethod] = useState(null);
+    const [serviceDetails, setServiceDetails] = useState({ plan: '', monthlyPrice: 0, anualPrice: 0 });
     const [preferenceId, setPreferenceId] = useState(null);
 
     useEffect(() => {
         initMercadoPago('TEST-c12efe3e-56fd-49b6-a560-dd5d3b700102', { locale: 'pt-BR' });
-    }, []);
-    
+        if (serviceId) {
+            loadServiceDetails(serviceId);
+        }
+    }, [serviceId]);
 
-    const onFinish = async (values) => {
+
+    const loadServiceDetails = async (id) => {
         try {
-            // Aqui você pode adicionar a validação do cliente ou a criação do token de cartão do MercadoPago se necessário
-    
-            const paymentData = {
-                cardNumber: values.cardNumber.replace(/\s+/g, ''), // Remove espaços em branco
-                cardExpirationMonth: values.expiryDate.split('/')[0],
-                cardExpirationYear: `20${values.expiryDate.split('/')[1]}`, // Adiciona '20' para o formato do ano
-                cardCVV: values.cvv,
-                transactionAmount: planPrice, // Ou o valor que você precisa cobrar
-                // Adicione outros campos necessários para a API do MercadoPago aqui
-            };
-    
-            // Envie os dados do cartão para o servidor
-            const response = await api.post('/process_payment', paymentData);
-    
-            if (response.data.status === 'approved') {
-                alert('Pagamento aprovado!');
-            } else {
-                alert('Pagamento não aprovado: ' + response.data.status_detail);
-            }
-    
+            const response = await api.get(`/service_details/${id}`);
+            setServiceDetails({
+                plan: response.data.plan,
+                monthlyPrice: response.data.price, // agora corresponde ao nome 'price' da API
+                anualPrice: response.data.anualPrice, // corrigido de 'anualPrice' para 'annualPrice'
+                persons: response.data.persons, // adicione isto para carregar a quantidade de pessoas
+            });
         } catch (error) {
-            console.error('Falha ao processar pagamento:', error);
-            alert('Erro ao processar o pagamento.');
+            console.error('Erro ao carregar detalhes do serviço:', error);
         }
     };
-    
-    const installmentOptions = [1, 2, 3, 6, 12].map(installment => (
-        <Option key={installment} value={installment}>
-            {installment}x
-        </Option>
-    ));
-    
+
+    const onSelectPaymentType = (type, itemDetails) => {
+        const details = {
+            title: `Plano ${serviceDetails.plan}`, // Garanta que serviceDetails.plan existe
+            unit_price: type === 'monthly' ? serviceDetails.monthlyPrice : serviceDetails.anualPrice, // Verifique se monthlyPrice e anualPrice estão definidos
+            description: `Plano ${serviceDetails.plan} - ${type === 'monthly' ? 'Mensal' : 'Anual'}` // Novamente, assegure-se que serviceDetails.plan existe
+        };
+        setPaymentType(type);
+        setPaymentMethod(null);
+        createPreference(details);
+    };
+
+    const calculateAnualSavings = () => {
+        const monthlyCost = serviceDetails.monthlyPrice * 12;
+        return monthlyCost - serviceDetails.anualPrice;
+    };
+
+    const onFinish = async (values) => {
+
+    };
+
+    const createPreference = async (itemDetails) => {
+        try {
+            const response = await api.post('/create_preference', {
+                itemDetails: itemDetails // Envie os detalhes do plano selecionado
+            });
+            const preferenceId = response.data.id;
+            setPreferenceId(preferenceId);
+        } catch (error) {
+            console.error('Erro ao criar a preferência de pagamento:', error);
+        }
+    };
+
+
+
     return (
-        <StyledCard title={`Finalizar Compra - Plano ${planTitle}`} bordered={false}>
-        <StyledForm form={form} layout="vertical" onFinish={onFinish}>
-            <Row gutter={8}>
-                <Col span={16}>
-                    <Form.Item
-                        name="cardNumber"
-                        rules={[{ required: true, message: 'Por favor, insira o número do cartão!' }]}
+        <StyledCard title={`Finalizar Compra - Plano ${serviceDetails.plan}`} bordered={false}>
+            <h3>Com o {serviceDetails.plan} você terá acesso a todas as funcionalidades do sistemas ja existentes, recebera atualizações constantes e ainda terá suporte garantido, você ainda pode optar pelo pagamento anual e garantir uma oferta de desconto imperdivel !</h3>
+            <StyledForm form={form} layout="vertical" onFinish={onFinish}>
+                <StyledPlanContainer>
+                <StyledPlanCard
+                        selected={paymentType === 'anual'}
+                        onClick={() => onSelectPaymentType('anual')}
                     >
-                        <Input placeholder="Número do cartão" />
-                    </Form.Item>
-                </Col>
-                <Col span={4}>
-                    <Form.Item
-                        name="expiryDate"
-                        rules={[{ required: true, message: 'Insira a validade!' }]}
+                        <h2><strong>Plano {serviceDetails.plan} Anual 🤩</strong></h2>
+                        <h3>Use 12 meses pagando por 10 e Economize R$ {calculateAnualSavings().toFixed(2)} ao ano !</h3>
+                        <h2>Pagando Apenas R$ {(serviceDetails.anualPrice / 12).toFixed(2)} por mês</h2>
+                        <div>{serviceDetails.persons} profissional(is)</div>
+                    </StyledPlanCard>
+                    <StyledPlanCard
+                        selected={paymentType === 'monthly'}
+                        onClick={() => onSelectPaymentType('monthly')}
                     >
-                        <Input placeholder="MM/YY" />
-                    </Form.Item>
-                </Col>
-                <Col span={4}>
-                    <Form.Item
-                        name="cvv"
-                        rules={[{ required: true, message: 'Insira o CVV!' }]}
-                    >
-                        <Input placeholder="CVC" />
-                    </Form.Item>
-                </Col>
-            </Row>
-            <Form.Item
-                    name="cardholderName"
-                    rules={[{ required: true, message: 'Por favor, insira o nome do titular!' }]}
-                >
-                    <Input placeholder="Nome do Titular" />
-                </Form.Item>
-                <Form.Item
-                    name="identificationNumber"
-                    rules={[{ required: true, message: 'Por favor, insira o CPF!' }]}
-                >
-                    <Input placeholder="CPF" />
-                </Form.Item>
-                <Form.Item
-                    name="cardholderEmail"
-                    rules={[
-                        { required: true, message: 'Por favor, insira o e-mail!' },
-                        { type: 'email', message: 'Por favor, insira um e-mail válido!' }
-                    ]}
-                >
-                    <Input placeholder="E-mail" />
-                </Form.Item>
-                <Form.Item
-                    name="installments"
-                    rules={[{ required: true, message: 'Por favor, selecione o número de parcelas!' }]}
-                >
-                    <Select placeholder="Número de parcelas">
-                        {installmentOptions}
-                    </Select>
-                </Form.Item>
-                <StyledButton type="primary" htmlType="submit">
-                    Pagar R${planPrice}
-                </StyledButton>
-        </StyledForm>
-    </StyledCard>
-        
+                        <h2><strong>Plano {serviceDetails.plan} Mensal 💸</strong></h2>
+                        <h3>Pagamento sem desconto mês a mês</h3>
+                        <h2>R$ {serviceDetails.monthlyPrice} por mês</h2>
+                        <div>{serviceDetails.persons} profissional(is)</div>
+                    </StyledPlanCard>
+
+                </StyledPlanContainer>
+                {paymentType && preferenceId && (
+                    <Wallet
+                        initialization={{
+                            preferenceId: preferenceId
+                        }}
+                    />
+                )}
+            </StyledForm>
+        </StyledCard>
+
     );
 };
 

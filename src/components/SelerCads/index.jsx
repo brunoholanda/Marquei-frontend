@@ -4,40 +4,54 @@ import { useNavigate } from 'react-router-dom';
 import api from '../../components/api/api';
 
 const PlanCard = ({ userId }) => {
-  const navigate = useNavigate(); // useNavigate em vez de useHistory
+  const navigate = useNavigate();
   const [cardData, setCardData] = useState({ holder: '', number: '', expMonth: '', expYear: '', securityCode: '' });
-  const [plans, setPlans] = useState([]); // Estado para armazenar os planos
+  const [plans, setPlans] = useState([]);
 
+  const sortPlans = (plans) => {
+    return plans.sort((a, b) => {
+      if (a.plan === 'Plus') return -1;  // Plus sempre em primeiro
+      if (b.plan === 'Plus') return 1;
+      
+      // Se Plus não estiver envolvido, verifique se é Pro ou Premium
+      if (a.plan === 'Pro' && b.plan !== 'Plus') return -1;  // Pro vem depois de Plus, mas antes de qualquer outro
+      if (b.plan === 'Pro' && a.plan !== 'Plus') return 1;
+      
+      if (a.plan === 'Premium' && !['Plus', 'Pro'].includes(b.plan)) return -1;  // Premium vem depois de Plus e Pro, mas antes de outros
+      if (b.plan === 'Premium' && !['Plus', 'Pro'].includes(a.plan)) return 1;
+  
+      return 0;  // Se nenhuma das condições especiais for atendida, mantenha a ordem original
+    });
+  };
+  
 
   const fetchPlans = async () => {
     try {
-      // Atualize a URL conforme necessário para corresponder ao seu endpoint do backend
       const response = await api.get('/services');
-      setPlans(response.data); // Atualiza o estado com os planos recebidos
+      const sortedPlans = sortPlans(response.data);
+      setPlans(sortedPlans);
     } catch (error) {
       console.error("Erro ao buscar os planos:", error);
     }
   };
 
-  // Use o hook useEffect para buscar os dados quando o componente é montado
   useEffect(() => {
     fetchPlans();
-  }, []); // Array vazio para executar apenas uma vez na montagem do componente
-
+  }, []);
 
   const handleInputChange = (e) => {
     setCardData({ ...cardData, [e.target.name]: e.target.value });
   };
 
-  const redirectToCheckout = (servicePlan, servicePrice) => {
-    navigate('/checkout', { state: { servicePlan, servicePrice } }); // Uso de navigate para redirecionar
+  const redirectToCheckout = (servicePlan, servicePrice, serviceId) => {
+    navigate('/checkout', { state: { servicePlan, servicePrice, serviceId } });
   };
 
   return (
     <div>
-      <div className={styles.cards}>
+      <div className={styles.planos}>
         {plans.map((service, index) => (
-          <div key={index} className={`${styles.serviceCard} ${service.mostSold ? styles.mostSold : ''}`}>
+          <div key={index} className={`${styles.planCard} ${service.mostSold ? styles.mostSold : ''}`}>
             {service.mostSold && <div className={styles.mostSoldLabel}>MAIS VENDIDO!</div>}
             <h2>{service.plan}</h2>
             <div className={styles.price}>
@@ -49,7 +63,7 @@ const PlanCard = ({ userId }) => {
             </div>
             <button
               className={styles.trialButton}
-              onClick={() => redirectToCheckout(service.service, service.price)}
+              onClick={() => redirectToCheckout(service.plan, service.price, service.id)}
             >
               Contratar Agora!
             </button>
