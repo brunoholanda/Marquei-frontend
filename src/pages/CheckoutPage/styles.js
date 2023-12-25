@@ -11,7 +11,8 @@ export const StyledCard = styled(Card)`
 export const StyledForm = styled(Form)`
   width: 30rem;
   display: flex;
-  flex-direction: column;
+  flex-direction: row;
+  align-items: center;
   margin: 0;
   display: center;
   .ant-form-item-label > label {
@@ -32,6 +33,20 @@ export const StyledContainerButton = styled.div`
 `;
 
 
+
+
+export const StyledPlanContainer = styled.div`
+  width: 800px;
+  border-radius: 4px;
+  display: flex;
+  flex-direction: row;
+
+  button {
+    margin-bottom: .8rem;
+  }
+
+`;
+
 export const StyledPlanCard = styled.div`
   width: 500px;
   box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2);
@@ -46,18 +61,6 @@ export const StyledPlanCard = styled.div`
     transform: translateY(-2px);
     box-shadow: 0 6px 12px 0 rgba(0,0,0,0.3);
   }
-`;
-
-export const StyledPlanContainer = styled.div`
-  width: 800px;
-  border-radius: 4px;
-  display: flex;
-  flex-direction: row;
-
-  button {
-    margin-bottom: .8rem;
-  }
-
 `;
 
 export const StyledInput = styled(Input)`

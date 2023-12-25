@@ -40,7 +40,12 @@ const ScheduleModal = ({ isModalAgendaVisible, handleCancel }) => {
         }
 
         try {
-            const response = await api.get('/clients');
+            const companyID = localStorage.getItem('companyID'); // Substitua 'companyID' pela chave correta se for diferente
+            const response = await api.get('/clients', {
+                params: {
+                    company_id: companyID,
+                },
+            })
             const filteredPatients = response.data.filter(patient =>
                 patient.nome.toLowerCase().includes(searchText.toLowerCase())
             );
@@ -381,7 +386,7 @@ const ScheduleModal = ({ isModalAgendaVisible, handleCancel }) => {
                     rules={[{ required: true, message: 'Por favor, insira o nome do paciente!' }]}
                 >
                     <AutoComplete
-                        placeholder="&#128269; Nome do paciente" 
+                        placeholder="&#128269; Nome do paciente"
                         onSearch={onSearchPatientName}
                         onSelect={onSelectPatient}
                         options={patientSuggestions}
@@ -431,7 +436,7 @@ const ScheduleModal = ({ isModalAgendaVisible, handleCancel }) => {
                     isVisible={isModalProfessionalVisible}
                     onClose={closeModalProfessional}
                     initialData={selectedProfessional}
-                    userSpecialties={userSpecialties} 
+                    userSpecialties={userSpecialties}
 
                 />
                 <StyledFormItem

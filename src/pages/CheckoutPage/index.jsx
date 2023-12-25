@@ -83,7 +83,7 @@ const CheckoutPage = () => {
                         <h2><strong>Plano {serviceDetails.plan} Anual 🤩</strong></h2>
                         <h3>Use 12 meses pagando por 10 e Economize R$ {calculateAnualSavings().toFixed(2)} ao ano !</h3>
                         <h2>Pagando Apenas R$ {(serviceDetails.anualPrice / 12).toFixed(2)} por mês</h2>
-                        <div>{serviceDetails.persons} profissional(is)</div>
+                        <div>{serviceDetails.persons} profissional(is) teram acesso a plataforma</div>
                     </StyledPlanCard>
                     <StyledPlanCard
                         selected={paymentType === 'monthly'}
@@ -92,7 +92,7 @@ const CheckoutPage = () => {
                         <h2><strong>Plano {serviceDetails.plan} Mensal 💸</strong></h2>
                         <h3>Pagamento sem desconto mês a mês</h3>
                         <h2>R$ {serviceDetails.monthlyPrice} por mês</h2>
-                        <div>{serviceDetails.persons} profissional(is)</div>
+                        <div>{serviceDetails.persons} profissional(is) teram acesso a plataforma</div>
                     </StyledPlanCard>
 
                 </StyledPlanContainer>

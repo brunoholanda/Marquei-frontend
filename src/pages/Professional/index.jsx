@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Table, Button, Spin, message, Modal, Tabs } from 'antd';
 import api from '../../components/api/api';
 import ProfessionalModal from '../../components/Modals/registerModal';
-import { Link } from 'react-router-dom';
+import { Link, Navigate } from 'react-router-dom';
 import { IdcardOutlined, UserAddOutlined, UserDeleteOutlined, UserSwitchOutlined } from '@ant-design/icons';
 import '../Appointments/Appointments.css';
 import CompanyDataModal from '../../components/Modals/companyModal';
@@ -18,6 +18,44 @@ function Configs() {
     const [isCompanyModalVisible, setIsCompanyModalVisible] = useState(false);
     const [companyData, setCompanyData] = useState(null);
     const userSpecialties = JSON.parse(localStorage.getItem('userSpecialties') || '[]');
+    const [maxProfessionals, setMaxProfessionals] = useState(null);
+    const [upgradeModalVisible, setUpgradeModalVisible] = useState(false); // Novo estado para controlar a visibilidade do modal de upgrade
+
+
+    useEffect(() => {
+        const fetchMaxProfessionals = async () => {
+            const storedCompanyID = localStorage.getItem('companyID');
+            const token = localStorage.getItem('authToken');
+
+            if (storedCompanyID && token) {
+                setLoading(true);
+                try {
+                    // Primeiro, busca os dados da empresa para obter o service_id
+                    const companyResponse = await api.get(`/companies/${storedCompanyID}`, {
+                        headers: {
+                            'Authorization': `Bearer ${token}`
+                        }
+                    });
+                    const serviceId = companyResponse.data.service_id;
+
+                    // Segundo, busca os dados do serviço para obter o número máximo de profissionais
+                    const serviceResponse = await api.get(`/service_details/${serviceId}`, {
+                        headers: {
+                            'Authorization': `Bearer ${token}`
+                        }
+                    });
+                    setMaxProfessionals(serviceResponse.data.persons);
+                } catch (error) {
+                    console.error('Erro ao buscar o número máximo de profissionais:', error);
+                    message.error('Erro ao buscar informações do serviço');
+                } finally {
+                    setLoading(false);
+                }
+            }
+        };
+
+        fetchMaxProfessionals();
+    }, []);
 
     useEffect(() => {
         const fetchCompanyData = async () => {
@@ -68,8 +106,26 @@ function Configs() {
     }, []);
 
     const openModal = () => {
+        // Antes de abrir o modal para adicionar um profissional, verifica se o limite foi alcançado
+        if (professionals.length >= maxProfessionals) {
+            // Abre o modal de upgrade em vez de exibir uma mensagem de aviso
+            setUpgradeModalVisible(true);
+            return;
+        }
         setSelectedProfessional(null);
         setIsModalVisible(true);
+    };
+
+
+    const handleUpgrade = () => {
+        // A lógica para redirecionar o usuário para a página de upgrade
+        // Pode ser uma navegação ou abrir um novo componente/modal
+        Navigate('/upgrade');
+        setUpgradeModalVisible(false); // Fecha o modal após o redirecionamento
+    };
+
+    const closeUpgradeModal = () => {
+        setUpgradeModalVisible(false);
     };
 
     const closeModal = () => {
@@ -154,11 +210,26 @@ function Configs() {
                     <Button style={{ marginBottom: '10px' }} type="primary" onClick={openModal}>
                         <UserAddOutlined />Adicionar Profissional
                     </Button>
+                    <Modal
+                        title="Limite de Profissionais Atingido"
+                        visible={upgradeModalVisible}
+                        onCancel={closeUpgradeModal}
+                        footer={[
+                            <Button key="back" onClick={closeUpgradeModal}>
+                                Cancelar
+                            </Button>,
+                            <Button key="submit" type="primary" onClick={handleUpgrade}>
+                                Fazer Upgrade
+                            </Button>,
+                        ]}
+                    >
+                        <p>Seu plano contratado só permite até {maxProfessionals} profissionais. Caso sua clínica esteja crescendo, faça um upgrade do seu plano.</p>
+                    </Modal>
                     <ProfessionalModal
                         isVisible={isModalVisible}
                         onClose={closeModal}
                         initialData={selectedProfessional}
-                        userSpecialties={userSpecialties} 
+                        userSpecialties={userSpecialties}
                     />
                     <CompanyDataModal
                         isVisible={isCompanyModalVisible}
@@ -176,7 +247,7 @@ function Configs() {
                     <ControleAgenda />
                 </TabPane>
                 <TabPane tab="Dados da Empresa " key="3">
-                        <CompanyData />
+                    <CompanyData />
                 </TabPane>
             </Tabs>
         </div>

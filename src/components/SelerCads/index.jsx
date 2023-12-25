@@ -8,8 +8,12 @@ const PlanCard = ({ userId }) => {
   const [cardData, setCardData] = useState({ holder: '', number: '', expMonth: '', expYear: '', securityCode: '' });
   const [plans, setPlans] = useState([]);
 
-  const sortPlans = (plans) => {
-    return plans.sort((a, b) => {
+  const sortAndFilterPlans = (plans) => {
+    // Primeiro, filtra os planos para incluir apenas Plus, Pro ou Premium
+    const filteredPlans = plans.filter(plan => ['Plus', 'Pro', 'Premium'].includes(plan.plan));
+
+    // Depois, classifica os planos filtrados
+    return filteredPlans.sort((a, b) => {
       if (a.plan === 'Plus') return -1;  // Plus sempre em primeiro
       if (b.plan === 'Plus') return 1;
       
@@ -23,13 +27,19 @@ const PlanCard = ({ userId }) => {
       return 0;  // Se nenhuma das condições especiais for atendida, mantenha a ordem original
     });
   };
+
+  const sortPlans = (plans) => {
+    return plans.sort((a, b) => {
+    
+    });
+  };
   
 
   const fetchPlans = async () => {
     try {
       const response = await api.get('/services');
-      const sortedPlans = sortPlans(response.data);
-      setPlans(sortedPlans);
+      const sortedAndFilteredPlans = sortAndFilterPlans(response.data);
+      setPlans(sortedAndFilteredPlans);
     } catch (error) {
       console.error("Erro ao buscar os planos:", error);
     }
