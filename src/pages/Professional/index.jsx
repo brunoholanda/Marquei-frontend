@@ -9,6 +9,7 @@ import CompanyDataModal from '../../components/Modals/companyModal';
 import { TabPane } from 'react-bootstrap';
 import CompanyData from './CmpanyData';
 import ControleAgenda from './ControleAgenda';
+import PlanCard from 'components/SelerCads';
 
 function Configs() {
     const [isModalVisible, setIsModalVisible] = useState(false);
@@ -224,6 +225,7 @@ function Configs() {
                         ]}
                     >
                         <p>Seu plano contratado só permite até {maxProfessionals} profissionais. Caso sua clínica esteja crescendo, faça um upgrade do seu plano.</p>
+                        <PlanCard maxProfessionals={maxProfessionals} />
                     </Modal>
                     <ProfessionalModal
                         isVisible={isModalVisible}
