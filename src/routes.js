@@ -68,7 +68,6 @@ function AppRoutes() {
                 <Route element={<PageBodySystem />}>
                     <Route path="/login" element={<Authentication />} />
                     <Route path="/reset-password" element={<ResetPassword />} />
-
                     <Route path="/agendamentos" element={<ProtectedRoute element={<Appointments />} />} />
                     <Route path="/allagendamentos" element={<ProtectedRoute element={<AllAppointments />} />} />
                     <Route path="/calendario" element={<ProtectedRoute element={<CalendarPage />} />} />
@@ -79,8 +78,6 @@ function AppRoutes() {
                     <Route path="/clientes" element={<ProtectedRoute element={<Pacientes/>} />} />
                     <Route path="/estoque" element={<ProtectedRoute element={<StockControlPage/>} />} />
                     <Route path="/contabilidade" element={<ProtectedRoute element={<Contabilidade/>} />} />
-
-
                     <Route path="*" element={<NotFound />} />
                 </Route>
             </Routes>

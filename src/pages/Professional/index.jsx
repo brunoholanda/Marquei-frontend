@@ -10,6 +10,7 @@ import { TabPane } from 'react-bootstrap';
 import CompanyData from './CmpanyData';
 import ControleAgenda from './ControleAgenda';
 import PlanCard from 'components/SelerCads';
+import MyPlan from './MyPlan';
 
 function Configs() {
     const [isModalVisible, setIsModalVisible] = useState(false);
@@ -250,6 +251,9 @@ function Configs() {
                 </TabPane>
                 <TabPane tab="Dados da Empresa " key="3">
                     <CompanyData />
+                </TabPane>
+                <TabPane tab="Meu Plano " key="4">
+                    <MyPlan />
                 </TabPane>
             </Tabs>
         </div>

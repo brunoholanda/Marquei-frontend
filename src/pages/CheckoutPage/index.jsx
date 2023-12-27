@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import api from '../../components/api/api';
 import { useLocation } from 'react-router-dom';
-import { Form } from 'antd';
+import { Form, Spin } from 'antd';
 import { StyledCard, StyledForm, StyledPlanCard, StyledPlanContainer } from './styles';
 import { initMercadoPago, Wallet } from '@mercadopago/sdk-react';
 import { Option } from 'antd/es/mentions';
@@ -14,6 +14,7 @@ const CheckoutPage = () => {
     const [paymentMethod, setPaymentMethod] = useState(null);
     const [serviceDetails, setServiceDetails] = useState({ plan: '', monthlyPrice: 0, anualPrice: 0 });
     const [preferenceId, setPreferenceId] = useState(null);
+    const [loading, setLoading] = useState(false);
 
     useEffect(() => {
         initMercadoPago('TEST-c12efe3e-56fd-49b6-a560-dd5d3b700102', { locale: 'pt-BR' });
@@ -45,6 +46,7 @@ const CheckoutPage = () => {
         };
         setPaymentType(type);
         setPaymentMethod(null);
+        setLoading(true); // Ativa o carregamento
         createPreference(details);
     };
 
@@ -64,8 +66,12 @@ const CheckoutPage = () => {
             });
             const preferenceId = response.data.id;
             setPreferenceId(preferenceId);
+            setLoading(false); // Desativa o carregamento
+
         } catch (error) {
             console.error('Erro ao criar a preferência de pagamento:', error);
+            setLoading(false); // Desativa o carregamento em caso de erro
+
         }
     };
 
@@ -76,7 +82,7 @@ const CheckoutPage = () => {
             <h3>Com o {serviceDetails.plan} você terá acesso a todas as funcionalidades do sistemas ja existentes, recebera atualizações constantes e ainda terá suporte garantido, você ainda pode optar pelo pagamento anual e garantir uma oferta de desconto imperdivel !</h3>
             <StyledForm form={form} layout="vertical" onFinish={onFinish}>
                 <StyledPlanContainer>
-                <StyledPlanCard
+                    <StyledPlanCard
                         selected={paymentType === 'anual'}
                         onClick={() => onSelectPaymentType('anual')}
                     >
@@ -96,12 +102,16 @@ const CheckoutPage = () => {
                     </StyledPlanCard>
 
                 </StyledPlanContainer>
-                {paymentType && preferenceId && (
-                    <Wallet
-                        initialization={{
-                            preferenceId: preferenceId
-                        }}
-                    />
+                {loading ? (
+                    <Spin size="large" />
+                ) : (
+                    paymentType && preferenceId && (
+                        <Wallet
+                            initialization={{
+                                preferenceId: preferenceId
+                            }}
+                        />
+                    )
                 )}
             </StyledForm>
         </StyledCard>

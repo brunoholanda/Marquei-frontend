@@ -161,6 +161,7 @@ const handleSpecialtyChange = selected => {
       cnpj: idNumber,
       telefone: phone,
       endereco: address,
+      service_id: 4, //sempre o id do plano teste da coluna, ajustar em producao
     };
   
     const userData = {
@@ -243,7 +244,7 @@ const handleSpecialtyChange = selected => {
     <div className='register'>
       <div className='formulario'>
         <h2>Experimentar gratuitamente 😊</h2>
-        <p  >Não solicitamos metodo de pagamento 💰</p>
+        <p>Não solicitamos metodo de pagamento 💰</p>
         <Form form={form} onFinish={onFinish}>
           <Form.Item
             name="profession"
