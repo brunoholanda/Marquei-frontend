@@ -34,7 +34,7 @@ const titleStyle = {
 const benefitsStyle = {
     flex: '3', 
     padding: '0 20px',
-    fontSize: '17px', 
+    fontSize: '16px', 
 };
 
 const priceStyle = {

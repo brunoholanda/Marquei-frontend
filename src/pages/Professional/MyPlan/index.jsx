@@ -7,7 +7,7 @@ import {
     titleStyle,
     benefitsStyle,
     priceStyle,
-    indicatorStyle, 
+    indicatorStyle,
     cardColumStyle
 } from './Styles'; // Adjust the path as needed
 
@@ -27,8 +27,27 @@ const PlanCard = ({ plan, isCurrent }) => {
         display: isCurrent ? 'flex' : 'none',
     };
 
+    const renderBenefitsText = () => {
+        if (plan.plan === 'Plano Teste') {
+            return (
+                <p>No plano {plan.plan} você conta com todos os benefícios do Marquei por um período de <b>7 dias</b>, podendo adicionar até {plan.persons} profissional na sua clínica e, caso queira, pode contratar um plano e seus dados serão mantidos.</p>
+            );
+        } else if (plan.plan === 'Plus') {
+            return (
+                <p>No plano {plan.plan} você conta com todos os benefícios do Marquei para {plan.persons} profissional, <b>plano ideal para profissionais que trabalham por conta própria.</b></p>
+            );
+        } else {
+            return (
+                <>
+                    <p>No plano {plan.plan} você conta com todos os benefícios do Marquei e ainda pode adicionar até {plan.persons} profissionais na sua clínica.</p>
+                    {plan.benefits && plan.benefits.join(', ')}
+                </>
+            );
+        }
+    };
+
     return (
-        <div style={{ position: 'relative', width: '100%' }}> 
+        <div style={{ position: 'relative', width: '100%' }}>
             <Card bordered={false} style={currentCardStyle}>
                 <div style={cardColumStyle}>
                     <div style={titleSectionStyle}>
@@ -38,8 +57,7 @@ const PlanCard = ({ plan, isCurrent }) => {
                         <div style={titleStyle}>{plan.plan}</div>
                     </div>
                     <div style={benefitsStyle}>
-                        <p>No plano {plan.plan} você conta com todos os beneficios do Marquei e ainda pode adicionar até {plan.persons} profissionais na sua clinica.</p>
-                        {plan.benefits && plan.benefits.join(', ')}
+                        {renderBenefitsText()}
                     </div>
                     <div style={priceStyle}>
                         {price ? `R$ ${price}/mês` : 'N/A'}
@@ -57,6 +75,11 @@ function MyPlan() {
     const [loading, setLoading] = useState(false);
     const [plans, setPlans] = useState([]);
     const [currentPlanId, setCurrentPlanId] = useState(null);
+
+    const orderPlans = (a, b) => {
+        const order = { 'Plus': 1, 'Pro': 2, 'Premium': 3, 'Plano Teste': 4 };
+        return (order[a.plan] || 5) - (order[b.plan] || 5);
+    };
 
     useEffect(() => {
         const storedCompanyID = localStorage.getItem('companyID');
@@ -94,9 +117,12 @@ function MyPlan() {
             {loading ? (
                 <Spin size="large" />
             ) : (
-                plans.map((plan) => (
-                    <PlanCard key={plan.id} plan={plan} isCurrent={plan.id === currentPlanId} />
-                ))
+                plans
+                    .filter(plan => plan.plan !== 'Plano Teste' || plan.id === currentPlanId)
+                    .sort(orderPlans)
+                    .map((plan) => (
+                        <PlanCard key={plan.id} plan={plan} isCurrent={plan.id === currentPlanId} />
+                    ))
             )}
         </div>
     );
