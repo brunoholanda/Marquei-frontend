@@ -21,6 +21,7 @@ import Contabilidade from "pages/Contabilidade";
 import Pacientes from "pages/Pacientes";
 import AtestadoInfoPage from "pages/ConfirmCertificate";
 import CheckoutPage from "pages/CheckoutPage";
+import MyPlan from "pages/Professional/MyPlan";
 
 function ScrollToTop() {
     const { pathname } = useLocation();
@@ -78,6 +79,8 @@ function AppRoutes() {
                     <Route path="/clientes" element={<ProtectedRoute element={<Pacientes/>} />} />
                     <Route path="/estoque" element={<ProtectedRoute element={<StockControlPage/>} />} />
                     <Route path="/contabilidade" element={<ProtectedRoute element={<Contabilidade/>} />} />
+                    <Route path="/planos" element={<ProtectedRoute element={<MyPlan/>} />} />
+
                     <Route path="*" element={<NotFound />} />
                 </Route>
             </Routes>

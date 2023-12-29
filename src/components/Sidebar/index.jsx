@@ -35,7 +35,10 @@ const Sidebar = () => {
   } = theme.useToken();
 
   const isAuthenticated = !!localStorage.getItem('authToken');
-  const userSpecialties = JSON.parse(localStorage.getItem('userSpecialties') || '[]');
+  if (!isAuthenticated) {
+      return null;
+  }
+    const userSpecialties = JSON.parse(localStorage.getItem('userSpecialties') || '[]');
 
   const handleLogout = () => {
     localStorage.removeItem('authToken');

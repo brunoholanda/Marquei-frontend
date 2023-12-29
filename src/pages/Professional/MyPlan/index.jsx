@@ -113,7 +113,7 @@ function MyPlan() {
     }, []);
 
     return (
-        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', width: '100%', marginTop: '20px' }}>
+        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', width: '100%', margin: '50px' }}>
             {loading ? (
                 <Spin size="large" />
             ) : (
