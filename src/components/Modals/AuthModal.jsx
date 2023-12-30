@@ -6,18 +6,20 @@ import ReactInputMask from 'react-input-mask';
 import { Option } from 'antd/es/mentions';
 import styles from '../../pages/RegisterScreen/RegisterScreen.css';
 import { useNavigate } from 'react-router-dom';
+import { LoadingOutlined } from '@ant-design/icons';
 
 const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/; // Simple email regex for validation
 
 
-const AuthModal = ({ isVisible, onClose, onLoginSuccess }) => {
+const AuthModal = ({ isVisible, onClose, onLoginSuccess, selectedService }) => {
     const [form] = Form.useForm();
 
     const [username, setUsername] = useState('');
     const [password, setPassword] = useState('');
     const [isUserExist, setIsUserExist] = useState(null);
     const [isLoading, setIsLoading] = useState(false);
-    const navigate = useNavigate();
+    const [isLoggedIn, setIsLoggedIn] = useState(false);
+    const [paymentType, setPaymentType] = useState(null); // 'monthly' or 'anual'
 
     // Additional state hooks for registration
     const [isAgreed, setIsAgreed] = useState(false);
@@ -26,6 +28,9 @@ const AuthModal = ({ isVisible, onClose, onLoginSuccess }) => {
     const [documentTypeLabel, setDocumentTypeLabel] = useState('Digite o CPF');
     const [namePlaceholder, setNamePlaceholder] = useState('Nome completo');
     const [selectedSpecialties, setSelectedSpecialties] = useState([]);
+    
+    const navigate = useNavigate();
+
     const validateEmail = (username) => {
         return emailRegex.test(username);
     }
@@ -65,6 +70,11 @@ const AuthModal = ({ isVisible, onClose, onLoginSuccess }) => {
         await checkEmailExists(username);
     };
 
+    const selectPaymentType = (type) => {
+        setPaymentType(type);
+        // Here, you can also call any logic that should happen right after selecting a payment type
+    };
+
     const handleLogin = async (event) => {
         event.preventDefault();
         setIsLoading(true);
@@ -77,17 +87,70 @@ const AuthModal = ({ isVisible, onClose, onLoginSuccess }) => {
                 body: JSON.stringify({ username, password }),
             });
             if (!response.ok) {
+                // If login is not successful, throw an error.
                 throw new Error('Failed to login. Please check your credentials.');
             }
             const data = await response.json();
             localStorage.setItem('authToken', data.token); // Store the token in local storage or context
-            onLoginSuccess(data); // Call the onLoginSuccess function with the user data
-            navigate('/planos');
 
+            setIsLoggedIn(true); // Update the state to indicate the user is logged in.
+            onLoginSuccess(data); // Call the onLoginSuccess function with the user data
         } catch (error) {
-            message.error(error.message);
+            message.error(error.message); // Display any error messages
         }
-        setIsLoading(false);
+        setIsLoading(false); // Update loading state
+    };
+
+    const renderContent = () => {
+        if (!isLoggedIn) {
+            // Render the login form if the user is not logged in
+            return (
+                <div>
+                    {/* Your existing login form elements go here */}
+                    <form onSubmit={handleLogin}>
+                        <Input
+                            type="email"
+                            value={username}
+                            onChange={(e) => setUsername(e.target.value)}
+                            placeholder="Insira seu Email"
+                            required
+                        />
+                        <Input
+                            type="password"
+                            value={password}
+                            onChange={(e) => setPassword(e.target.value)}
+                            placeholder="Insira sua senha"
+                            required
+                        />
+                        <Button type="primary" htmlType="submit" loading={isLoading}>
+                            Login
+                        </Button>
+                    </form>
+                </div>
+            );
+        } else if (!paymentType) {
+            // Render the payment type selection options if the user is logged in but hasn't selected a payment type yet
+            return (
+                <div>
+                    <h2>Escolha o tipo de pagamento</h2>
+                    <button onClick={() => selectPaymentType('monthly')}>Plano Mensal</button>
+                    <button onClick={() => selectPaymentType('annual')}>Plano Anual</button>
+                    {/* Include additional details or styling as needed */}
+                </div>
+            );
+        } else {
+            // Render payment confirmation or additional details based on the selected payment type
+            return (
+                <div>
+                    <h2>Você selecionou: {paymentType === 'monthly' ? 'Plano Mensal' : 'Plano Anual'}</h2>
+                    {/* Add additional logic and components to handle payment processing */}
+                    <p>Detalhes do plano, preço, e outras informações relevantes.</p>
+                    {/* Include buttons or links to proceed with payment, go back to change selection, etc. */}
+                    <button onClick={() => setPaymentType(null)}>Alterar seleção</button>
+                    {/* Include more details or steps as required */}
+                </div>
+            );
+        }
     };
 
     function buildUserData(email, password, nome, phone, address, profession) {
@@ -336,6 +399,10 @@ const AuthModal = ({ isVisible, onClose, onLoginSuccess }) => {
             onCancel={onClose}
             footer={null}
         >
+            <p>Plano Selecionado: {selectedService.servicePlan}</p>
+            <p>Preço: R${selectedService.servicePrice}</p>
+            {isLoading ? <LoadingOutlined /> : renderContent()}
+
             <form>
                 <Input
                     type="email"

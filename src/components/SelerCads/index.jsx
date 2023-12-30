@@ -9,11 +9,24 @@ const PlanCard = ({ maxProfessionals }) => {
   const [cardData, setCardData] = useState({ holder: '', number: '', expMonth: '', expYear: '', securityCode: '' });
   const [plans, setPlans] = useState([]);
   const [showAuthModal, setShowAuthModal] = useState(false);
+  const [selectedService, setSelectedService] = useState({ servicePlan: '', servicePrice: 0, serviceId: '' });
 
   const handleLoginSuccess = () => {
     // Logic to handle what happens after a successful login or registration
     setShowAuthModal(false);
     // Maybe navigate to a different page or update the state
+  };
+
+  const handleServiceSelect = (service) => {
+    // Set the selected service details when a service is selected
+    setSelectedService({
+      servicePlan: service.plan,
+      servicePrice: service.price,
+      serviceId: service.id, // Assuming each service has a unique 'id' property
+    });
+
+    // Show the authentication modal
+    setShowAuthModal(true);
   };
 
   const sortAndFilterPlans = (plans) => {
@@ -83,11 +96,12 @@ const PlanCard = ({ maxProfessionals }) => {
             <div className={styles.duration}>
               Por {service.persons} profissional(is) da saúde, durante {service.duration} meses.
             </div>
-            <button onClick={() => setShowAuthModal(true)}>Contratar Agora</button>
+            <button onClick={() => handleServiceSelect(service)}>Contratar Agora</button>
             <AuthModal
               isVisible={showAuthModal}
               onClose={() => setShowAuthModal(false)}
               onLoginSuccess={handleLoginSuccess}
+              selectedService={selectedService} // Pass the selected service details to the AuthModal
             />
           </div>
         ))}
