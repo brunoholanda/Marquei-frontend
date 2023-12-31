@@ -13,7 +13,6 @@ const PlanCard = ({ maxProfessionals }) => {
 
   const handleLoginSuccess = () => {
     // Logic to handle what happens after a successful login or registration
-    setShowAuthModal(false);
     // Maybe navigate to a different page or update the state
   };
 
@@ -41,7 +40,6 @@ const PlanCard = ({ maxProfessionals }) => {
       filteredPlans = filteredPlans.filter(plan => plan.plan === 'Premium');
     } // Não é necessário um else para outros valores, pois já filtramos o plano "Teste"
 
-    // Classifica os planos filtrados
     return filteredPlans.sort((a, b) => {
       if (a.plan === 'Plus') return -1;  // Plus sempre em primeiro
       if (b.plan === 'Plus') return 1;
@@ -73,14 +71,6 @@ const PlanCard = ({ maxProfessionals }) => {
   useEffect(() => {
     fetchPlans();
   }, []);
-
-  const handleInputChange = (e) => {
-    setCardData({ ...cardData, [e.target.name]: e.target.value });
-  };
-
-  const redirectToCheckout = (servicePlan, servicePrice, serviceId) => {
-    navigate('/checkout', { state: { servicePlan, servicePrice, serviceId } });
-  };
 
   return (
     <div>

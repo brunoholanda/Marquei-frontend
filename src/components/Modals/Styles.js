@@ -74,4 +74,40 @@ export const StyledSelect = styled(Select)`
   }
 `;
 
+export const StyledPlanContainer = styled.div`
+  width: 800px;
+  border-radius: 4px;
+  display: flex;
+  flex-direction: column;
+
+  justify-content: center;
+  button {
+    margin-bottom: .8rem;
+  }
+
+`;
+
+export const StyledPlanCard = styled.div`
+  width: 375px;
+  box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2);
+  margin: 2rem;
+  padding: 1rem;
+  border-radius: 8px;
+  border: ${({ selected }) => (selected ? '3px solid #3f51b5' : 'none')}; /* Altere a cor e o estilo conforme necessário */
+  cursor: pointer;
+  transition: transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
+
+  &:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 12px 0 rgba(0,0,0,0.3);
+  }
+`;
+
+export const StyledTextCard = styled.p`
+  text-align: center;
+  color: #666666;
+`;
+
+
+
 // Adicione estilizações para outros componentes conforme necessário
