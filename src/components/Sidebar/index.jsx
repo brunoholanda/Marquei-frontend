@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   HistoryOutlined,
   ScheduleOutlined,
@@ -15,6 +15,7 @@ import {
 } from '@ant-design/icons';
 import { Link, useNavigate } from 'react-router-dom';
 import { Layout, Menu, theme } from 'antd';
+import ReactJoyride from 'react-joyride';
 
 const { Header, Sider } = Layout;
 
@@ -28,6 +29,30 @@ function getItem(label, key, icon, children, url) {
 }
 
 const Sidebar = () => {
+  const [runTutorial, setRunTutorial] = useState(false);
+  const [steps, setSteps] = useState([
+    {
+      target: '.custom-menu .ant-menu-item:nth-child(6)',
+      content: 'Clique aqui para acessar as configurações do sistema.',
+    },
+    // ...outros passos se necessário
+  ]);
+
+  useEffect(() => {
+    if (!localStorage.getItem('tutorialShown')) {
+      setRunTutorial(true);
+      localStorage.setItem('tutorialShown', 'true');
+    }
+  }, []);
+
+  const handleJoyrideCallback = (data) => {
+    const { status } = data;
+    if (status === 'finished' || status === 'skipped') {
+      setRunTutorial(false);
+    }
+  };
+
+
   const [collapsed, setCollapsed] = useState(false);
   const navigate = useNavigate();
   const {
@@ -36,9 +61,9 @@ const Sidebar = () => {
 
   const isAuthenticated = !!localStorage.getItem('authToken');
   if (!isAuthenticated) {
-      return null;
+    return null;
   }
-    const userSpecialties = JSON.parse(localStorage.getItem('userSpecialties') || '[]');
+  const userSpecialties = JSON.parse(localStorage.getItem('userSpecialties') || '[]');
 
   const handleLogout = () => {
     localStorage.removeItem('authToken');
@@ -72,6 +97,7 @@ const Sidebar = () => {
   }
 
 
+
   return (
     <Layout style={{ minHeight: '100vh' }}>
       <Sider collapsible collapsed={collapsed} onCollapse={setCollapsed}>
@@ -88,6 +114,17 @@ const Sidebar = () => {
       <Layout>
         <Header style={{ padding: 0, background: colorBgContainer }} />
       </Layout>
+      <ReactJoyride
+        run={runTutorial}
+        steps={steps}
+        continuous={true}
+        showSkipButton={true}
+        styles={{
+          options: {
+            zIndex: 10000,
+          },
+        }}
+      />
     </Layout>
   );
 };

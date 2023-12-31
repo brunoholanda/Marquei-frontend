@@ -26,6 +26,7 @@
     "react-helmet": "^6.1.0",
     "react-icons": "^4.10.1",
     "react-input-mask": "^2.0.4",
+    "react-joyride": "^2.7.2",
     "react-lazy-load-image-component": "^1.6.0",
     "react-qr-code": "^2.0.12",
     "react-responsive-carousel": "^3.2.23",

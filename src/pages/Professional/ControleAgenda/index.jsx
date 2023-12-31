@@ -7,6 +7,7 @@ import 'moment/locale/pt-br';
 import '../Configs.css'
 import WeeklyModal from '../../../components/Modals/WeeklyModal ';
 import ScheduleLinkModal from 'components/Modals/ScheduleLinkModal';
+import ReactJoyride from 'react-joyride';
 const { Option } = Select;
 
 const ControleAgenda = () => {
@@ -22,6 +23,23 @@ const ControleAgenda = () => {
     const [selectedProfessional, setSelectedProfessional] = useState(null);
     const [isLinkModalVisible, setIsLinkModalVisible] = useState(false);
     const companyID = localStorage.getItem('companyID');
+    const [runTutorial, setRunTutorial] = useState();
+    const [steps, setSteps] = useState([
+        {
+            target: '.select-professional', 
+            content: 'Primeiro, selecione um profissional da lista.',
+        },
+        {
+            target: '.weekly-pattern-button', 
+            content: 'Agora, clique aqui para definir o padrão semanal de horários.',
+        },
+        {
+            target: '.generate-link-button',
+            content: 'Por fim, clique aqui para gerar um link de agendamento para os clientes, compartilhe o link nas suas redes sociais.',
+        }
+    ]);
+
+
 
     useEffect(() => {
         const fetchProfessionals = async () => {
@@ -51,7 +69,12 @@ const ControleAgenda = () => {
     }, []);
 
 
-
+    const handleJoyrideCallback = (data) => {
+        const { status } = data;
+        if (status === 'finished' || status === 'skipped') {
+            setRunTutorial(false);
+        }
+    };
 
     const [editingId, setEditingId] = useState(null);
 
@@ -94,6 +117,7 @@ const ControleAgenda = () => {
     const handleDelete = (id) => {
         showDeleteConfirmation(id);
     };
+
 
 
     const columns = [
@@ -237,11 +261,21 @@ const ControleAgenda = () => {
             message.warning('Selecione um profissional e uma data para prosseguir.');
         }
     };
+
+    useEffect(() => {
+        if (!localStorage.getItem('tutorialShown')) {
+            setRunTutorial(true);
+            localStorage.setItem('tutorialShown', 'true');
+        }
+    }, []);
+    
     return (
         <div>
+
             <h1>Controle da Agenda <ControlOutlined /></h1>
             <p>Aqui você inclui datas ou horários em que não poderá atender seus clientes. <WarningFilled /></p>
             <Select
+                className="select-professional"
                 showSearch
                 style={{ width: 200, marginBottom: 20, marginRight: 20 }}
                 placeholder="Selecione um profissional"
@@ -259,6 +293,7 @@ const ControleAgenda = () => {
                 ))}
             </Select>
             <Button
+                className="weekly-pattern-button"
                 type="primary"
                 onClick={showWeeklyModal}
                 disabled={!selectedProfessional}
@@ -322,8 +357,8 @@ const ControleAgenda = () => {
                     </Button>
                 </div>
                 <p>Feriados locais precisam ser incluídos manualmente <WarningTwoTone twoToneColor="#ff0000" /></p>
-                <Button style={{ marginBottom: '20px' }} type="primary" onClick={() => setIsLinkModalVisible(true)}>
-                <LinkOutlined /> Gerar Link de Agendamento
+                <Button className="generate-link-button" style={{ marginBottom: '20px' }} type="primary" onClick={() => setIsLinkModalVisible(true)}>
+                    <LinkOutlined /> Gerar Link de Agendamento
                 </Button>
                 {isLinkModalVisible && (
                     <ScheduleLinkModal
@@ -334,6 +369,15 @@ const ControleAgenda = () => {
                 )}
                 <Table dataSource={disabledDates} columns={columns} rowKey="id" />
             </div>
+            <ReactJoyride
+                run={runTutorial}
+                steps={steps}
+                callback={handleJoyrideCallback}
+                continuous={true}
+                showProgress={true}
+                showSkipButton={true}
+                styles={{ options: { zIndex: 10000 } }}
+            />
         </div>
     );
 }

@@ -11,6 +11,7 @@ import CompanyData from './CmpanyData';
 import ControleAgenda from './ControleAgenda';
 import PlanCard from 'components/SelerCads';
 import MyPlan from './MyPlan';
+import ReactJoyride from 'react-joyride';
 
 function Configs() {
     const [isModalVisible, setIsModalVisible] = useState(false);
@@ -22,6 +23,28 @@ function Configs() {
     const userSpecialties = JSON.parse(localStorage.getItem('userSpecialties') || '[]');
     const [maxProfessionals, setMaxProfessionals] = useState(null);
     const [upgradeModalVisible, setUpgradeModalVisible] = useState(false); // Novo estado para controlar a visibilidade do modal de upgrade
+    const [runTutorial, setRunTutorial] = useState(false);
+    const [steps, setSteps] = useState([
+        {
+            target: '.add-professional-button', // Classe CSS única para o botão Adicionar Profissional
+            content: 'Clique aqui para adicionar um novo profissional ao sistema, faça o cadastro com atenção incluindo todos os dados. Em seguida clique em "Controle da Agenda"',
+        },
+
+    ]);
+
+    useEffect(() => {
+        if (!localStorage.getItem('configsTutorialShown')) {
+            setRunTutorial(true);
+            localStorage.setItem('configsTutorialShown', 'true');
+        }
+    }, []);
+
+    const handleJoyrideCallback = (data) => {
+        const { status } = data;
+        if (status === 'finished' || status === 'skipped') {
+            setRunTutorial(false);
+        }
+    };
 
 
     useEffect(() => {
@@ -209,7 +232,7 @@ function Configs() {
                 <TabPane tab="Controle de Profissionais" key="1">
                     <h1>Controle de Profissionais <IdcardOutlined /></h1>
                     <p>Aqui você pode adicionar profissionais ou atualizar seus dados.</p>
-                    <Button style={{ marginBottom: '10px' }} type="primary" onClick={openModal}>
+                    <Button className="add-professional-button" style={{ marginBottom: '10px' }} type="primary" onClick={openModal}>
                         <UserAddOutlined />Adicionar Profissional
                     </Button>
                     <Modal
@@ -256,6 +279,18 @@ function Configs() {
                     <MyPlan />
                 </TabPane>
             </Tabs>
+            <ReactJoyride
+                run={runTutorial}
+                steps={steps}
+                callback={handleJoyrideCallback}
+                continuous={true}
+                showSkipButton={true}
+                styles={{
+                    options: {
+                        zIndex: 10000,
+                    },
+                }}
+            />
         </div>
     );
 }

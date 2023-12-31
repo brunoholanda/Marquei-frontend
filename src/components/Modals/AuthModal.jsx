@@ -8,6 +8,7 @@ import { StyledPlanCard, StyledPlanContainer, StyledTextCard } from './Styles';
 import api from '../../components/api/api';
 
 const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+const commonDomains = ["gmail.com", "yahoo.com", "hotmail.com", "outlook.com", "live.com"];
 
 
 const AuthModal = ({ isVisible, onClose, onLoginSuccess, selectedService }) => {
@@ -25,10 +26,39 @@ const AuthModal = ({ isVisible, onClose, onLoginSuccess, selectedService }) => {
     const [preferenceId, setPreferenceId] = useState(null);
     const [loading, setLoading] = useState(false);
     const navigate = useNavigate();
+    const [emailSuggestions, setEmailSuggestions] = useState([]);
+    const [preapprovalPlanId, setPreapprovalPlanId] = useState('');
+    const [showTrialModal, setShowTrialModal] = useState(false);  // Novo estado para controlar a visibilidade do modal de teste grátis
 
     const validateEmail = (username) => {
         return emailRegex.test(username);
     }
+
+    const updateEmailSuggestions = (inputText) => {
+        if (inputText.includes('@')) {
+            const parts = inputText.split('@');
+            const domainPart = parts[1];
+            const filteredDomains = commonDomains.filter((domain) =>
+                domain.startsWith(domainPart)
+            ).map((domain) => parts[0] + "@" + domain);
+            setEmailSuggestions(filteredDomains);
+        } else {
+            setEmailSuggestions([]);
+        }
+    };
+
+    const handleEmailChange = (e) => {
+        const newEmail = e.target.value;
+        setUsername(newEmail);
+        updateEmailSuggestions(newEmail);
+    };
+
+    // Handler para selecionar uma sugestão
+    const selectSuggestion = (suggestion) => {
+        setUsername(suggestion);
+        setEmailSuggestions([]);
+    };
+
 
     const checkEmailExists = async (username) => {
         try {
@@ -44,11 +74,18 @@ const AuthModal = ({ isVisible, onClose, onLoginSuccess, selectedService }) => {
 
             if (!data.exists) {
                 message.info("Seu email não existe em nosso cadastro, por favor faça seu cadastro e aproveite 7 dias grátis para testar o Marquei");
-                navigate('/cadastro');
+                setShowTrialModal(true);
             }
         } catch (error) {
             message.error('Error checking email: ' + error.message);
         }
+    };
+
+    const handleFreeTrial = () => {
+        // Aqui você pode implementar a lógica para iniciar o teste grátis
+        // Por exemplo, pode redirecionar o usuário para uma página de cadastro
+        navigate('/cadastro');
+        setShowTrialModal(false); // Fecha o modal após a ação
     };
 
     const handleEmailSubmit = async (e) => {
@@ -113,9 +150,9 @@ const AuthModal = ({ isVisible, onClose, onLoginSuccess, selectedService }) => {
                 monthlyPrice: response.data.price,
                 anualPrice: response.data.anualPrice,
                 persons: response.data.persons,
-                preapproval_plan_id: response.data.preapproval_plan_id, // Certifique-se de que este campo está sendo retornado pelo backend
-
             });
+            setPreapprovalPlanId(response.data.preapproval_plan_id);
+
         } catch (error) {
             console.error('Erro ao carregar detalhes do serviço:', error);
         }
@@ -138,22 +175,61 @@ const AuthModal = ({ isVisible, onClose, onLoginSuccess, selectedService }) => {
         }
     };
 
-    const onSelectPaymentType = (type, itemDetails) => {
-        const details = {
-            title: `Plano ${serviceDetails.plan}`,
-            unit_price: type === 'monthly' ? serviceDetails.monthlyPrice : serviceDetails.anualPrice,
-            description: `Plano ${serviceDetails.plan} - ${type === 'monthly' ? 'Mensal' : 'Anual'}`,
-            preapproval_plan_id: serviceDetails.preapproval_plan_id, // Incluindo o preapproval_plan_id
-        };
-        setPaymentType(type);
-        setPaymentMethod(null);
-        setLoading(true);
+    const onSelectPaymentType = async (type, itemDetails) => {
+        const authToken = localStorage.getItem('authToken'); // Supondo que o token de autenticação esteja armazenado no localStorage
+
         if (type === 'monthly') {
-            handleMonthlySubscription(details, username); // Passar o e-mail do usuário como payer_email
+            if (!preapprovalPlanId) {
+                message.error('ID de plano de aprovação prévia não encontrado. Por favor, tente novamente mais tarde.');
+                return;
+            }
+
+            // Dados que serão enviados para a API
+            const paymentData = {
+                payment_type: 'mensal',
+                payment_email: username, // ou o e-mail do usuário autenticado
+                service_id: selectedService.serviceId, // ou outro identificador relevante do serviço
+                payment_confirm: false,
+            };
+
+            try {
+                // Enviando dados de pagamento para a API
+                const response = await fetch(`${BASE_URL}/companies/updatePaymentInfo`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${authToken}`,
+                    },
+                    body: JSON.stringify(paymentData),
+                });
+
+                const responseData = await response.json();
+
+                if (response.ok) {
+                    // Se a atualização foi bem-sucedida, redireciona para o pagamento mensal
+                    const monthlyPaymentUrl = `https://www.mercadopago.com/mlb/debits/new?preapproval_plan_id=${preapprovalPlanId}`;
+                    window.location.href = monthlyPaymentUrl;
+                } else {
+                    // Lidar com erros na atualização de informações de pagamento
+                    message.error(`Erro ao atualizar informações de pagamento: ${responseData.error || 'Erro desconhecido'}`);
+                }
+            } catch (error) {
+                console.error('Erro ao enviar dados de pagamento:', error);
+                message.error('Erro ao enviar informações de pagamento.');
+            }
         } else {
+            // Processo para outros tipos de pagamento (ex: anual)
+            const details = {
+                title: `Plano ${serviceDetails.plan}`,
+                unit_price: type === 'anual' ? serviceDetails.anualPrice : serviceDetails.monthlyPrice,
+                description: `Plano ${serviceDetails.plan} - ${type === 'anual' ? 'Anual' : 'Mensal'}`
+            };
+            setPaymentType(type);
+            setLoading(true);
             createPreference(details);
         }
     };
+
 
 
     const calculateAnualSavings = () => {
@@ -215,37 +291,6 @@ const AuthModal = ({ isVisible, onClose, onLoginSuccess, selectedService }) => {
         },
     }
 
-    const handleMonthlySubscription = async (itemDetails, payer_email) => {
-        setLoading(true);
-
-        try {
-            const authToken = localStorage.getItem('authToken');
-            const response = await fetch(`${BASE_URL}/monthly_payment`, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${authToken}`,
-                },
-                body: JSON.stringify({
-                    amount: itemDetails.unit_price,
-                    payer_email // Incluir o e-mail do pagador na solicitação
-                }),
-            });
-
-            const data = await response.json();
-            if (response.ok) {
-                // Tratar a resposta. Talvez salvar o ID da assinatura e redirecionar o usuário para a página de sucesso
-            } else {
-                message.error(`Erro: ${data.error}`);
-            }
-        } catch (error) {
-            console.error('Erro ao criar assinatura mensal:', error);
-            message.error('Erro ao enviar informações para assinatura.');
-        }
-        setLoading(false);
-    };
-
-
     const renderContent = () => {
         if (!isLoggedIn) {
             return (
@@ -254,10 +299,23 @@ const AuthModal = ({ isVisible, onClose, onLoginSuccess, selectedService }) => {
                         <Input
                             type="email"
                             value={username}
-                            onChange={(e) => setUsername(e.target.value)}
+                            onChange={handleEmailChange}
                             placeholder="Insira seu Email"
                             required
                         />
+                        {emailSuggestions.length > 0 && (
+                            <div style={{ marginTop: '0.5rem', background: '#f7f7f7', padding: '0.5rem' }}>
+                                {emailSuggestions.map((suggestion, index) => (
+                                    <div
+                                        key={index}
+                                        style={{ cursor: 'pointer', padding: '0.5rem' }}
+                                        onClick={() => selectSuggestion(suggestion)}
+                                    >
+                                        {suggestion}
+                                    </div>
+                                ))}
+                            </div>
+                        )}
                         {isUserExist && (
                             <>
                                 <Input
@@ -328,6 +386,7 @@ const AuthModal = ({ isVisible, onClose, onLoginSuccess, selectedService }) => {
                     )}
                     <StyledTextCard>
                         <p>Ao clicar em Pagar você será redirecionado para o ambiente seguro do Mercado Pago, o valor a ser pago no plano anual será  R$ {serviceDetails.anualPrice} e pode ser parcelado...</p>
+                        <p>Utilize o mesmo e-mail logado no pagamento !</p>
                     </StyledTextCard>
                     <Button
                         style={{ textAlign: 'center', width: '100%', marginTop: '1rem' }}
@@ -342,15 +401,34 @@ const AuthModal = ({ isVisible, onClose, onLoginSuccess, selectedService }) => {
 
 
     return (
-        <Modal
-            title="Cadastre-se / Entrar"
-            visible={isVisible}
-            onCancel={onClose}
-            footer={null}
-        >
-            <p>Plano {selectedService.servicePlan}</p>
-            {isLoading ? <Spin size="large" /> : renderContent()}
-        </Modal>
+        <>
+
+            <Modal
+                title="Cadastre-se / Entrar"
+                visible={isVisible}
+                onCancel={onClose}
+                footer={null}
+            >
+                <p>Plano {selectedService.servicePlan}</p>
+                <div style={{ textAlign: 'center' }}>
+                    {isLoading ? <Spin size="large" /> : renderContent()}
+                </div>
+            </Modal>
+            <Modal
+                title="Teste Grátis 😮"
+                visible={showTrialModal}
+                onCancel={() => setShowTrialModal(false)}
+                footer={null}
+            >
+                <p>Seu e-mail não existe em nosso cadastro, por favor faça seu cadastro e aproveite 7 dias grátis para testar o Marquei !</p>
+                <Button
+                    style={{ textAlign: 'center', width: '100%', marginTop: '1rem' }}
+                    type="primary" onClick={handleFreeTrial}>
+                    Testar Grátis Por 7 Dias 😃
+                </Button>
+            </Modal>
+        </>
+
     );
 };
 

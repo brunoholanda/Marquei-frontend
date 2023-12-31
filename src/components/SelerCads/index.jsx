@@ -22,6 +22,8 @@ const PlanCard = ({ maxProfessionals }) => {
       servicePlan: service.plan,
       servicePrice: service.price,
       serviceId: service.id, // Assuming each service has a unique 'id' property
+      service_link: service.preapproval_plan_id,
+      
     });
 
     // Show the authentication modal
