@@ -17,12 +17,23 @@
             margin-bottom: .5rem;
         }
 
+        span {
+            text-decoration: none;
+            color: var(--branco);
+            margin-bottom: .5rem;
+        }
+
         h3 {
-            color: var(--branci);
+            color: var(--branco);
         }
 
         a:hover {
             color: var(--gold-black);
+        }
+
+        span:hover {
+            color: var(--gold-black);
+            cursor: pointer;
         }
     }
 

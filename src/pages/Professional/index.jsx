@@ -12,6 +12,7 @@ import ControleAgenda from './ControleAgenda';
 import PlanCard from 'components/SelerCads';
 import MyPlan from './MyPlan';
 import ReactJoyride from 'react-joyride';
+import TrackingPage from 'pages/TrackingPage';
 
 function Configs() {
     const [isModalVisible, setIsModalVisible] = useState(false);
@@ -269,13 +270,16 @@ function Configs() {
                         <Table dataSource={professionals} columns={columns} rowKey="id" />
                     )}
                 </TabPane>
-                <TabPane tab="Controle da Agenda " key="2">
+                <TabPane tab="Controle da Agenda" key="2">
                     <ControleAgenda />
                 </TabPane>
-                <TabPane tab="Dados da Empresa " key="3">
+                <TabPane tab="Dados da Empresa" key="3">
                     <CompanyData />
                 </TabPane>
-                <TabPane tab="Meu Plano " key="4">
+                <TabPane tab="Chamados" key="4">
+                    <TrackingPage />
+                </TabPane>
+                <TabPane tab="Meu Plano" key="5">
                     <MyPlan />
                 </TabPane>
             </Tabs>
