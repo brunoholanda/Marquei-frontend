@@ -4,6 +4,7 @@ import styles from './PageBody.module.scss';
 import Sidebar from 'components/Sidebar';
 import CalledModal from 'components/Modals/calledModal';
 import RecommendationModal from 'components/Modals/recommendationModal';
+import FreeMonthlyModal from 'components/Modals/freeMonthlyModal';
 
 export default function PageBodySystem() {
     return (
@@ -21,6 +22,7 @@ export default function PageBodySystem() {
 function Footer() {
     const [showCalledModal, setShowCalledModal] = useState(false);
     const [showRecommentationModal, setShowRecommentationModal] = useState(false);
+    const [showMonthlyModal, setShowMonthlyModal] = useState(false);
 
     const handleOpenCalled = () => {
         setShowCalledModal(true);
@@ -28,6 +30,10 @@ function Footer() {
 
     const handleOpenRecommentation = () => {
         setShowRecommentationModal(true);
+    };
+
+    const handleOpenMonthly = () => {
+        setShowMonthlyModal(true);
     };
 
     return (
@@ -49,19 +55,19 @@ function Footer() {
                     <span onClick={handleOpenRecommentation} className={styles.link}>
                         Indique a um amigo !
                     </span>
-                    <Link to="/cadastro">
+                    <span onClick={handleOpenMonthly} className={styles.link}>
                         Mensalidade Gratis
-                    </Link>
+                    </span>
                 </div>
             </div>
             <div className={styles.footer__topicos}>
                 <h3>Suporte</h3>
                 <div className={styles.link}>
-                    <Link to="/servicos/clinico">
+                    <Link to="/ajuda">
                         Central de ajuda
                     </Link>
                     <span onClick={handleOpenCalled} className={styles.link}>
-                        Abra um chamado
+                        Relate um problema
                     </span>
                 </div>
             </div>
@@ -72,6 +78,10 @@ function Footer() {
             <RecommendationModal
                 modalRecommendationisVisible={showRecommentationModal}
                 modalRecommendationisClose={() => setShowRecommentationModal(false)}
+            />
+            <FreeMonthlyModal
+                freeMonthlyModalisVisible={showMonthlyModal}
+                freeMonthlyModalisClose={() => setShowMonthlyModal(false)}
             />
         </div>
     )

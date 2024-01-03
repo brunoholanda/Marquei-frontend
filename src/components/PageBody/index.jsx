@@ -67,7 +67,7 @@ function Footer() {
             <div className={styles.footer__topicos}>
                 <h3>Ajuda</h3>
                 <div className={styles.link}>
-                    <Link to="/servicos/clinico">
+                    <Link to="/ajuda">
                         Central de ajuda
                     </Link>
                     <Link to="/servicos/canal">
