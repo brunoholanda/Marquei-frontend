@@ -71,11 +71,11 @@ const CalendarView = ({ events, onEventClick }) => {
 
 
     const eventStyleGetter = (event, start, end, isSelected) => {
-        let backgroundColor = '#EEAD2D';
+        let backgroundColor = '#FFD700	';
         if (event.status === 2) {
-            backgroundColor = 'red';
+            backgroundColor = '#FF4500		';
         } else if (event.status === 1) {
-            backgroundColor = 'green';
+            backgroundColor = '#00CED1	';
         }
 
         const style = {
@@ -138,7 +138,7 @@ const CalendarView = ({ events, onEventClick }) => {
                 </Button>
                 </div>
                 <div className="calendar-controls">
-                    <Button  type="primary" danger onClick={() => setModalAgendarVisible(true)}>
+                    <Button  type="primary" onClick={() => setModalAgendarVisible(true)}>
                         <PlusOutlined /> Novo Agendamento
                     </Button>
                     <ScheduleModal

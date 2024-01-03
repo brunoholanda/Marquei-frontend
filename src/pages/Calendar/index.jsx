@@ -97,11 +97,11 @@ const CalendarPage = () => {
     };
 
     const eventStyleGetter = (event, start, end, isSelected) => {
-        let backgroundColor = '#EEAD2D';
+        let backgroundColor = '#FFD700	';
         if (event.status === 2) {
-            backgroundColor = 'red';
+            backgroundColor = '#C71585	';
         } else if (event.status === 1) {
-            backgroundColor = 'green';
+            backgroundColor = '#00CED1	';
         }
 
         const style = {

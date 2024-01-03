@@ -190,9 +190,9 @@ const DashboardPanel = () => {
 
     useEffect(() => {
         const updatedData = [
-            { name: 'Confirmados', uv: appointmentData.confirmed, fill: '#7B68EE' },
-            { name: 'Cancelados', uv: appointmentData.cancelled, fill: '#DC143C' },
-            { name: 'A Confirmar', uv: appointmentData.toConfirm, fill: '#DAA520	' },
+            { name: 'Confirmados', uv: appointmentData.confirmed, fill: '#00CED1' },
+            { name: 'Cancelados', uv: appointmentData.cancelled, fill: '#FF4500' },
+            { name: 'A Confirmar', uv: appointmentData.toConfirm, fill: '#FFD700	' },
         ];
 
         setDataForChart(updatedData);

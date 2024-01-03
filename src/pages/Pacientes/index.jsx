@@ -14,7 +14,24 @@ const Pacientes = () => {
     const [selectedClient] = useState(null);
     const [setAppointmentHistory] = useState([]);
     const [initialLoad, setInitialLoad] = useState(true);
+    const [nomeConsultorio, setNomeConsultorio] = useState('');
 
+    useEffect(() => {
+        const fetchNomeConsultorio = async () => {
+            const companyID = localStorage.getItem('companyID');
+            if (companyID) {
+                try {
+                    const response = await api.get(`/companies/${companyID}`);
+                    setNomeConsultorio(response.data.nome);
+                } catch (error) {
+                    console.error('Erro ao buscar nome do consultório:', error);
+                    showNotification('error', 'Erro ao buscar nome do consultório.');
+                }
+            }
+        };
+
+        fetchNomeConsultorio();
+    }, []);
 
     const navigate = useNavigate();
 
@@ -64,6 +81,13 @@ const Pacientes = () => {
         navigate(`/client-details/${clienteId}`, { state: { from: 'Pacientes' } });
     };
 
+    const getSaudacao = () => {
+        const hora = new Date().getHours();
+        if (hora >= 0 && hora < 12) return "bom dia";
+        if (hora >= 12 && hora < 18) return "boa tarde";
+        return "boa noite";
+    };
+
     const columns = [
         {
             title: 'Nome',
@@ -90,22 +114,27 @@ const Pacientes = () => {
         {
             title: 'Ação',
             key: 'action',
-            render: (text, record) => (
-                <span>
-                    <Button type='primary' onClick={() => handleViewDetails(record.id)}><EyeOutlined />Detalhes</Button>
-                    <Button
-                        key={`whatsapp-${record.id}`}
-                        className="button-whats modal-btn"
-                        onClick={() => {
-                            const message = `Oi, sou do consultório ...`;
-                            const phoneNumber = record.celular.replace(/[^0-9]/g, "");
-                            window.open(`https://api.whatsapp.com/send?phone=+55${phoneNumber}&text=${encodeURIComponent(message)}`, '_blank');
-                        }}
-                    >
-                        <WhatsAppOutlined /> Conversar
-                    </Button>
-                </span>
-            ),
+            render: (text, record) => {
+                const primeiroNome = record.nome.split(" ")[0]; 
+                const saudacao = getSaudacao(); 
+                const mensagem = `Oi, ${primeiroNome} ${saudacao}, sou do consultório ${nomeConsultorio}, tudo bem?`;
+
+                return (
+                    <div style={{ display: 'flex', justifyContent: 'space-between', width: 'fit-content', alignItems: 'center'}}>
+                        <Button type='primary' onClick={() => handleViewDetails(record.id)}><EyeOutlined />Detalhes</Button>
+                        <Button
+                            key={`whatsapp-${record.id}`}
+                            className="button-whats modal-btn"
+                            onClick={() => {
+                                const phoneNumber = record.celular.replace(/[^0-9]/g, "");
+                                window.open(`https://api.whatsapp.com/send?phone=+55${phoneNumber}&text=${encodeURIComponent(mensagem)}`, '_blank');
+                            }}
+                        >
+                            <WhatsAppOutlined /> Conversar
+                        </Button>
+                    </div>
+                );
+            },
         },
     ];
 

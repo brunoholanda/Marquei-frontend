@@ -6,6 +6,7 @@ import { useLocation, useNavigate } from 'react-router-dom';
 import { Wallet, initMercadoPago } from '@mercadopago/sdk-react';
 import { StyledPlanCard, StyledPlanContainer, StyledTextCard } from './Styles';
 import api from '../../components/api/api';
+import { WarningOutlined } from '@ant-design/icons';
 
 const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 const commonDomains = ["gmail.com", "yahoo.com", "hotmail.com", "outlook.com", "live.com"];
@@ -300,7 +301,7 @@ const AuthModal = ({ isVisible, onClose, onLoginSuccess, selectedService }) => {
                             type="email"
                             value={username}
                             onChange={handleEmailChange}
-                            placeholder="Insira seu Email"
+                            placeholder="Insira seu E-mail"
                             required
                         />
                         {emailSuggestions.length > 0 && (
@@ -363,6 +364,7 @@ const AuthModal = ({ isVisible, onClose, onLoginSuccess, selectedService }) => {
                             <div>{serviceDetails.persons} profissional(is) teram acesso a plataforma</div>
                         </StyledPlanCard>
                     </StyledPlanContainer>
+                    <p><WarningOutlined /> Ao pagar utilize o mesmo e-mail logado !</p>
                 </div>
             );
         } else {
@@ -385,7 +387,7 @@ const AuthModal = ({ isVisible, onClose, onLoginSuccess, selectedService }) => {
                         )
                     )}
                     <StyledTextCard>
-                        <p>Ao clicar em Pagar você será redirecionado para o ambiente seguro do Mercado Pago, o valor a ser pago no plano anual será  R$ {serviceDetails.anualPrice} e pode ser parcelado...</p>
+                        <p>Ao clicar em Pagar você será redirecionado para o ambiente seguro do Mercado Pago, o valor a ser pago no plano anual será  <b>R$ {serviceDetails.anualPrice}</b> e pode ser parcelado*</p>
                         <p>Utilize o mesmo e-mail logado no pagamento !</p>
                     </StyledTextCard>
                     <Button

@@ -33,8 +33,8 @@ const RecommendationModal = ({ modalRecommendationisVisible, modalRecommendation
             setInputName('');
             setInputPhone('');
 
-            modalRecommendationisClose(); // Fechar o modal de indicação
-            setIsSuccessModalVisible(true); // Abrir o modal de sucesso
+            modalRecommendationisClose(); 
+            setIsSuccessModalVisible(true); 
         } catch (error) {
             message.error(error.response?.data?.message || 'Ocorreu um erro ao enviar os dados!');
         } finally {
@@ -60,7 +60,6 @@ const RecommendationModal = ({ modalRecommendationisVisible, modalRecommendation
                     style={{ width: '100%' }}
                     onChange={(value) => setSelectedOption(value)}
                     value={selectedOption}
-
                 >
                     <Option value="medico">Médico</Option>
                     <Option value="dentista">Dentista</Option>
