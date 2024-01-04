@@ -16,6 +16,7 @@ import {
 import { Link, useNavigate } from 'react-router-dom';
 import { Layout, Menu, theme } from 'antd';
 import ReactJoyride from 'react-joyride';
+import './Sidebar.css';
 
 const { Header, Sider } = Layout;
 
@@ -29,6 +30,8 @@ function getItem(label, key, icon, children, url) {
 }
 
 const Sidebar = () => {
+  const [isMobile, setIsMobile] = useState(window.innerWidth < 768);
+
   const [runTutorial, setRunTutorial] = useState(false);
   const [steps, setSteps] = useState([
     {
@@ -45,6 +48,29 @@ const Sidebar = () => {
     }
   }, []);
 
+  useEffect(() => {
+    const handleResize = () => {
+      const currentIsMobile = window.innerWidth < 768;
+      setIsMobile(currentIsMobile);
+
+      // Colapsa a sidebar automaticamente em dispositivos móveis
+      if (currentIsMobile) {
+        setCollapsed(true);
+      }
+    };
+
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
+
+  const toggleCollapsed = () => {
+    // Permite a alteração apenas se não estiver em um dispositivo móvel
+    if (!isMobile) {
+      setCollapsed(!collapsed);
+    }
+  };
+
+
   const handleJoyrideCallback = (data) => {
     const { status } = data;
     if (status === 'finished' || status === 'skipped') {
@@ -53,7 +79,7 @@ const Sidebar = () => {
   };
 
 
-  const [collapsed, setCollapsed] = useState(false);
+  const [collapsed, setCollapsed] = useState(isMobile);
   const navigate = useNavigate();
   const {
     token: { colorBgContainer },
@@ -100,7 +126,13 @@ const Sidebar = () => {
 
   return (
     <Layout style={{ minHeight: '100vh' }}>
-      <Sider collapsible collapsed={collapsed} onCollapse={setCollapsed}>
+      <Sider
+        collapsible={!isMobile} 
+        collapsed={collapsed}
+        onCollapse={setCollapsed}
+        className="sidebar" // Assegure-se de que esta classe corresponda à classe definida no arquivo CSS
+
+      >
         <div className="demo-logo-vertical" />
         <Menu
           theme="dark"
@@ -110,6 +142,12 @@ const Sidebar = () => {
           onClick={onMenuClick}
           className="custom-menu" // Adicione uma classe personalizada ao Menu
         />
+        {!isMobile && (
+
+          <div onClick={toggleCollapsed}> {/* Estilize conforme necessário */}
+            {collapsed ? 'Expandir' : 'Colapsar'}
+          </div>
+        )}
       </Sider>
       <Layout>
         <Header style={{ padding: 0, background: colorBgContainer }} />

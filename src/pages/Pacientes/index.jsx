@@ -34,7 +34,6 @@ const Pacientes = () => {
     }, []);
 
     const navigate = useNavigate();
-
     const showNotification = (type, message) => {
         notification[type]({
             message: message,

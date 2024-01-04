@@ -1,43 +1,62 @@
 .sidebar {
     width: 250px; /* Largura do menu */
-    background-color: #f4f4f4; /* Cor de fundo do menu */
-    height: 100%; /* Altura para ocupar a coluna inteira */
+    background-color: #f4f4f4; 
+    height: 100%; 
   }
   
   .sidebar-list {
-    list-style: none; /* Remove estilos de lista padrão */
+    list-style: none; 
     padding: 0;
     margin: 0;
   }
   
   .sidebar-list-item {
-    display: flex; /* Para alinhar ícones e texto */
-    align-items: center; /* Centraliza verticalmente */
-    padding: 10px; /* Espaçamento interno */
+    display: flex;
+    align-items: center; 
+    padding: 10px; 
   }
   
   .icon {
-    margin-right: 10px; /* Espaço entre ícone e texto */
+    margin-right: 10px; 
     display: block;
-    width: 24px; /* Largura do ícone */
-    text-align: center; /* Centraliza o ícone/texto dentro do espaço */
+    width: 24px; 
+    text-align: center; 
   }
   
   .text {
-    display: none; /* Esconder texto por padrão */
-    /* Adicione uma classe adicional quando o menu for expandido para exibir o texto */
+    display: none; 
   }
   
-  /* Quando o menu for expandido, mostre o texto */
   
-  /* Estilos CSS personalizados para centralizar o ícone e ajustar o background */
-.custom-menu .ant-menu-item {
-  display: flex;
-  align-items: center;
-  background-color: #e6e6e6; /* Cor de fundo personalizada */
-  padding: 10px 20px; /* Espaçamento personalizado */
+.custom-menu .anticon {
+  margin-right: 10px;
 }
 
-.custom-menu .anticon {
-  margin-right: 10px; /* Espaçamento à direita do ícone */
+@media (max-width: 768px) {
+  .sidebar {
+    width: 40px; /* Reduz a largura da sidebar para dispositivos móveis */
+  }
+  .custom-menu {
+    width: 40px; 
+  }
+
+  .icon {
+    width: 16px;
+  }
+
+  .custom-menu {
+    width: 30px;
+  }
+
+  .ant-layout-sider {
+    width: 40px !important; /* Largura desejada para dispositivos móveis */
+    flex: 0 0 80px !important; /* Flex shorthand para 'flex-grow', 'flex-shrink' e 'flex-basis' */
+    max-width: 40px !important; /* Largura máxima para dispositivos móveis */
+    min-width: 40px !important; /* Largura mínima para dispositivos móveis */
+  }
+
+  .ant-layout-sider .anticon {
+    font-size: 18px !important; /* Reduzir o tamanho do ícone */
+  }
+
 }
