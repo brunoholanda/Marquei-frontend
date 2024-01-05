@@ -10,6 +10,9 @@ import { DashboardOutlined } from '@ant-design/icons';
 const { Option } = Select;
 
 const DashboardPanel = () => {
+    const isMobile = window.innerWidth < 768;
+    const chartSize = isMobile ? { width: 280, height: 250 } : { width: 530, height: 300 };
+
     const [timeFilter, setTimeFilter] = useState('Esta semana');
     const [dataForChart, setDataForChart] = useState([]);
     const [selectedMonth, setSelectedMonth] = useState(new Date().getMonth() + 1); // Mês atual por padrão
@@ -108,10 +111,10 @@ const DashboardPanel = () => {
                     // Filtrar por mês selecionado, se aplicável
                     if (viewOtherMonths) {
                         filteredAppointments = filteredAppointments.filter(appointment => {
-                          const appointmentDate = parseDate(appointment.data);
-                          return (appointmentDate.getMonth() + 1) === selectedMonth && appointmentDate.getFullYear() === selectedYear;
+                            const appointmentDate = parseDate(appointment.data);
+                            return (appointmentDate.getMonth() + 1) === selectedMonth && appointmentDate.getFullYear() === selectedYear;
                         });
-                      } else {
+                    } else {
                         // Filtrar por tempo (semana, 15 dias, último mês), independente do mês
                         const startDate = getStartDate(timeFilter);
                         if (startDate) {
@@ -202,7 +205,7 @@ const DashboardPanel = () => {
     return (
         <div>
             <div className='dashboard'>
-            <h1>Gestão e Acompanhamento <DashboardOutlined/></h1>
+                <h1>Gestão e Acompanhamento <DashboardOutlined /></h1>
                 <div className='dashboard-buttons'>
                     <Button
                         type={timeFilter === 'Esta semana' ? 'primary' : 'default'}
@@ -282,10 +285,10 @@ const DashboardPanel = () => {
                 <Row gutter={16}>
                     <Col xs={24} md={12}>
                         <Card title="Status dos atendimentos">
-                            <div className="chartContainer" style={{ marginLeft: '0', paddingLeft: '0' }}>
+                            <div className="chartContainer" style={{ margin: isMobile ? '0 auto' : '0' }}>
                                 <RadialBarChart
-                                    width={530}
-                                    height={300}
+                                    width={chartSize.width}
+                                    height={chartSize.height}
                                     innerRadius="20%"
                                     outerRadius="90%"
                                     data={dataForChart}
@@ -293,17 +296,25 @@ const DashboardPanel = () => {
                                     endAngle={0}
                                 >
                                     <RadialBar minAngle={15} label={{ position: 'insideStart', fill: '#fff' }} background clockWise={true} dataKey='uv' />
-                                    <Legend iconSize={10} width={120} height={140} layout='vertical' verticalAlign='middle' wrapperStyle={{ top: 0, left: 20, lineHeight: '24px' }} />
+                                    <Legend
+                                        iconSize={10}
+                                        width={120}
+                                        height={140}
+                                        layout='vertical'
+                                        verticalAlign='middle'
+                                        wrapperStyle={{ top: 0, left: isMobile ? 0 : 20, lineHeight: '24px' }}
+                                        className={isMobile ? "legend-mobile" : ""}
+                                    />
                                 </RadialBarChart>
                             </div>
                         </Card>
                     </Col>
                     <Col xs={24} md={12}>
                         <Card title="Particular x Convenio">
-                            <div className="chartContainer">
+                            <div className="chartContainer" style={{ margin: isMobile ? '0 auto' : '0' }}>
                                 <RadialBarChart
-                                    width={520}
-                                    height={300}
+                                    width={chartSize.width}
+                                    height={chartSize.height}
                                     innerRadius="20%"
                                     outerRadius="90%"
                                     data={[
@@ -314,7 +325,15 @@ const DashboardPanel = () => {
                                     endAngle={0}
                                 >
                                     <RadialBar minAngle={15} label={{ position: 'insideStart', fill: '#fff' }} background clockWise={true} dataKey='uv' />
-                                    <Legend iconSize={10} width={120} height={140} layout='vertical' verticalAlign='middle' wrapperStyle={{ top: 0, left: 20, lineHeight: '24px' }} />
+                                    <Legend
+                                        iconSize={10}
+                                        width={120}
+                                        height={140}
+                                        layout='vertical'
+                                        verticalAlign='middle'
+                                        wrapperStyle={{ top: 0, left: isMobile ? 0 : 20, lineHeight: '24px' }}
+                                        className={isMobile ? "legend-mobile" : ""}
+                                    />
                                 </RadialBarChart>
                             </div>
                         </Card>

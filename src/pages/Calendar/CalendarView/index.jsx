@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Calendar, momentLocalizer } from 'react-big-calendar';
 import moment from 'moment';
 import 'moment/locale/pt-br';
@@ -46,7 +46,9 @@ const CustomTooltip = ({ appointment, onConfirm }) => {
 
 
 const CalendarView = ({ events, onEventClick }) => {
-    const [view, setView] = useState('work_week');
+    const [isMobile, setIsMobile] = useState(window.innerWidth < 768);
+
+    const [view, setView] = useState(isMobile ? 'day' : 'work_week');
     const [isModalAgendarVisible, setModalAgendarVisible] = useState(false);
 
     const showWorkWeek = () => setView('work_week');
@@ -99,29 +101,50 @@ const CalendarView = ({ events, onEventClick }) => {
     );
 
 
+    useEffect(() => {
+        function handleResize() {
+            const mobile = window.innerWidth < 768;
+            setIsMobile(mobile);
+            if (mobile) {
+                setView('day'); 
+            }
+        }
 
-
+        window.addEventListener('resize', handleResize);
+        return () => window.removeEventListener('resize', handleResize);
+    }, []);
     return (
         <div style={{ height: 1300 }}>
             <div className="calendar-controls">
-                <Button
-                    type={view === 'work_week' ? 'primary' : 'default'}
-                    onClick={showWorkWeek}
-                >
-                    Dias Úteis
-                </Button>
-                <Button
-                    type={view === 'week' ? 'primary' : 'default'}
-                    onClick={showFullWeek}
-                >
-                    Semana Inteira
-                </Button>
-                <Button
-                    type={view === 'day' ? 'primary' : 'default'}
-                    onClick={showToday}
-                >
-                    Dia Atual
-                </Button>
+                {isMobile ? (
+                    <Button
+                        type={view === 'day' ? 'primary' : 'default'}
+                        onClick={() => setView('day')}
+                    >
+                        Dias
+                    </Button>
+                ) : (
+                    <>
+                        <Button
+                            type={view === 'work_week' ? 'primary' : 'default'}
+                            onClick={showWorkWeek}
+                        >
+                            Dias Úteis
+                        </Button>
+                        <Button
+                            type={view === 'week' ? 'primary' : 'default'}
+                            onClick={showFullWeek}
+                        >
+                            Semana Inteira
+                        </Button>
+                        <Button
+                            type={view === 'day' ? 'primary' : 'default'}
+                            onClick={showToday}
+                        >
+                            Dia Atual
+                        </Button>
+                    </>
+                )}
             </div>
             <div className="calendar-controls">
                 <Button
@@ -136,18 +159,18 @@ const CalendarView = ({ events, onEventClick }) => {
                 >
                     Dia Inteiro
                 </Button>
-                </div>
-                <div className="calendar-controls">
-                    <Button  type="primary" onClick={() => setModalAgendarVisible(true)}>
-                        <PlusOutlined /> Novo Agendamento
-                    </Button>
-                    <ScheduleModal
-                        isModalAgendaVisible={isModalAgendarVisible}
-                        handleCancel={() => setModalAgendarVisible(false)}
-                    />
-                </div>
+            </div>
+            <div className="calendar-controls">
+                <Button type="primary" onClick={() => setModalAgendarVisible(true)}>
+                    <PlusOutlined /> Novo Agendamento
+                </Button>
+                <ScheduleModal
+                    isModalAgendaVisible={isModalAgendarVisible}
+                    handleCancel={() => setModalAgendarVisible(false)}
+                />
+            </div>
 
-          
+
             <Calendar
                 localizer={localizer}
                 events={events}
@@ -157,7 +180,7 @@ const CalendarView = ({ events, onEventClick }) => {
                 eventPropGetter={eventStyleGetter}
                 defaultDate={moment().toDate()}
                 view={view}
-                views={['day', 'work_week', 'week']}
+                views={isMobile ? ['day'] : ['day', 'work_week', 'week']} // Configura as vistas disponíveis com base no dispositivo
                 components={{
                     header: CustomHeader,
                     event: ({ event }) => (

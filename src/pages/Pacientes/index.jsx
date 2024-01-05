@@ -9,6 +9,7 @@ import { useNavigate } from 'react-router-dom';
 const { Search } = Input;
 
 const Pacientes = () => {
+    const [isMobile, setIsMobile] = useState(window.innerWidth < 768);
     const [clientes, setClientes] = useState([]);
     const [loading, setLoading] = useState(false);
     const [selectedClient] = useState(null);
@@ -87,40 +88,84 @@ const Pacientes = () => {
         return "boa noite";
     };
 
+    useEffect(() => {
+        const handleResize = () => setIsMobile(window.innerWidth < 768);
+        window.addEventListener('resize', handleResize);
+        return () => window.removeEventListener('resize', handleResize);
+    }, []);
+
+    // Função para truncar o nome
+    const formatName = (name) => {
+        const nameParts = name.split(' ');
+        if (nameParts.length > 3) {
+            return `${nameParts[0]} ${nameParts[1]} ${nameParts[2]}`; // Retorna apenas os três primeiros nomes
+        }
+        return name;
+    };
+
     const columns = [
         {
             title: 'Nome',
             dataIndex: 'nome',
             key: 'nome',
-        },
-        {
-            title: 'CPF',
-            dataIndex: 'cpf',
-            key: 'cpf',
-        },
-        {
-            title: 'Celular',
-            dataIndex: 'celular',
-            key: 'celular',
-        },
-        {
-            title: 'Data de Nascimento',
-            dataIndex: 'data_nascimento',
-            key: 'data_nascimento',
+            render: (text) => isMobile ? formatName(text) : text,
 
-            render: (text) => <span>{new Date(text).toLocaleDateString()}</span>,
         },
-        {
+      
+      
+    ];
+
+    if (!isMobile) {
+        columns.push(
+            {
+                title: 'CPF',
+                dataIndex: 'cpf',
+                key: 'cpf',
+            },
+            {
+                title: 'Celular',
+                dataIndex: 'celular',
+                key: 'celular',
+            },
+            {
+                title: 'Ação',
+                key: 'action',
+                render: (text, record) => {
+                    const primeiroNome = record.nome.split(" ")[0];
+                    const saudacao = getSaudacao();
+                    const mensagem = `Oi, ${primeiroNome} ${saudacao}, sou do consultório ${nomeConsultorio}, tudo bem?`;
+
+                    return (
+                        <div style={{ display: 'flex', justifyContent: 'space-between', width: 'fit-content', alignItems: 'center'}}>
+                            <Button type='primary' onClick={() => handleViewDetails(record.id)}>Detalhes <EyeOutlined /></Button>
+                            <Button
+                                key={`whatsapp-${record.id}`}
+                                className="button-whats modal-btn"
+                                onClick={() => {
+                                    const phoneNumber = record.celular.replace(/[^0-9]/g, "");
+                                    window.open(`https://api.whatsapp.com/send?phone=+55${phoneNumber}&text=${encodeURIComponent(mensagem)}`, '_blank');
+                                }}
+                            >
+                                Conversar <WhatsAppOutlined />
+                            </Button>
+                        </div>
+                    );
+                },
+            }
+        );
+    } else {
+        // Apenas a coluna de ação ajustada para mobile
+        columns.push({
             title: 'Ação',
             key: 'action',
             render: (text, record) => {
-                const primeiroNome = record.nome.split(" ")[0]; 
-                const saudacao = getSaudacao(); 
+                const primeiroNome = record.nome.split(" ")[0];
+                const saudacao = getSaudacao();
                 const mensagem = `Oi, ${primeiroNome} ${saudacao}, sou do consultório ${nomeConsultorio}, tudo bem?`;
-
+    
                 return (
                     <div style={{ display: 'flex', justifyContent: 'space-between', width: 'fit-content', alignItems: 'center'}}>
-                        <Button type='primary' onClick={() => handleViewDetails(record.id)}><EyeOutlined />Detalhes</Button>
+                        <Button type='primary' onClick={() => handleViewDetails(record.id)} icon={<EyeOutlined />}>{!isMobile && 'Detalhes'}</Button>
                         <Button
                             key={`whatsapp-${record.id}`}
                             className="button-whats modal-btn"
@@ -128,14 +173,15 @@ const Pacientes = () => {
                                 const phoneNumber = record.celular.replace(/[^0-9]/g, "");
                                 window.open(`https://api.whatsapp.com/send?phone=+55${phoneNumber}&text=${encodeURIComponent(mensagem)}`, '_blank');
                             }}
-                        >
-                            <WhatsAppOutlined /> Conversar
+                            icon={<WhatsAppOutlined />}>{!isMobile && 'Conversar'}
                         </Button>
                     </div>
                 );
             },
-        },
-    ];
+        });
+    }
+
+
 
     const convertDate = (dateStr) => {
         const parts = dateStr.split("/");
@@ -219,7 +265,7 @@ const Pacientes = () => {
             <Search
                 placeholder="Digite o nome ou CPF"
                 onSearch={onSearch}
-                style={{ width: '50%', marginBottom: 20 }}
+                style={{ width: isMobile ? '100%' : '50%', marginBottom: 20 }}  // Estilo condicional baseado no estado isMobile
             />
             <Table
                 columns={columns}

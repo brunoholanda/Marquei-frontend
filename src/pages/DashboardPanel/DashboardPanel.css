@@ -21,6 +21,7 @@
     justify-content: space-around;
     align-items: center;
     flex-wrap: wrap;
+    margin: 0 2rem;
 }
 
 .chartContainer {
@@ -49,7 +50,19 @@
         margin-bottom: 10px; 
     }
 
-    .chartContainer {
-        height: 250px; 
+    .dashboard-radials {
+        margin: 0 0.5rem;
     }
+
+    .chartContainer {
+        width: 250px;
+        height: 250px; 
+        margin: 0 auto;
+    }
+
+    .legend-mobile {
+        transform: translateX(-50%);
+        left: 50% !important;
+        bottom: -20px !important; 
+      }
 }

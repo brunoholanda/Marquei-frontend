@@ -4,12 +4,10 @@ import {
   ScheduleOutlined,
   LogoutOutlined,
   CalendarOutlined,
-  ControlOutlined,
   DashboardOutlined,
   CalculatorOutlined,
   TeamOutlined,
   BarChartOutlined,
-  IdcardOutlined,
   AppleOutlined,
   SettingOutlined,
 } from '@ant-design/icons';
@@ -38,7 +36,6 @@ const Sidebar = () => {
       target: '.custom-menu .ant-menu-item:nth-child(6)',
       content: 'Clique aqui para acessar as configurações do sistema.',
     },
-    // ...outros passos se necessário
   ]);
 
   useEffect(() => {
@@ -53,7 +50,6 @@ const Sidebar = () => {
       const currentIsMobile = window.innerWidth < 768;
       setIsMobile(currentIsMobile);
 
-      // Colapsa a sidebar automaticamente em dispositivos móveis
       if (currentIsMobile) {
         setCollapsed(true);
       }
@@ -64,7 +60,6 @@ const Sidebar = () => {
   }, []);
 
   const toggleCollapsed = () => {
-    // Permite a alteração apenas se não estiver em um dispositivo móvel
     if (!isMobile) {
       setCollapsed(!collapsed);
     }
@@ -108,11 +103,11 @@ const Sidebar = () => {
   const items = [
     getItem('Calendário', '1', <CalendarOutlined style={{ fontSize: iconSize }} />, null, '/calendario'),
     getItem('DashBoards', '2', <DashboardOutlined style={{ fontSize: iconSize }} />, null, '/painel'),
-    getItem('Agendamentos', '3', <ScheduleOutlined style={{ fontSize: iconSize }} />, null, '/agendamentos'),
-    getItem('Histórico', '4', <HistoryOutlined style={{ fontSize: iconSize }} />, null, '/allagendamentos'),
+    !isMobile && getItem('Agendamentos', '3', <ScheduleOutlined style={{ fontSize: iconSize }} />, null, '/agendamentos'),
+    !isMobile && getItem('Histórico', '4', <HistoryOutlined style={{ fontSize: iconSize }} />, null, '/allagendamentos'),
     getItem('Cleintes', '5', <TeamOutlined style={{ fontSize: iconSize }} />, null, '/clientes'),
     getItem('Configurações', '6', <SettingOutlined style={{ fontSize: iconSize }} />, null, '/configs'),
-    getItem('Estoque', '7', <BarChartOutlined style={{ fontSize: iconSize }} />, null, '/estoque'),
+    !isMobile && getItem('Estoque', '7', <BarChartOutlined style={{ fontSize: iconSize }} />, null, '/estoque'),
     getItem('Contabilidade', '8', <CalculatorOutlined style={{ fontSize: iconSize }} />, null, '/contabilidade'),
     userSpecialties.includes(5) && getItem('Plano Alimentar', '10', <AppleOutlined style={{ fontSize: iconSize }} />, null, '/plano_alimentar'),
     isAuthenticated && getItem('Sair do Sistema', 'logout', <LogoutOutlined style={{ fontSize: iconSize }} />, null, null), // Conditional item
@@ -130,7 +125,7 @@ const Sidebar = () => {
         collapsible={!isMobile} 
         collapsed={collapsed}
         onCollapse={setCollapsed}
-        className="sidebar" // Assegure-se de que esta classe corresponda à classe definida no arquivo CSS
+        className="sidebar"
 
       >
         <div className="demo-logo-vertical" />
@@ -140,11 +135,11 @@ const Sidebar = () => {
           mode="inline"
           items={items}
           onClick={onMenuClick}
-          className="custom-menu" // Adicione uma classe personalizada ao Menu
+          className="custom-menu" 
         />
         {!isMobile && (
 
-          <div onClick={toggleCollapsed}> {/* Estilize conforme necessário */}
+          <div onClick={toggleCollapsed}>
             {collapsed ? 'Expandir' : 'Colapsar'}
           </div>
         )}

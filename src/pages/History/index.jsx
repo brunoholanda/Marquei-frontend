@@ -2,8 +2,9 @@ import React, { useState, useEffect } from 'react';
 import { Button, Input, Table, Tooltip, message } from 'antd';
 import api from 'components/api/api';
 import { CheckCircleOutlined, CloseCircleOutlined, ExclamationCircleOutlined, HistoryOutlined, SearchOutlined, WarningFilled } from '@ant-design/icons';
-
+import './History.module.css';
 const AllAppointments = () => {
+    const [isMobile, setIsMobile] = useState(window.innerWidth < 768);
     const [appointments, setAppointments] = useState([]);
     const [loading, setLoading] = useState(false);
     const [filteredAppointments, setFilteredAppointments] = useState([]);
@@ -60,46 +61,49 @@ const AllAppointments = () => {
         fetchAllAppointments(); // Chama na montagem do componente
     }, []);
 
-    const columns = [
-        {
-            title: 'Nome',
-            dataIndex: 'nome',
-            key: 'nome',
-            filterDropdown: ({ setSelectedKeys, selectedKeys, confirm, clearFilters }) => (
-                <div style={{ padding: 8 }}>
-                    <Input
-                        ref={node => { searchInput = node; }}  // Adicione esta linha
-                        placeholder={`Pesquisar nome`}
-                        value={selectedKeys[0]}
-                        onChange={e => setSelectedKeys(e.target.value ? [e.target.value] : [])}
-                        onPressEnter={() => handleSearch(selectedKeys, confirm)}
-                        style={{ marginBottom: 8, display: 'block' }}
-                    />
-                    <Button
-                        type="primary"
-                        onClick={() => handleSearch(selectedKeys, confirm)}
-                        size="small"
-                        style={{ width: 90, marginRight: 8 }}
-                    >
-                        Pesquisar
-                    </Button>
-                    <Button onClick={() => handleReset(clearFilters)} size="small" style={{ width: 90 }}>
-                        Resetar
-                    </Button>
-                </div>
-            ),
-            filterIcon: filtered => <SearchOutlined style={{ color: filtered ? '#1890ff' : undefined }} />,
-            onFilter: (value, record) => record.nome.toLowerCase().includes(value.toLowerCase()),
-            onFilterDropdownVisibleChange: visible => {
-                if (visible) {
-                    setTimeout(() => searchInput.select(), 100);
-                }
-            },
-        },
+    useEffect(() => {
+        const handleResize = () => setIsMobile(window.innerWidth < 768);
+        window.addEventListener('resize', handleResize);
+        return () => window.removeEventListener('resize', handleResize);
+    }, []);
 
+    const formatName = (name) => {
+        const nameParts = name.split(' ');
+        if (nameParts.length > 2) {
+            return `${nameParts[0]} ${nameParts[1]}`; // Retorna apenas os dois primeiros nomes
+        }
+        return name;
+    };
+
+    const commonColumns = [
+        {
+          title: 'Nome',
+          dataIndex: 'nome',
+          key: 'nome',
+          render: (text) => isMobile ? formatName(text) : text,
+        },
+        {
+          title: 'Data',
+          dataIndex: 'data',
+          key: 'data',
+        },
+        {
+            title: 'Horário',
+            dataIndex: 'horario',
+            key: 'horario',
+        },
+        {
+          title: 'Contato',
+          dataIndex: 'celular',
+          key: 'celular',
+        },
+      ];
+      
+
+    const desktopColumns  = [
         {
             title: 'Status',
-            dataIndex: 'status', // nome da nova coluna
+            dataIndex: 'status',
             key: 'status',
             render: status => (
                 <Tooltip title={status === null ? "Pendente" : status === 1 ? "Confirmado" : "Cancelado"}>
@@ -114,20 +118,11 @@ const AllAppointments = () => {
             dataIndex: 'data',
             key: 'data',
         },
-        {
-            title: 'Horário',
-            dataIndex: 'horario',
-            key: 'horario',
-        },
+
         {
             title: 'Convenio',
             dataIndex: 'planodental',
             key: 'planoDental',
-        },
-        {
-            title: 'Contato',
-            dataIndex: 'celular',
-            key: 'celular',
         },
         {
             title: 'Motivo',
@@ -170,6 +165,9 @@ const AllAppointments = () => {
             },
         },
     ];
+
+    const columns = isMobile ? commonColumns : [...commonColumns, ...desktopColumns];
+
 
     return (
         <div className='tabela'>

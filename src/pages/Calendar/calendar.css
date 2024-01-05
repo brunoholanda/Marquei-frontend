@@ -2,26 +2,26 @@
     margin: 1rem 4rem;
 }
 
-.calendario  h1 {
-   color: var(--cinza-texto);
+.calendario h1 {
+    color: var(--cinza-texto);
 }
 
 .status-indicators {
     display: flex;
     align-items: center;
     gap: 10px;
-    margin-bottom: 1rem ;
+    margin-bottom: 1rem;
 }
 
 .indicator {
     display: flex;
     align-items: center;
-    gap: 5px; 
+    gap: 5px;
 }
 
 .square {
     width: 20px;
-    height: 20px; 
+    height: 20px;
     border-radius: 6px;
 }
 
@@ -30,7 +30,7 @@
 }
 
 .red {
-    background-color: #FF4500	;
+    background-color: #FF4500;
 }
 
 .green {
@@ -40,16 +40,16 @@
 
 .rbc-header {
     font-weight: bold;
-    font-size: 16px; 
-    height: 30px; 
-    line-height: 30px; 
+    font-size: 16px;
+    height: 30px;
+    line-height: 30px;
 
 
 }
 
 .rbc-date-cell {
     font-weight: bold;
-    font-size: 16px; 
+    font-size: 16px;
 }
 
 .custom-tooltip {
@@ -73,3 +73,40 @@
     margin-bottom: .3rem;
 }
 
+@media (max-width: 768px) {
+    .calendario {
+        margin: 1rem 1rem;
+        text-align: center;
+    }
+
+    .calendario h1 {
+        margin-top: 2.5rem;
+        font-size: 20px;
+    }
+
+    .calendario p {
+        font-size: 12px;
+    }
+
+    .status-indicators {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+
+    .indicator {
+        font-size: 13px;
+    }
+
+    .square {
+        width: 15px;
+        height: 15px;
+        border-radius: 4px;
+    }
+
+    .rbc-toolbar-label {
+        margin-top: 1rem;
+    }
+
+    
+}

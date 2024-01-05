@@ -161,6 +161,7 @@ const CalendarPage = () => {
                 placeholder="Selecione um profissional"
                 onChange={handleProfessionalChange}
                 value={selectedProfessional}
+                className='calendario-profissional'
             >
                 {professionals.map(professional => (
                     <Select.Option key={professional.id} value={professional.id}>
