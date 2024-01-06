@@ -86,6 +86,7 @@ const TransactionModal = ({ type, isVisible, onClose, onSubmit }) => {
   );
 };
 const Contabilidade = () => {
+  const [isMobile, setIsMobile] = useState(window.innerWidth < 768);
   const [balance, setBalance] = useState(0);
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [modalType, setModalType] = useState('income');
@@ -104,7 +105,7 @@ const Contabilidade = () => {
       fetchTransactionsForMonth(formattedMonth, formattedYear);
     }
   };
-  
+
 
   const fileType = 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;charset=UTF-8';
   const fileExtension = '.xlsx';
@@ -131,6 +132,13 @@ const Contabilidade = () => {
   useEffect(() => {
     fetchBalanceAndTransactions();
   }, []);
+
+  useEffect(() => {
+    const handleResize = () => setIsMobile(window.innerWidth < 768);
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
+
 
   const fetchBalanceAndTransactions = async () => {
     try {
@@ -301,26 +309,12 @@ const Contabilidade = () => {
   }));
 
 
-  return (
-    <div className="contabilidade">
-      <h1>Contabilidade <CalculatorOutlined /></h1>
-      <div className="transaction-buttons">
-        <Button type="primary" onClick={() => openModal('income')}>
-          <PlusCircleOutlined /> Receita
-        </Button>
-        <Button type="primary" danger onClick={() => openModal('expense')}>
-          <MinusCircleOutlined /> Despesa
-        </Button>
-      </div>
-
-      <TransactionModal
-        type={modalType}
-        isVisible={isModalVisible}
-        onClose={closeModal}
-        onSubmit={handleTransactionSubmit}
-      />
-      <Tabs defaultActiveKey="1">
-        <TabPane tab="Resumo do Mês" key="1">
+  const tabList = [
+    {
+      key: '1',
+      tab: isMobile ? 'Resumo' : 'Resumo do Mês',  
+      content: (
+        <>
           <Row gutter={16}>
             <Col xs={24} md={13}>
               <Card title="Resumo do Mês">
@@ -355,9 +349,15 @@ const Contabilidade = () => {
                 </div>
               </Card>
             </Col>
-          </Row>
-        </TabPane>
-        <TabPane tab="Balanço Mensal" key="2">
+          </Row>        </>
+      ),
+    },
+
+    {
+      key: '2',
+      tab: isMobile ? 'Balanço' : 'Balanço Mensal', // Nome da tab ajustado para mobile
+      content: (
+        <>
           <h2>Balanço Mensal 💰</h2>
           <Row gutter={16}>
             <Col span={24}>
@@ -384,10 +384,17 @@ const Contabilidade = () => {
                 </BarChart>
               </ResponsiveContainer>
             </Col>
-          </Row>
-        </TabPane>
-        <TabPane tab="Extrato" key="3">
-            <h2>Selecione a Data Para Ver o Extrato 💲</h2>
+          </Row>        </>
+      ),
+    },
+
+    {
+      key: '3',
+      tab: 'Extrato',
+      content: (
+        <div className="contabilidade_extrato">
+          <h2>Selecione a Data Para Ver o Extrato 💲</h2>
+          <div className="contabilidade_extrato-controls">
             <DatePicker
               picker="month"
               format="MM/YYYY"
@@ -395,9 +402,38 @@ const Contabilidade = () => {
               onChange={handleDateChange}
             />
 
-            <Button style={{ marginLeft: '30px' }} onClick={() => exportToCSV(formattedTransactions, 'extrato_transacoes')}>Exportar para Excel</Button>
-            <Table style={{ marginTop: '30px' }} dataSource={formattedTransactions} columns={columns} />
-        </TabPane>
+            <Button onClick={() => exportToCSV(formattedTransactions, 'extrato_transacoes')}>Exportar para Excel</Button>
+          </div>
+          <Table style={{ marginTop: '30px' }} dataSource={formattedTransactions} columns={columns} />
+        </div>
+      ),
+    },
+  ].filter(Boolean);
+
+  return (
+    <div className="contabilidade">
+      <h1>Contabilidade <CalculatorOutlined /></h1>
+      <div className="transaction-buttons">
+        <Button type="primary" onClick={() => openModal('income')}>
+          <PlusCircleOutlined /> Receita
+        </Button>
+        <Button type="primary" danger onClick={() => openModal('expense')}>
+          <MinusCircleOutlined /> Despesa
+        </Button>
+      </div>
+
+      <TransactionModal
+        type={modalType}
+        isVisible={isModalVisible}
+        onClose={closeModal}
+        onSubmit={handleTransactionSubmit}
+      />
+      <Tabs defaultActiveKey="1">
+        {tabList.map(tab => (
+          <Tabs.TabPane tab={tab.tab} key={tab.key}>
+            {tab.content}
+          </Tabs.TabPane>
+        ))}
       </Tabs>
 
     </div>

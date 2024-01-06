@@ -10,6 +10,7 @@ import { useForm } from 'antd/es/form/Form';
 const { TabPane } = Tabs;
 
 const DoctorDetails = () => {
+    const [isMobile, setIsMobile] = useState(window.innerWidth < 768);
     const { id } = useParams();
     const navigate = useNavigate();
     const [professionalDetails, setProfessionalDetails] = useState(null);
@@ -78,6 +79,11 @@ const DoctorDetails = () => {
         fetchDetailsAndPlanos();
     }, [id]);
 
+    useEffect(() => {
+        const handleResize = () => setIsMobile(window.innerWidth < 768);
+        window.addEventListener('resize', handleResize);
+        return () => window.removeEventListener('resize', handleResize);
+    }, []);
 
     const handleCEPChange = async (e) => {
         const value = e.target.value.replace(/\D/g, '');
@@ -97,7 +103,7 @@ const DoctorDetails = () => {
                     setReferencia(data.complemento || '');
                     setCidade(data.localidade || '');
                     setEstadoSelecionado(data.uf || '');
-        
+
                     // Atualiza editedDetails com os novos valores
                     handleInputChange('endereco', data.logradouro || '');
                     handleInputChange('numero', data.numero || '');
@@ -125,7 +131,7 @@ const DoctorDetails = () => {
         try {
             const payload = {
                 ...editedDetails,
-                planosSaude: planosSelecionados // Enviar IDs dos planos selecionados
+                planosSaude: planosSelecionados
             };
 
             const response = await api.put(`/professionals/${id}`, payload);
@@ -200,20 +206,24 @@ const DoctorDetails = () => {
         }
     };
 
-
-    return (
-        <div className='tabela'>
-            <h1>Detalhes do Proffisional <UserOutlined /></h1>
-            <Button onClick={handleGoBack}>Voltar</Button>
-            <Tabs defaultActiveKey="1">
-                <TabPane tab="Dados Pessoais" key="1">
+    const tabList = [
+        {
+            key: '1',
+            tab: isMobile ? 'Detalhes' : 'Dados Pessoais',  // Nome da tab ajustado para mobile
+            content: (
+                <>
                     <p><b>Nome:</b> <Input value={editedDetails.nome || professionalDetails.nome} onChange={(e) => handleInputChange('nome', e.target.value)} /></p>
                     <p><b>Telefone:</b> <Input value={editedDetails.celular || professionalDetails.celular} onChange={(e) => handleInputChange('celular', e.target.value)} /></p>
                     <p><b>Nascimento:</b> <Input value={editedDetails.data_de_nascimento || professionalDetails.data_de_nascimento} onChange={e => handleInputChange('data_de_nascimento', e.target.value)} /></p>
                     <p><b>CPF:</b> <Input value={editedDetails.cpf || professionalDetails.cpf} onChange={e => handleInputChange('cpf', e.target.value)} /></p>
-                    <Button onClick={handleSaveChanges}>Salvar</Button>
-                </TabPane>
-                <TabPane tab="Informacoes Proffisionais" key="2">
+                    <Button onClick={handleSaveChanges}>Salvar</Button>                </>
+            ),
+        },
+        {
+            key: '2',
+            tab: isMobile ? 'Profissional' : 'Informacoes Proffisionais',  // Nome da tab ajustado para mobile
+            content: (
+                <>
                     <p><b>Registro Profissional:</b> <Input value={editedDetails.registro_profissional || professionalDetails.registro_profissional} onChange={(e) => handleInputChange('registro_profissional', e.target.value)} /></p>
                     <p><b>Título:</b> <Input value={editedDetails.titulo || professionalDetails.titulo} onChange={(e) => handleInputChange('titulo', e.target.value)} /></p>
                     <p><b>Planos que atende:</b>
@@ -231,9 +241,14 @@ const DoctorDetails = () => {
                             </Select>
                         )}
                     </p>
-                    <Button onClick={handleSaveChanges}>Salvar</Button>
-                </TabPane>
-                <TabPane tab="Endereço" key="3">
+                    <Button onClick={handleSaveChanges}>Salvar</Button>                </>
+            ),
+        },
+        {
+            key: '3',
+            tab: isMobile ? 'End.' : 'Endereço', // Nome da tab ajustado para mobile
+            content: (
+                <>
                     <p>
                         <b>CEP:</b>
                         <Input
@@ -276,30 +291,61 @@ const DoctorDetails = () => {
                             onChange={(e) => handleInputChange('cidade', e.target.value)}
                         />
                     </p>
-                    <Button onClick={handleSaveChanges}>Salvar</Button>
-                </TabPane>
-
-                <TabPane tab="Assinatura" key="4">
+                    <Button onClick={handleSaveChanges}>Salvar</Button>                </>
+            ),
+        },
+        {
+            key: '4',
+            tab: isMobile ? 'Ass.' : 'Assinatura',
+            content: (
+                <>
                     <p><b>Assinatura Atual:</b></p>
                     {professionalDetails.assinatura && (
-                        <img src={`data:image/png;base64,${professionalDetails.assinatura}`} alt="Assinatura" />
-                    )}
+                        <img
+                            src={`data:image/png;base64,${professionalDetails.assinatura}`}
+                            alt="Assinatura"
+                            style={{
+                                maxWidth: '100%',
+                                height: 'auto'
+                            }}
+                        />)}
                     <p><b>Você pode assinar novamnete para atualizar:</b></p>
 
-                    <div style={{ border: '1px solid black', width: 500, margin: '20px' }}>
-
+                    <div style={{
+                        border: '1px solid black',
+                        width: isMobile ? '75vw' : '500px',
+                        margin: isMobile ? '2px 0 15px 0' : '20px',
+                        display: 'flex',
+                        justifyContent: 'center'
+                    }}>
                         <ReactSignatureCanvas
                             ref={sigCanvas}
                             canvasProps={{
-                                width: 500,
-                                height: 200,
+                                width: isMobile ? window.innerWidth * 0.8 : 500, // 80% da largura da tela no mobile
+                                height: isMobile ? window.innerWidth * 0.4 : 200, // 40% da largura da tela no mobile
                                 className: 'signatureCanvas'
                             }}
                         />
                     </div>
                     <Button onClick={clearSignature}>Limpar</Button>
                     <Button onClick={saveSignature} style={{ marginLeft: '10px' }}>Salvar Assinatura</Button>
-                </TabPane>
+                </>
+            ),
+        },
+    ].filter(Boolean);
+
+
+
+    return (
+        <div className='tabela'>
+            <h1>Detalhes do Proffisional <UserOutlined /></h1>
+            <Button onClick={handleGoBack}>Voltar</Button>
+            <Tabs defaultActiveKey="1">
+                {tabList.map(tab => (
+                    <Tabs.TabPane tab={tab.tab} key={tab.key}>
+                        {tab.content}
+                    </Tabs.TabPane>
+                ))}
             </Tabs>
         </div>
     );

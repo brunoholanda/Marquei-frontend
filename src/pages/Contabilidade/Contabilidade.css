@@ -2,7 +2,8 @@
     margin: 2rem 3rem;
 }
 
-.contabilidade h1, h2 {
+.contabilidade h1,
+h2 {
     color: var(--cinza-texto);
 }
 
@@ -13,4 +14,39 @@
 .transaction-buttons button {
     margin-right: 1rem;
     width: 10rem;
+    margin-top: 1rem;
+}
+
+
+.contabilidade_extrato-controls button {
+    margin-left: 30px;
+}
+
+@media (max-width: 768px) {
+    .contabilidade {
+        margin: 2rem 1.5rem;
+    }
+
+    .contabilidade_extrato {
+        display: flex;
+        flex-wrap: wrap;
+    }
+
+    .contabilidade_extrato h2 {
+        font-size: 18px;
+    }
+
+    .contabilidade_extrato-controls {
+        display: flex;
+        flex-direction: column;
+    }
+
+    .contabilidade_extrato-controls button {
+        margin-left: 0;
+        margin-top: 1rem;
+    }
+
+    .contabilidade_extrato table {
+        font-size: 10px;
+    }
 }

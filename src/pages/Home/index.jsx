@@ -13,7 +13,9 @@ import Faq from 'components/Faq';
 function Home() {
   return (
     <div>
-      <Carousel />
+      <div className={styles.carouselHome}>
+        <Carousel />
+      </div>
       <div className={styles.home}>
         <section className={styles.analogica}>
           <div className={styles.analogica__texto}>

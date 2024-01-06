@@ -13,6 +13,13 @@
 
 .btn:hover {
     transform: scale(1.05);
-        cursor: pointer;
-        background-color: #02075d;
+    cursor: pointer;
+    background-color: #02075d;
+}
+
+
+@media (max-width: 768px) {
+    .btn {
+        width: 80%;
+    }
 }

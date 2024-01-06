@@ -48,7 +48,7 @@ const Authentication = () => {
   
         localStorage.setItem('authToken', token);
         localStorage.setItem('companyID', company_id);
-        localStorage.setItem('userSpecialties', JSON.stringify(user_specialties)); // Armazenando especialidades do usuário
+        localStorage.setItem('userSpecialties', JSON.stringify(user_specialties));
   
         setUsername('');
         setPassword('');

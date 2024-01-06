@@ -4,14 +4,18 @@
     align-items: center;
 }
 
-@media (max-width: 768px) {
-    .padrao-semanal-mobile {
-        flex-direction: column !important;
-        width: 100% !important; /* Garante que os elementos ocupem toda a largura */
-    }
+.data-horarios-desabilitados {
+    margin-top: 20px;
+}
 
-    .padrao-semanal-mobile .select-professional,
-    .padrao-semanal-mobile .weekly-pattern-button {
-        width: 100% !important; /* Garante que os elementos ocupem toda a largura */
+.dataHorarios h2 {
+    font-size: 30px;
+}
+
+
+
+@media (max-width: 768px) {
+    .datadesabilitados {
+        font-size: 1px !important;
     }
 }

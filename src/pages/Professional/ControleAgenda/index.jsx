@@ -13,6 +13,7 @@ const { Option } = Select;
 
 const ControleAgenda = () => {
     moment.locale('pt-br');
+    const [isMobile, setIsMobile] = useState(window.innerWidth < 768);
     const [isModalVisible, setIsModalVisible] = useState(false);
     const [startTime, setStartTime] = useState(null);
     const [endTime, setEndTime] = useState(null);
@@ -69,6 +70,11 @@ const ControleAgenda = () => {
         fetchProfessionals();
     }, []);
 
+    useEffect(() => {
+        const handleResize = () => setIsMobile(window.innerWidth < 768);
+        window.addEventListener('resize', handleResize);
+        return () => window.removeEventListener('resize', handleResize);
+    }, []);
 
     const handleJoyrideCallback = (data) => {
         const { status } = data;
@@ -128,14 +134,14 @@ const ControleAgenda = () => {
             key: 'date',
             render: (text, record) => moment(record.date, 'DD/MM/YYYY').format('DD [de] MMMM YYYY')
         },
-        {
+        ...(!isMobile ? [{
             title: 'Dia da Semana',
             dataIndex: 'weekday',
             key: 'weekday',
             render: (text, record) => moment(record.date, 'DD/MM/YYYY').format('dddd')
-        },
+        }] : []),
         {
-            title: 'Intervalo de Tempo',
+            title:  isMobile ? 'Intervalo' : 'Intervalo de Tempo',
             dataIndex: 'time',
             key: 'time',
             render: (text, record) => {
@@ -154,27 +160,28 @@ const ControleAgenda = () => {
             key: 'action',
             render: (text, record) => (
                 <>
-                    <Button
-                        icon={<EditOutlined />}
-                        onClick={() => handleEdit(record)}
-                        type="primary"
-                        title="Editar horário"
-                        style={{ marginLeft: '10px' }}
-                    >
-                        Editar
-                    </Button>
-                    <Button
-                        icon={<DeleteOutlined />}
-                        onClick={() => handleDelete(record.id)}
-                        type="primary"
-                        title="Excluir"
-                        style={{ marginLeft: '10px', backgroundColor: 'red', color: 'white' }}
-                    >Excluir
-                    </Button>
-                </>
+                <Button
+                    icon={<EditOutlined />}
+                    onClick={() => handleEdit(record)}
+                    type="primary"
+                    title="Editar horário"
+                    style={{ marginLeft: '10px' }}
+                >
+                    {isMobile ? '' : 'Editar'}
+                </Button>
+                <Button
+                    icon={<DeleteOutlined />}
+                    onClick={() => handleDelete(record.id)}
+                    type="primary"
+                    danger
+                    title="Excluir"
+                    style={{ marginLeft: '10px' }}
+                >
+                    {isMobile ? '' : 'Excluir'}
+                </Button>
+            </>
             )
         }
-
     ];
 
     const showModal = () => {
@@ -279,7 +286,7 @@ const ControleAgenda = () => {
                 <Select
                     className="select-professional"
                     showSearch
-                    style={{ width: 200, marginBottom: 20, marginRight: 20 }}
+                    style={{ width: 200, marginBottom: 20, marginRight: 20, display: 'flex', flexWrap: 'wrap' }}
                     placeholder="Selecione um profissional"
                     optionFilterProp="children"
                     onChange={(value) => setSelectedProfessional(value)}
@@ -350,9 +357,9 @@ const ControleAgenda = () => {
                 setIsVisible={setIsWeeklyModalVisible}
                 selectedProfessional={selectedProfessional}
             />
-            <div style={{ marginTop: '20px' }}>
-                <div style={{ display: 'flex', alignItems: 'center' }}>
-                    <h2 style={{ marginRight: '20px' }} >Datas ou Horário Desabilitadas</h2>
+            <div className='datadesabilitados'>
+                <div style={{ display: 'flex', alignItems: 'center', flexWrap: 'wrap' }}>
+                    <h2 style={{ marginRight: '18px', fontSize: '18px' }} >Datas ou Horário Desabilitadas</h2>
                     <Button type="primary" onClick={showModal} style={{ marginRight: '10px' }}>
                         <PlusCircleFilled />
                         Incluir

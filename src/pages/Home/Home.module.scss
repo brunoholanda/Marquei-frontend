@@ -91,3 +91,10 @@
     color: #30455c;
   }
 }
+
+
+@media (max-width: 768px) {
+  .carouselHome {
+    display: none;
+  }
+}
