@@ -3,7 +3,7 @@ import { Table, Button, Spin, message, Modal, Tabs } from 'antd';
 import api from '../../components/api/api';
 import ProfessionalModal from '../../components/Modals/registerModal';
 import { Link, Navigate } from 'react-router-dom';
-import { IdcardOutlined, UserAddOutlined, UserDeleteOutlined, UserSwitchOutlined } from '@ant-design/icons';
+import { DeleteOutlined, IdcardOutlined, UserAddOutlined, UserDeleteOutlined, UserSwitchOutlined } from '@ant-design/icons';
 import '../Appointments/Appointments.css';
 import CompanyDataModal from '../../components/Modals/companyModal';
 import { TabPane } from 'react-bootstrap';
@@ -15,6 +15,7 @@ import ReactJoyride from 'react-joyride';
 import TrackingPage from 'pages/TrackingPage';
 
 function Configs() {
+    const [isMobile, setIsMobile] = useState(window.innerWidth < 768);
     const [isModalVisible, setIsModalVisible] = useState(false);
     const [loading, setLoading] = useState(false);
     const [professionals, setProfessionals] = useState([]);
@@ -131,6 +132,13 @@ function Configs() {
         fetchProfessionals();
     }, []);
 
+    useEffect(() => {
+        const handleResize = () => setIsMobile(window.innerWidth < 768);
+        window.addEventListener('resize', handleResize);
+        return () => window.removeEventListener('resize', handleResize);
+    }, []);
+
+
     const openModal = () => {
         // Antes de abrir o modal para adicionar um profissional, verifica se o limite foi alcançado
         if (professionals.length >= maxProfessionals) {
@@ -191,46 +199,69 @@ function Configs() {
         }
     };
 
-    const columns = [
+    const formatName = (name) => {
+        const nameParts = name.split(' ');
+        if (nameParts.length > 2) {
+            return `${nameParts[0]} ${nameParts[1]}`; // Retorna apenas os dois primeiros nomes
+        }
+        return name;
+    };
+
+    let columns = [
         {
             title: 'Nome',
             dataIndex: 'nome',
             key: 'nome',
+            render: (text) => isMobile ? formatName(text) : text,
+
         },
-        {
-            title: 'Celular',
-            dataIndex: 'celular',
-            key: 'celular',
-        },
-        {
-            title: 'Registro Profissional',
-            dataIndex: 'registro_profissional',
-            key: 'registro_profissional',
-        },
-        {
-            title: 'Ação',
-            key: 'action',
-            render: (text, record) => (
-                <>
-                    <Link to={`/professionals/${record.id}`} style={{ marginRight: 8 }}>
+    ];
+    if (!isMobile) {
+        columns.push(
+            {
+                title: 'Celular',
+                dataIndex: 'celular',
+                key: 'celular',
+            },
+            {
+                title: 'Registro Profissional',
+                dataIndex: 'registro_profissional',
+                key: 'registro_profissional',
+            },
+        );
+    }
+    columns.push({
+        title: 'Ação',
+        key: 'action',
+        render: (text, record) => (
+            <>
+                <Link to={`/professionals/${record.id}`} style={{ marginRight: 8 }}>
+                    {isMobile ? (
+                        <Button icon={<UserSwitchOutlined />} onClick={() => editProfessional(record)} />
+                    ) : (
                         <Button type="primary" onClick={() => editProfessional(record)}>
                             <UserSwitchOutlined /> Editar
                         </Button>
-                    </Link>
+                    )}
+                </Link>
+                {isMobile ? (
+                    <Button icon={<DeleteOutlined />} type="primary" danger onClick={() => showDeleteConfirm(record)} />
+                ) : (
                     <Button type="primary" danger onClick={() => showDeleteConfirm(record)}>
-                        <UserDeleteOutlined />Excluir
+                        <DeleteOutlined /> Excluir
                     </Button>
-                </>
-            ),
-        }
+                )}
+            </>
+        ),
+    });
 
-    ];
 
-
-    return (
-        <div className='tabela'>
-            <Tabs>
-                <TabPane tab="Controle de Profissionais" key="1">
+    const tabList = [
+        {
+            key: '1',
+            tab: isMobile ? 'Profissionais' : 'Controle de Profissionais',  // Nome da tab ajustado para mobile
+            content: (
+                <>
                     <h1>Controle de Profissionais <IdcardOutlined /></h1>
                     <p>Aqui você pode adicionar profissionais ou atualizar seus dados.</p>
                     <Button className="add-professional-button" style={{ marginBottom: '10px' }} type="primary" onClick={openModal}>
@@ -269,19 +300,55 @@ function Configs() {
                     ) : (
                         <Table dataSource={professionals} columns={columns} rowKey="id" />
                     )}
-                </TabPane>
-                <TabPane tab="Controle da Agenda" key="2">
+                </>
+            ),
+        },
+        {
+            key: '2',
+            tab: isMobile ? 'Agenda' : 'Controle da Agenda',  // Nome da tab ajustado para mobile
+            content: (
+                <>
                     <ControleAgenda />
-                </TabPane>
-                <TabPane tab="Dados da Empresa" key="3">
+                </>
+            ),
+        },
+        {
+            key: '3',
+            tab: isMobile ? 'Empresa' : 'Dados Empresa', // Nome da tab ajustado para mobile
+            content: (
+                <>
                     <CompanyData />
-                </TabPane>
-                <TabPane tab="Chamados" key="4">
+                </>
+            ),
+        },
+        !isMobile && {
+            key: '4',
+            tab: 'Chamados',
+            content: (
+                <>
                     <TrackingPage />
-                </TabPane>
-                <TabPane tab="Meu Plano" key="5">
+                </>
+            ),
+        },
+        !isMobile && {
+            key: '5',
+            tab: 'Meu Plano',
+            content: (
+                <div style={{ marginBottom: '16px' }}>
                     <MyPlan />
-                </TabPane>
+                </div>
+            ),
+        },
+    ].filter(Boolean);
+
+    return (
+        <div className='tabela'>
+            <Tabs defaultActiveKey="1">
+                {tabList.map(tab => (
+                    <Tabs.TabPane tab={tab.tab} key={tab.key}>
+                        {tab.content}
+                    </Tabs.TabPane>
+                ))}
             </Tabs>
             <ReactJoyride
                 run={runTutorial}

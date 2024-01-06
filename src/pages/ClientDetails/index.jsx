@@ -13,12 +13,14 @@ import ReceitaPage from './Receita';
 const { TabPane } = Tabs;
 
 const ClientDetails = ({ userSpecialties = [] }) => {
+    const [isMobile, setIsMobile] = useState(window.innerWidth < 768);
+
     const [isLoading, setIsLoading] = useState(true);
     const { id } = useParams();
     const navigate = useNavigate();
     const [appointmentDetails, setAppointmentDetails] = useState({ nome: '' });
     const [editedDetails, setEditedDetails] = useState({ nome: '' });
-    const [qrCodeUrl, setQrCodeUrl] = useState(null); 
+    const [qrCodeUrl, setQrCodeUrl] = useState(null);
     const [isModalVisible, setIsModalVisible] = useState(false);
     const [certificateData, setCertificateData] = useState({
         date: null,
@@ -120,6 +122,11 @@ const ClientDetails = ({ userSpecialties = [] }) => {
         fetchProfessionalDetails();
     }, [professionalId]);
 
+    useEffect(() => {
+        const handleResize = () => setIsMobile(window.innerWidth < 768);
+        window.addEventListener('resize', handleResize);
+        return () => window.removeEventListener('resize', handleResize);
+    }, []);
 
     const handleMedicamentoChange = (index, value) => {
         const newMedicamentos = [...receitaData.medicamentos];
@@ -326,7 +333,7 @@ const ClientDetails = ({ userSpecialties = [] }) => {
                 handleAuthModalClose();
 
                 if (actionType === 'certificate') {
-                    handleOpenModal(); 
+                    handleOpenModal();
                 } else if (actionType === 'declaration') {
                     handleOpenDeclarationModal();
                 } else if (actionType === 'recipe') {
@@ -371,7 +378,7 @@ const ClientDetails = ({ userSpecialties = [] }) => {
         setSearchResults([]);
     };
 
-        const onAtestadoEmitido = async () => {
+    const onAtestadoEmitido = async () => {
         const patientName = editedDetails.nome;
         const days = certificateData.days;
         const date = certificateData.date;
@@ -392,42 +399,12 @@ const ClientDetails = ({ userSpecialties = [] }) => {
         });
     };
 
-    
-    return (
-        <div className='clienteDetails'>
-            <h1>Detalhes do Cliente</h1>
-            <Button onClick={handleGoBack}>Voltar</Button>
-            <div style={{ display: 'none' }}>
-                <CertificatePage
-                    qrCodeUrl={qrCodeUrl}
-                    nome={editedDetails.nome}
-                    days={certificateData.days}
-                    date={certificateData.date}
-                    reason={certificateData.reason}
-                    professionalId={professionalId}
-                    ref={certificatePageRef}
-                />
-            </div>
-            <div style={{ display: 'none' }}>
-                <DeclarationPage
-                    nome={editedDetails.nome}
-                    date={declarationData.date}
-                    startTime={declarationData.startTime}
-                    endTime={declarationData.endTime}
-                    professionalId={professionalId}
-                    ref={declarationPageRef}
-                />
-            </div>
-            <div style={{ display: 'none' }}>
-                <ReceitaPage
-                    nome={editedDetails.nome}
-                    medicamentos={receitaData.medicamentos}
-                    professionalId={professionalId}
-                    ref={receitaPageRef}
-                />
-            </div>
-            <Tabs defaultActiveKey="1">
-                <TabPane tab="Dados Pessoais" key="1">
+    const tabList = [
+        {
+            key: '1',
+            tab: isMobile ? 'Detalhes' : 'Dados Pessoais',  // Nome da tab ajustado para mobile
+            content: (
+                <div className='dadosPessoaisTab'>
                     <p><b>Nome:</b> <Input value={editedDetails.nome || appointmentDetails.nome} onChange={(e) => handleInputChange('nome', e.target.value)} /></p>
                     <p><b>Data de Nascimento:</b> <Input value={editedDetails.data_nascimento || appointmentDetails.data_nascimento} onChange={(e) => handleInputChange('data_nascimento', e.target.value)} /></p>
                     <p><b>Telefone:</b>
@@ -451,13 +428,23 @@ const ClientDetails = ({ userSpecialties = [] }) => {
                         </ReactInputMask>
                     </p>
                     <Button onClick={handleSaveChanges}>Salvar</Button>
-                </TabPane>
-
-                <TabPane tab="Histórico de Consultas" key="2">
+                </div>
+            ),
+        },
+        !isMobile && {
+            key: '2',
+            tab: 'Histórico de Consultas',
+            content: (
+                <>
                     <Table columns={columns} dataSource={appointmentHistory} rowKey="id" />
-                </TabPane>
-
-                <TabPane tab="Atestados e Receitas" key="3">
+                </>
+            ),
+        },
+        {
+            key: '3',
+            tab: isMobile ? 'Atestados' : 'Atestados e Receitas', 
+            content: (
+                <>
                     <div className='atestados-botoes'>
                         {canEmitCertificateOrRecipe && (
                             <>
@@ -474,7 +461,7 @@ const ClientDetails = ({ userSpecialties = [] }) => {
                         footer={[
                             <Button key="back" onClick={handleCloseModal}>Cancelar</Button>,
                             <ReactToPrint
-                                trigger={() =>  <Button key="emit" type="primary" onClick={printCertificate}>Emitir</Button>}
+                                trigger={() => <Button key="emit" type="primary" onClick={printCertificate}>Emitir</Button>}
                                 content={() => certificatePageRef.current}
                                 onAfterPrint={onAtestadoEmitido} // Chama a função após a impressão bem-sucedida
                             />
@@ -575,23 +562,76 @@ const ClientDetails = ({ userSpecialties = [] }) => {
                         ))}
                         <Button onClick={addMedicamentoField}>Adicionar Medicamento</Button>
                     </Modal>
-                </TabPane>
-                <TabPane tab="Orçamentos" key="4">
+                </>
+            ),
+        },
+        !isMobile && {
+            key: '4',
+            tab: 'Orçamentos',
+            content: (
+                <>
                     <div className='atestados-botoes'>
                         <Button onClick={handleEmitirAtestado}>Novo Orçamento</Button>
                     </div>
-                </TabPane>
-                <TabPane tab="Anotações" key="5">
-                    <div style={{ marginBottom: '16px' }}>
-                        <Input.TextArea
-                            rows={4}
-                            value={clientNotes}
-                            onChange={(e) => setClientNotes(e.target.value)}
-                            style={{ marginBottom: '8px' }}
-                        />
-                        <Button type='primary' onClick={handleSaveNotes}>Salvar Anotações</Button>
-                    </div>
-                </TabPane>
+                </>
+            ),
+        },
+        {
+            key: '5',
+            tab: 'Anotações',
+            content: (
+                <div style={{ marginBottom: '16px' }}>
+                    <Input.TextArea
+                        rows={4}
+                        value={clientNotes}
+                        onChange={(e) => setClientNotes(e.target.value)}
+                        style={{ marginBottom: '8px' }}
+                    />
+                    <Button type='primary' onClick={handleSaveNotes}>Salvar Anotações</Button>
+                </div>),
+        },
+    ].filter(Boolean);
+
+
+    return (
+        <div className='clienteDetails'>
+            <h1>Detalhes do Cliente</h1>
+            <Button onClick={handleGoBack}>Voltar</Button>
+            <div style={{ display: 'none' }}>
+                <CertificatePage
+                    qrCodeUrl={qrCodeUrl}
+                    nome={editedDetails.nome}
+                    days={certificateData.days}
+                    date={certificateData.date}
+                    reason={certificateData.reason}
+                    professionalId={professionalId}
+                    ref={certificatePageRef}
+                />
+            </div>
+            <div style={{ display: 'none' }}>
+                <DeclarationPage
+                    nome={editedDetails.nome}
+                    date={declarationData.date}
+                    startTime={declarationData.startTime}
+                    endTime={declarationData.endTime}
+                    professionalId={professionalId}
+                    ref={declarationPageRef}
+                />
+            </div>
+            <div style={{ display: 'none' }}>
+                <ReceitaPage
+                    nome={editedDetails.nome}
+                    medicamentos={receitaData.medicamentos}
+                    professionalId={professionalId}
+                    ref={receitaPageRef}
+                />
+            </div>
+            <Tabs defaultActiveKey="1" >
+                {tabList.map(tab => (
+                    <Tabs.TabPane tab={tab.tab} key={tab.key}>
+                        {tab.content}
+                    </Tabs.TabPane>
+                ))}
             </Tabs>
             <Modal
                 title="Autenticação do Profissional"

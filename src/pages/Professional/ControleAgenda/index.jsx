@@ -8,6 +8,7 @@ import '../Configs.css'
 import WeeklyModal from '../../../components/Modals/WeeklyModal ';
 import ScheduleLinkModal from 'components/Modals/ScheduleLinkModal';
 import ReactJoyride from 'react-joyride';
+import './ControleAgenda.module.css';
 const { Option } = Select;
 
 const ControleAgenda = () => {
@@ -26,11 +27,11 @@ const ControleAgenda = () => {
     const [runTutorial, setRunTutorial] = useState();
     const [steps, setSteps] = useState([
         {
-            target: '.select-professional', 
+            target: '.select-professional',
             content: 'Primeiro, selecione um profissional da lista.',
         },
         {
-            target: '.weekly-pattern-button', 
+            target: '.weekly-pattern-button',
             content: 'Agora, clique aqui para definir o padrão semanal de horários.',
         },
         {
@@ -268,39 +269,40 @@ const ControleAgenda = () => {
             localStorage.setItem('tutorialShown', 'true');
         }
     }, []);
-    
+
     return (
         <div>
 
             <h1>Controle da Agenda <ControlOutlined /></h1>
             <p>Aqui você inclui datas ou horários em que não poderá atender seus clientes. <WarningFilled /></p>
-            <Select
-                className="select-professional"
-                showSearch
-                style={{ width: 200, marginBottom: 20, marginRight: 20 }}
-                placeholder="Selecione um profissional"
-                optionFilterProp="children"
-                onChange={(value) => setSelectedProfessional(value)}
-                filterOption={(input, option) =>
-                    option.children.toLowerCase().indexOf(input.toLowerCase()) >= 0
-                }
-                value={selectedProfessional}
-            >
-                {professionals.map((professional) => (
-                    <Option key={professional.id} value={professional.id}>
-                        {professional.nome}
-                    </Option>
-                ))}
-            </Select>
-            <Button
-                className="weekly-pattern-button"
-                type="primary"
-                onClick={showWeeklyModal}
-                disabled={!selectedProfessional}
-            >
-                Padrão Semanal
-            </Button>
-
+            <div className='padrao-semanal-mobile'>
+                <Select
+                    className="select-professional"
+                    showSearch
+                    style={{ width: 200, marginBottom: 20, marginRight: 20 }}
+                    placeholder="Selecione um profissional"
+                    optionFilterProp="children"
+                    onChange={(value) => setSelectedProfessional(value)}
+                    filterOption={(input, option) =>
+                        option.children.toLowerCase().indexOf(input.toLowerCase()) >= 0
+                    }
+                    value={selectedProfessional}
+                >
+                    {professionals.map((professional) => (
+                        <Option key={professional.id} value={professional.id}>
+                            {professional.nome}
+                        </Option>
+                    ))}
+                </Select>
+                <Button
+                    className="weekly-pattern-button"
+                    type="primary"
+                    onClick={showWeeklyModal}
+                    disabled={!selectedProfessional}
+                >
+                    Padrão Semanal
+                </Button>
+            </div>
             <Modal
                 title="Desabilitar Data ou Horário"
                 visible={isModalVisible}

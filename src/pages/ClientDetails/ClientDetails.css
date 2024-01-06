@@ -36,3 +36,27 @@
 .atestados-botoes button {
     margin: 1rem 0;
 }
+
+@media (max-width: 768px) {
+    .clienteDetails {
+        margin: 2rem 1.5rem;
+    
+    }
+    
+    .clienteDetails h1 {
+        font-size: 20px;
+    }
+
+    .dadosPessoaisTab {
+        width: 17.5rem;
+    }
+
+    .historicoConsultasTab, .orcamentosTab {
+        display: none;
+    }
+
+    .ant-tabs-content {
+        display: flex;
+        flex-direction: column;
+    }
+}

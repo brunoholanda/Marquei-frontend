@@ -1,0 +1,17 @@
+.padrao-semanal-mobile {
+    display: flex;
+    justify-content: start;
+    align-items: center;
+}
+
+@media (max-width: 768px) {
+    .padrao-semanal-mobile {
+        flex-direction: column !important;
+        width: 100% !important; /* Garante que os elementos ocupem toda a largura */
+    }
+
+    .padrao-semanal-mobile .select-professional,
+    .padrao-semanal-mobile .weekly-pattern-button {
+        width: 100% !important; /* Garante que os elementos ocupem toda a largura */
+    }
+}
