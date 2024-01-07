@@ -5,12 +5,6 @@ import Btn from "components/Btn";
 import MenuMobile from "components/MenuMobile";
 
 function MenuLinks() {
-    const scrollToBottom = () => {
-        window.scrollTo({
-            top: document.body.scrollHeight,
-            behavior: 'smooth'
-        });
-    }
 
     return (
         <div className={styles.menuLinks}>
@@ -30,18 +24,6 @@ function MenuLinks() {
     )
 }
 
-function SocialLinks() {
-    return (
-        <div className={styles.socialLinks}>
-            <a href="https://www.instagram.com/drawaleskacaetano_/" target="_blank" rel="noreferrer">
-                <div className={styles.socialLinks__li}></div>
-            </a>
-            <a href="https://wa.me/5583998472670" target="_blank" rel="noreferrer">
-                <div className={styles.socialLinks__wp}></div>
-            </a>
-        </div>
-    )
-}
 
 export default function Header() {
     return (

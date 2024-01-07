@@ -47,7 +47,7 @@ const PlanCard = ({ plan, isCurrent }) => {
     };
 
     return (
-        <div style={{ position: 'relative', width: '100%' }}>
+        <div style={{ position: 'relative', width: '100%', maxWidth: '93.75rem' }}>
             <Card bordered={false} style={currentCardStyle}>
                 <div style={cardColumStyle}>
                     <div style={titleSectionStyle}>

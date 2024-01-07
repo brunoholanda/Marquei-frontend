@@ -8,6 +8,7 @@ import AppointmentModal from '../../components/Modals/AppointmentModal';
 import { Select, message } from 'antd';
 
 const CalendarPage = () => {
+    const [isMobile, setIsMobile] = useState(false);
     const [appointments, setAppointments] = useState([]);
     const [currentAppointment, setCurrentAppointment] = useState(null);
     const [isModalVisible, setIsModalVisible] = useState(false);
@@ -23,10 +24,18 @@ const CalendarPage = () => {
     const handleCloseModal = () => {
         setIsModalVisible(false);
         setCurrentAppointment(null);
-        updateAppointments(); 
+        updateAppointments();
 
     };
 
+    useEffect(() => {
+        const handleResize = () => {
+            setIsMobile(window.innerWidth < 768);
+        };
+        window.addEventListener('resize', handleResize);
+        handleResize();
+        return () => window.removeEventListener('resize', handleResize);
+    }, []);
 
 
     useEffect(() => {
@@ -140,6 +149,11 @@ const CalendarPage = () => {
 
     return (
         <div className='calendario'>
+            {isMobile && (
+                <div className='mobileAlert'>
+                    "Tenha acesso a mais recursos acessando a versão para computador"
+                </div>
+            )}
             <h1>Visualização por Calendário <CalendarOutlined /></h1>
             <div className="status-indicators">
                 <div class="indicator">

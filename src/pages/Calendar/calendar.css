@@ -2,6 +2,14 @@
     margin: 1rem 4rem;
 }
 
+.mobileAlert {
+    font-size: 12px;
+    background-color: lightblue;
+    padding: 10px;
+    text-align: center;
+    border-radius: 8px;
+}
+
 .calendario h1 {
     color: var(--cinza-texto);
 }
