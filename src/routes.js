@@ -23,6 +23,7 @@ import AtestadoInfoPage from "pages/ConfirmCertificate";
 import CheckoutPage from "pages/CheckoutPage";
 import MyPlan from "pages/Professional/MyPlan";
 import HelpCenter from "pages/HelpCenter";
+import ResourcesGrid from "pages/Resources";
 
 function ScrollToTop() {
     const { pathname } = useLocation();
@@ -62,6 +63,8 @@ function AppRoutes() {
                     <Route path="/cadastro" element={<RegisterScreen />} />
                     <Route path="/agendar/:company_id" element={<Schedule />} />
                     <Route path="/checkout" element={<CheckoutPage />} />
+                    <Route path="/resources" element={<ResourcesGrid />} />
+
                     <Route path="/ajuda" element={<HelpCenter />} />
 
                     <Route path="/confirm-certificate/:id" element={<AtestadoInfoPage />} />

@@ -8,8 +8,8 @@ function MenuLinks() {
 
     return (
         <div className={styles.menuLinks}>
-            <Link to="./">
-                Serviços
+            <Link to="./resources">
+                Recursos
             </Link>
             <Link to="./">
                 Planos
@@ -17,7 +17,7 @@ function MenuLinks() {
             <Link to="./sobre">
                 Como Funciona
             </Link>
-            <Link to="./contato">
+            <Link to="./cadastro">
                 Contrate
             </Link>
         </div>

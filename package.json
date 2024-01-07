@@ -4,6 +4,9 @@
   "private": true,
   "dependencies": {
     "@ant-design/icons": "^5.2.6",
+    "@fortawesome/fontawesome-svg-core": "^6.5.1",
+    "@fortawesome/free-solid-svg-icons": "^6.5.1",
+    "@fortawesome/react-fontawesome": "^0.2.0",
     "@mercadopago/sdk-react": "^0.0.10",
     "@testing-library/jest-dom": "^5.16.5",
     "@testing-library/react": "^13.4.0",
@@ -16,6 +19,7 @@
     "hamburger-react": "^2.5.0",
     "jwt-decode": "^4.0.0",
     "lodash": "^4.17.21",
+    "material-icons": "^1.13.12",
     "mercadopago": "^2.0.5",
     "moment": "^2.29.4",
     "qrcode.react": "^3.1.0",

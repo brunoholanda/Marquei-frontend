@@ -151,7 +151,7 @@ const CalendarPage = () => {
         <div className='calendario'>
             {isMobile && (
                 <div className='mobileAlert'>
-                    "Tenha acesso a mais recursos acessando a versão para computador"
+                    Tenha acesso a mais recursos acessando a versão para computador 🖥️
                 </div>
             )}
             <h1>Visualização por Calendário <CalendarOutlined /></h1>
