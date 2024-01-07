@@ -75,9 +75,9 @@ const CalendarView = ({ events, onEventClick }) => {
     const eventStyleGetter = (event, start, end, isSelected) => {
         let backgroundColor = '#FFD700	';
         if (event.status === 2) {
-            backgroundColor = '#FF4500		';
+            backgroundColor = '#ef4d27		';
         } else if (event.status === 1) {
-            backgroundColor = '#00CED1	';
+            backgroundColor = '#34ab6e	';
         }
 
         const style = {

@@ -23,6 +23,7 @@ import {
 } from '@ant-design/icons';
 import { useNavigate } from 'react-router-dom';
 import Btn from 'components/Btn';
+import computerPhone from '../../public/computerPhone.png';
 
 const services = [
     {
@@ -78,16 +79,16 @@ const ResourcesGrid = () => {
 
     return (
         <>
-            <StyledBanner>
-                <h1>Solução abrangente para agendamentos Online</h1>
-                <p>
-                    Descubra o poder de uma plataforma de agendamento online projetada para transformar a forma como você gerencia seu tempo e seus clientes. Com nossa solução inovadora, você terá acesso a uma gama de recursos avançados, projetados com a simplicidade em mente, garantindo que qualquer membro da sua equipe possa dominá-los com facilidade. Desfrute de uma visão clara e abrangente da sua agenda diária, semanal e mensal, otimizando o planejamento e alocando recursos de maneira eficaz para atender melhor às demandas dos seus clientes.
-                </p>
-            </StyledBanner>
+<StyledBanner backgroundImage={computerPhone}>
+  <h1>Solução abrangente para agendamentos Online</h1>
+  <p>
+    Descubra o poder de uma plataforma de agendamento online projetada para transformar a forma como você gerencia seu tempo e seus clientes.
+  </p>
+</StyledBanner>
             <StyledContainer>
                 <StyledRow gutter={[16, 16]}>
                     {services.map((service, index) => (
-                        <StyledCol span={8} key={index}>
+                        <StyledCol xs={24} sm={24} md={12} lg={8} xl={8} key={index}>
                             <StyledCard>
                                 <StyledIcon as={service.Icon} />
                                 <StyledTitle>{service.title}</StyledTitle>
