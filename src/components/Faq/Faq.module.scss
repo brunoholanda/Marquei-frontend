@@ -1,61 +1,77 @@
-
 .faq {
-    text-align: center;  
-  
-    h2 {
-      font-size: 2.8rem;
-      color: #30455c;
-    }
+  text-align: center;
+
+  h2 {
+    font-size: 2.8rem;
+    color: #30455c;
   }
-  
-  .accordion {
-    margin: 4rem 15rem;
-    .accordionItem {
-      border-bottom: 1px solid #ccc;
-      margin-bottom: 1rem;
-    }
-  
-    .title {
-      cursor: pointer;
-      padding: 15px;
-      font-size: 1.4rem;
-      background-color: #fff;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-  
-  
-      span {
-        color: var(--azul);
-        font-weight: bold;
-        transition: 0.5s ease;
-  
-  
-        &:hover {
-          color: var(--azul-forte);
-          transform: scale(1.03);
-        }
+}
+
+.accordion {
+  margin: 4rem 15rem;
+
+  .accordionItem {
+    border-bottom: 1px solid #ccc;
+    margin-bottom: 1rem;
+  }
+
+  .title {
+    cursor: pointer;
+    padding: 15px;
+    font-size: 1.4rem;
+    background-color: #fff;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+
+
+    span {
+      color: var(--azul);
+      font-weight: bold;
+      transition: 0.5s ease;
+
+
+      &:hover {
+        color: var(--azul-forte);
+        transform: scale(1.03);
       }
     }
-  
-  
-    .iconPlus {
-      color: var(--azul-forte);
-    }
-  
-    .iconMinus {
-      color: var(--azul-forte);
-    }
-  
-    .content {
-        background-color: #fff;
-        color: var(--cinza-texto);
-        font-size: 1.3rem;
-        text-align: left;
-        line-height: 1.5rem;
-        overflow: hidden;
-        transition: max-height 0.3s ease-in-out, padding 0.3s ease-in-out;
-        max-height: 0;
-        padding: 0;
+  }
+
+
+  .iconPlus {
+    color: var(--azul-forte);
+  }
+
+  .iconMinus {
+    color: var(--azul-forte);
+  }
+
+  .content {
+    background-color: #fff;
+    color: var(--cinza-texto);
+    font-size: 1.3rem;
+    text-align: left;
+    line-height: 1.5rem;
+    overflow: hidden;
+    transition: max-height 0.3s ease-in-out, padding 0.3s ease-in-out;
+    max-height: 0;
+    padding: 0;
+  }
+}
+
+
+@media (max-width: 768px) {
+
+  .faq {
+    h2 {
+      font-size: 2rem;
     }
   }
+
+  .accordion {
+    margin: 4rem 1rem;
+
+
+  }
+}

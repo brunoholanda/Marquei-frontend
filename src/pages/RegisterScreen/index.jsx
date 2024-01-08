@@ -414,12 +414,12 @@ const handleSpecialtyChange = selected => {
       </div>
       <div className='marketing'>
         <img src={logo} alt="" />
-        <h1>O Marquei.com é o software gestor de agendamentos para profissionais da saude.</h1>
+        <h1>O Marquei.com é o software gestor de agendamentos para profissionais da saúde.</h1>
         <p>
           Convidamos você a experimentar tudo o que podemos oferecer para melhorar seus atendimentos e a gestão do seu dia a dia de trabalho.
         </p>
         <p>
-          Experimente gratuitamente o Marquei por 7 dias, sem qualquer compromisso, e mergulhe em nossas soluções:
+          Experimente o Marquei por 7 dias, sem qualquer compromisso, e mergulhe em nossas soluções:
         </p>
         <ul>
           <li> <CheckOutlined />Agenda médica e agendamento online</li>

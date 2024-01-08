@@ -1,6 +1,7 @@
 .menuLinks {
     display: flex;
     align-items: center;
+
     a {
         text-decoration: none;
         color: var(--cinza-texto);
@@ -12,8 +13,7 @@
     }
 
     a:hover {
-        color: #02075d;
-        font-weight: 700;
+        color: #3f51b5;
     }
 }
 
@@ -32,8 +32,25 @@
         display: none;
     }
 
-    button {
-        width: 13rem;
+    &__access{
+        a {
+            text-decoration: none;
+            color: var(--cinza-texto);
+            margin-left: 2rem;
+            font-family: var(--fonte-secundaria);
+            font-size: 1.25rem;
+            font-weight: 500;
+            cursor: pointer;
+        }
+
+        a:hover {
+            color: #3f51b5;
+            text-decoration: underline;
+        }
+
+        button {
+            width: 10rem;
+        }
     }
 }
 
@@ -64,7 +81,6 @@
         padding-top: .3rem;
         cursor: pointer;
     }
-    /* Adicione mais estilos conforme necessário */
 }
 
 .socialLinks {

@@ -8,7 +8,7 @@ import Btn from 'components/Btn';
 import PlanCard from 'components/SelerCads';
 import { Link } from 'react-router-dom';
 import Faq from 'components/Faq';
-
+import computerPhone from '../../public/computerPhone.png';
 
 function Home() {
   return (
@@ -58,10 +58,11 @@ function Home() {
           </div>
         </section>
         <section className={styles.solucao}>
+          <img src={computerPhone} alt="imagem de computador e telefone" />
           <h3>Solução ultraconfiável para profissionais de qualquer lugar do país !</h3>
         </section>
         <section className={styles.planos}>
-          <h2>Temos o plano certo para o seu consultório médico</h2>
+          <h2>Temos o plano certo para você !</h2>
           <div className={styles.cards}>
             <PlanCard />
           </div>

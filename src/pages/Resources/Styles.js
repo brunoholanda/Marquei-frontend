@@ -3,33 +3,23 @@ import { Row, Col, Card } from 'antd';
 import { ClockCircleOutlined } from '@ant-design/icons';
 
 export const StyledBanner = styled.div`
-  position: relative;
-  margin: 5rem 0rem;
-  padding: 4rem;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin: 0rem 0rem;
+  padding: 1rem;
   text-align: center;
-  background-color: #3f51b5; /* Cor de fundo como fallback */
-  background-image: url(${props => props.backgroundImage});
-  background-size: 15%;
-  background-repeat: no-repeat;
-  background-position: calc(100% - 50px) center; /* 50px é a margem que você quer da direita */
+  background-color: #3f51b5; /* Cor de fundo como fallback */ 
   color: #fff;
 
-  h1, p {
-    position: relative; /* Isso garante que o texto fique em cima da imagem de fundo */
-    z-index: 2;
+  p {
     color: #fff;
-
+    margin-top: 2rem;
   }
 
-  &:before {
-    content: "";
-    position: absolute;
-    top: 0;
-    right: 0;
-    bottom: 0;
-    left: 0;
-    z-index: 1; /* Isso garante que a sobreposição fique entre o texto e a imagem de fundo */
-  }
+img {
+  width: 16rem;
+}
   
 @media (max-width: 768px) {
   padding: 1rem;
@@ -41,12 +31,7 @@ export const StyledBanner = styled.div`
   p {
     font-size: 14px;
   }
-  
   }
-
-
-  
-
 `;
 
 export const StyledContainer = styled.div`

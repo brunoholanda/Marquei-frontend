@@ -34,6 +34,7 @@
   background-color: #f4f7fb;
   display: flex;
   justify-content: space-around;
+  padding-bottom: 1rem;
 
   &__texto {
     margin: 2rem 10rem;
@@ -64,17 +65,23 @@
   display: flex;
   justify-content: center;
   align-items: center;
+  margin-bottom: 5rem;
+
+  img {
+    width: 14rem;
+  }
 
   h3 {
     color: #f4f7fb;
     font-size: 1.6rem;
+    margin-left: .5rem;
   }
 }
 
 .planos {
   text-align: center;
   align-items: center;
-  justify-content: center; 
+  justify-content: center;
 }
 
 .cards {
@@ -84,7 +91,7 @@
 }
 
 .faq {
-  text-align: center;  
+  text-align: center;
 
   h2 {
     font-size: 2.8rem;
@@ -97,4 +104,84 @@
   .carouselHome {
     display: none;
   }
+
+  .home {
+    text-align: center;
+
+    h2 {
+      font-size: 1.8rem;
+    }
+
+    p {
+      font-size: 1rem;
+    }
+
+    ul {
+      font-size: 1rem;
+    }
+
+  }
+
+  .analogica {
+
+    &__img {
+      display: none;
+    }
+  }
+
+  .controle {
+    background-color: #fff;
+    display: flex;
+    justify-content: space-around;
+
+    &__texto {
+      margin: 2rem 10rem;
+    }
+
+    &__img {
+      display: none;
+    }
+  }
+
+  .solucao {
+    background-color: var(--azul);
+    height: 8rem;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-bottom: 5rem;
+
+    img {
+      display: none;
+    }
+
+    h3 {
+      color: #f4f7fb;
+      font-size: 1rem;
+      margin-left: 0rem;
+    }
+  }
+
+  .planos {
+    text-align: center;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .cards {
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+  }
+
+  .faq {
+    text-align: center;
+    margin: 0;
+
+    h2 {
+      font-size: 2.8rem;
+      color: #30455c;
+    }
+  }
+
 }

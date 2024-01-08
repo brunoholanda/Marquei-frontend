@@ -8,7 +8,6 @@ import logo from '../../public/logo.png'
 export default function PageBody() {
     return (
         <>
-            <HighHeader />
             <Header />
             <Outlet />
             <Footer />

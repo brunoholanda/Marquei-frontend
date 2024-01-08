@@ -11,7 +11,7 @@ function MenuLinks() {
             <Link to="./resources">
                 Recursos
             </Link>
-            <Link to="./">
+            <Link to="./planos">
                 Planos
             </Link>
             <Link to="./sobre">
@@ -37,9 +37,14 @@ export default function Header() {
             <div className={styles.header__links}>
                 <MenuLinks />
             </div>
-            <Link to='./cadastro'>
-                <Btn>Experimentar grátis</Btn>
-            </Link>
+            <div className={styles.header__access}>
+                <Link to='./login'>
+                    Acessar
+                </Link>
+                <Link to='./cadastro'>
+                    <Btn>Teste grátis</Btn>
+                </Link>
+            </div>
         </div>
     )
 }

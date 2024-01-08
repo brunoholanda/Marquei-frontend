@@ -1,0 +1,82 @@
+// Arquivo: SelerCards.module.scss
+
+.planos {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 20px;
+
+  &__title {
+    text-align: center;
+    margin-top: 3rem;
+    margin-bottom: 5rem;
+
+    h2 {
+      font-size: 3rem;
+    }
+  }
+}
+
+.planCard {
+  background-color: #ffffff;
+  border-radius: 10px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  padding: 20px;
+  width: 300px; // ou a largura que você preferir
+  position: relative;
+  text-align: center;
+
+  &.mostSold {
+    border: 2px solid #e9b311; // ou a cor que indica que é o mais vendido
+  }
+
+  .mostSoldLabel {
+    position: absolute;
+    top: -10px;
+    left: 50%;
+    transform: translateX(-50%);
+    background-color: #e9b311;
+    color: white;
+    padding: 5px 10px;
+    border-radius: 5px;
+  }
+
+  h2 {
+    color: #3f51b5;
+    font-size: 40px;
+    margin-bottom: 10px;
+  }
+
+  .price {
+    margin: 20px 0;
+    .originalPrice {
+      text-decoration: line-through;
+      color: #777777;
+      margin-right: 5px;
+    }
+
+    .perMonth {
+      display: block;
+      color: #777777;
+      font-size: 0.8rem;
+    }
+  }
+
+  .duration {
+    font-size: 0.8rem;
+    color: #666666;
+    margin-bottom: 20px;
+  }
+
+  button {
+    background-color: #3f51b5;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 5px;
+    cursor: pointer;
+    width: 100%;
+    font-weight: bold;
+    margin-top: 10px;
+  }
+}

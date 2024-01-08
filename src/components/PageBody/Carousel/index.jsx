@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import './Carousel.css'; // Make sure to create an appropriate CSS file to style the components
 import imagea from '../../../public/carrossel/1.png';
-import imageb from '../../../public/carrossel/2.png';
+import imageb from '../../../public/home/mens.png';
 import imagec from '../../../public/carrossel/3.png';
-import imaged from '../../../public/carrossel/4.webp';
+import imaged from '../../../public/carrossel/2.png';
 import { ClockCircleOutlined, ControlOutlined, FormOutlined, HeartOutlined } from '@ant-design/icons';
 import Btn from 'components/Btn';
 

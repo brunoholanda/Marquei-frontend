@@ -79,12 +79,17 @@ const ResourcesGrid = () => {
 
     return (
         <>
-<StyledBanner backgroundImage={computerPhone}>
-  <h1>Solução abrangente para agendamentos Online</h1>
-  <p>
-    Descubra o poder de uma plataforma de agendamento online projetada para transformar a forma como você gerencia seu tempo e seus clientes.
-  </p>
-</StyledBanner>
+            <StyledBanner>
+                <div>
+                    <h1>Solução abrangente para agendamentos Online</h1>
+                    <p>
+                        Descubra o poder de uma plataforma de agendamento online projetada para transformar a forma como você gerencia seu tempo e seus clientes.
+                    </p>
+                </div>
+                <div>
+                    <img src={computerPhone} alt="" />
+                </div>
+            </StyledBanner>
             <StyledContainer>
                 <StyledRow gutter={[16, 16]}>
                     {services.map((service, index) => (

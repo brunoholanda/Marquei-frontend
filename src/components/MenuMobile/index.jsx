@@ -21,7 +21,7 @@ export default function MenuMobile() {
                 <HamburgerMenu
                     toggled={isOpen}
                     toggle={toggleMenu}
-                    color="#ab7b3b"
+                    color="#3f51b5"
                     size={60}
                 />
             </nav>
@@ -30,23 +30,17 @@ export default function MenuMobile() {
                     <Link to="./">
                         <li>Inicio</li>
                     </Link>
-                    <Link to="/servicos/estetica">
-                        <li>Estética</li>
+                    <Link to="./resources">
+                        <li>Recursos</li>
                     </Link>
-                    <Link to="/servicos/canal">
-                        <li>Canal</li>
-                    </Link>
-                    <Link to="/servicos/protese">
-                        <li>Prótese</li>
-                    </Link>
-                    <Link to="/servicos/clinico">
-                        <li>Clínico Geral</li>
+                    <Link to="./planos">
+                        <li>Planos</li>
                     </Link>
                     <Link to="./sobre">
-                        <li>Sobre</li>
+                        <li>Como Funciona</li>
                     </Link>
-                    <Link to="./contato">
-                        <li>Contato</li>
+                    <Link to="./cadastro">
+                        <li>Contrate</li>
                     </Link>
                 </ul>
             )}

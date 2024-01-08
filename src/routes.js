@@ -24,6 +24,7 @@ import CheckoutPage from "pages/CheckoutPage";
 import MyPlan from "pages/Professional/MyPlan";
 import HelpCenter from "pages/HelpCenter";
 import ResourcesGrid from "pages/Resources";
+import PlansPage from "pages/PlansPage";
 
 function ScrollToTop() {
     const { pathname } = useLocation();
@@ -64,6 +65,7 @@ function AppRoutes() {
                     <Route path="/agendar/:company_id" element={<Schedule />} />
                     <Route path="/checkout" element={<CheckoutPage />} />
                     <Route path="/resources" element={<ResourcesGrid />} />
+                    <Route path="/planos" element={<PlansPage />} />
 
                     <Route path="/ajuda" element={<HelpCenter />} />
 

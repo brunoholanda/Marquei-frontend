@@ -3,7 +3,7 @@
   width: 100%;
   overflow: hidden;
   height: 500px;
-  background-image: linear-gradient(to bottom, #02075d, #4dbcd4);
+  background-image: linear-gradient(to bottom, #3f51b5, #4dbcd4);
 }
 
 .carousel-slides {
@@ -32,7 +32,7 @@
   left: 100px;
   transform: translateY(-50%);
   z-index: 3;
-  max-width: 300px;
+  max-width: 30%;
 
 }
 
@@ -48,9 +48,9 @@
 
 .slide-content button {
   width: 200px;
-  color: #002868;
+  color: #ffff;
   font-weight: bold;
-  background-color: #ffcb2e;
+  background-color: #3f51b5;
 }
 
 .slide-content button:hover {
@@ -82,7 +82,7 @@
   flex-direction: column;
   gap: 10px;
   z-index: 100;
-  background-image: linear-gradient(to bottom, #02075d, #4dbcd4);
+  background-image: linear-gradient(to bottom, #3f51b5, #4dbcd4);
   height: 490px;
 
 }

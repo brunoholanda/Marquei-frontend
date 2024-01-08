@@ -1,6 +1,9 @@
 :root {
   --fonte-principal: 'Poppins', sans-serif;
   --fonte-secundaria: 'DM Sans', sans-serif;
+  --fonte-principal-teste: 'Roboto Condensed', sans-serif;
+  --fonte-principal-e: 'Open Sans', sans-serif;
+
   --branco: #ffffff;
   --preto: #000000;
   --cinza-texto: #666666;
@@ -17,7 +20,7 @@
 body {
   margin: 0;
   padding: 0;
-  font-family: var(--fonte-principal);
+  font-family: var(--fonte-secundaria);
   background-color: #fff;
   
   -webkit-font-smoothing: antialiased;
