@@ -75,7 +75,7 @@ const PlansPage = ({ maxProfessionals }) => {
   }, []);
 
   return (
-    <div>
+    <div className={styles.containerPlanos}>
       <div className={styles.planos__title}>
         <h3>NOSSOS PLANOS</h3>
         <h2>O marquei é projetado para seu negócio crescer</h2>

@@ -6,11 +6,12 @@ export const StyledBanner = styled.div`
   display: flex;
   justify-content: center;
   align-items: center;
-  margin: 0rem 0rem;
+  margin: 6rem 0 0 0;
   padding: 1rem;
   text-align: center;
   background-color: #3f51b5; /* Cor de fundo como fallback */ 
   color: #fff;
+  
 
   p {
     color: #fff;

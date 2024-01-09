@@ -1,11 +1,11 @@
 .mobileMenu {
 
-    margin-bottom: .5em;
+    margin-bottom: .6em;
     margin-left: 0;
 
     a {
         text-decoration: none;
-        color: #3f51b5;
+        color: var(--branco);
         font-weight: 700;
         font-size: 18px;
     }
@@ -13,7 +13,7 @@
     li {
         list-style: none;
         margin-bottom: .5em;
-        border: 1px solid #3f51b5;
+        border: 1px solid var(--branco);
         text-align: center;
         border-radius: 10px;
         width: 150px;

@@ -63,6 +63,16 @@ const Carousel = () => {
                     </div>
                 ))}
             </div>
+
+
+        </div>
+    );
+};
+
+
+export default Carousel;
+
+/*
             <div className="carousel-side-options">
                 {carouselData.map((slide, index) => (
                     <button
@@ -75,9 +85,4 @@ const Carousel = () => {
                     </button>
                 ))}
             </div>
-        </div>
-    );
-};
-
-
-export default Carousel;
+            */

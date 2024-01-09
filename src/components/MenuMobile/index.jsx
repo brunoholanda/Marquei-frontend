@@ -21,7 +21,7 @@ export default function MenuMobile() {
                 <HamburgerMenu
                     toggled={isOpen}
                     toggle={toggleMenu}
-                    color="#3f51b5"
+                    color="#fff"
                     size={60}
                 />
             </nav>

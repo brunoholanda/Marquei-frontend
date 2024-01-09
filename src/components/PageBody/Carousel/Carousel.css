@@ -3,7 +3,8 @@
   width: 100%;
   overflow: hidden;
   height: 500px;
-  background-image: linear-gradient(to bottom, #3f51b5, #4dbcd4);
+  background-image: linear-gradient(to bottom, #3f51b5, #030d29);
+  margin: 6rem 0 0 0;
 }
 
 .carousel-slides {
@@ -27,13 +28,9 @@
 }
 
 .slide-content {
-  position: absolute;
-  top: 50%;
-  left: 100px;
-  transform: translateY(-50%);
   z-index: 3;
-  max-width: 30%;
-
+  max-width: 40%;
+  color: #ffff;
 }
 
 .slide-content h2 {
@@ -56,7 +53,7 @@
 .slide-content button:hover {
   width: 200px;
   color: #ffff;
-  background-color: #002868;
+  background-color: #3f51b5;
 }
 
 .slide.active {
@@ -67,7 +64,7 @@
 
 .slide img {
   max-height: 100%;
-  max-width: 100%;
+  max-width: 60%; /* Ajuste a largura conforme necessário */
   object-fit: contain;
 }
 
@@ -131,4 +128,27 @@
 
 .side-option-icon {
   margin-right: 10px;
+}
+
+@media screen and (max-width: 768px) {
+  .carousel-container {
+    height: 400px;
+    margin: 4rem 0 0 0;
+    
+  }
+  
+
+  .carousel-slides img {
+    display: none;
+  }
+
+  
+.slide-content h2 {
+  font-size: 28px;
+}
+
+.slide-content p {
+  font-size: 18px;
+}
+
 }

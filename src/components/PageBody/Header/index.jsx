@@ -1,6 +1,8 @@
 import { Link } from "react-router-dom";
 import styles from './Header.module.scss';
 import logo from '../../../public/logo.png';
+import logob from '../../../public/logo-branca.png';
+
 import Btn from "components/Btn";
 import MenuMobile from "components/MenuMobile";
 
@@ -29,7 +31,7 @@ export default function Header() {
     return (
         <div className={styles.header}>
             <Link to="./">
-                <img src={logo} alt="logo da pagina" />
+                <img src={logob} alt="logo da pagina" />
             </Link>
             <div className={styles.header__mobile}>
                 <MenuMobile />
