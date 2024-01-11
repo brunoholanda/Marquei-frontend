@@ -8,7 +8,8 @@ import {
     StyledIcon,
     StyledTitle,
     StyledDescription,
-    StyledTest
+    StyledTest,
+    StyledFaq
 } from './Styles';
 import {
     CalendarOutlined,
@@ -24,6 +25,7 @@ import {
 import { useNavigate } from 'react-router-dom';
 import Btn from 'components/Btn';
 import computerPhone from '../../public/computerPhone.png';
+import Faq from 'components/Faq';
 
 const services = [
     {
@@ -87,7 +89,7 @@ const ResourcesGrid = () => {
                     </p>
                 </div>
                 <div>
-                    <img src={computerPhone} alt="" />
+                    <img src={computerPhone} alt="imagem do sistema marquei agendamentos online" />
                 </div>
             </StyledBanner>
             <StyledContainer>
@@ -107,6 +109,10 @@ const ResourcesGrid = () => {
                 <p>O Marquei É grátis por 7 dias, aproveite e ...</p>
                 <Btn onClick={goToSignUp}>Crie seu cadastro !</Btn>
             </StyledTest>
+            <StyledFaq>
+                <h2>Confira as perguntas mais frequentes...</h2>
+                <Faq />
+            </StyledFaq>
         </>
     );
 };

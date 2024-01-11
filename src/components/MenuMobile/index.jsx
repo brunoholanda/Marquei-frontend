@@ -14,7 +14,6 @@ export default function MenuMobile() {
         setOpen(false);
     }
 
-
     return (
         <>
             <nav>
@@ -22,7 +21,7 @@ export default function MenuMobile() {
                     toggled={isOpen}
                     toggle={toggleMenu}
                     color="#fff"
-                    size={60}
+                    size={45}
                 />
             </nav>
             {isOpen && (

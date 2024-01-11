@@ -23,6 +23,7 @@ img {
 }
   
 @media (max-width: 768px) {
+  margin: 4rem 0 0 0;
   padding: 1rem;
 
   h1 {
@@ -32,6 +33,9 @@ img {
   p {
     font-size: 14px;
   }
+  img {
+    display: none;
+}
   }
 `;
 
@@ -123,4 +127,10 @@ export const StyledTest = styled.div`
     padding: 1rem;
   }
 
+`;
+
+export const StyledFaq = styled.div`
+  h2 {
+    text-align: center;
+  }
 `;

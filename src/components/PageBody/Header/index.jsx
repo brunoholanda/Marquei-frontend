@@ -1,7 +1,7 @@
 import { Link } from "react-router-dom";
 import styles from './Header.module.scss';
 import logo from '../../../public/logo.png';
-import logob from '../../../public/logo-branca.png';
+import logob from '../../../public/logo-branca-2.png';
 
 import Btn from "components/Btn";
 import MenuMobile from "components/MenuMobile";

@@ -6,6 +6,7 @@ import { useNavigate } from 'react-router-dom';
 import ReactInputMask from 'react-input-mask';
 import logo from '../../public/logo.png'
 import { CheckOutlined } from '@ant-design/icons';
+import computerPhone from '../../public/computerPhone.png';
 const { Option } = Select;
 
 
@@ -222,9 +223,6 @@ const handleSpecialtyChange = selected => {
     }
   };
 
-
-
-
   const onAgreementChange = (e) => {
     setIsAgreed(e.target.checked);
   };
@@ -265,7 +263,6 @@ const handleSpecialtyChange = selected => {
               <Option value="psicologo">Psicólogo</Option>
               <Option value="fisioterapeuta">Fisioterapeuta</Option>
               <Option value="nutricionista">Nutricionista</Option>
-              {/* Adicione mais opções conforme necessário */}
             </Select>
           </Form.Item>
 
@@ -432,6 +429,7 @@ const handleSpecialtyChange = selected => {
         <p>
           Preencha seu cadastro para começar o teste. Não solicitamos informações de pagamento e nosso suporte está disponível para esclarecer suas dúvidas durante o horário comercial.
         </p>
+        <img className='marketing-img' src={computerPhone} alt="imagem do sistema marquei agendamentos online" />
       </div>
     </div>
   );

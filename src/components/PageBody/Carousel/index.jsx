@@ -6,23 +6,24 @@ import imagec from '../../../public/carrossel/3.png';
 import imaged from '../../../public/carrossel/2.png';
 import { ClockCircleOutlined, ControlOutlined, FormOutlined, HeartOutlined } from '@ant-design/icons';
 import Btn from 'components/Btn';
+import { useNavigate } from 'react-router-dom';
 
 const carouselData = [
     {
         title: "Gerencie sua clínica",
-        description: "Gestão clínica simplificada para você focar no seu paciente",
+        description: "Gestão clínica simplificada para você focar no seu paciente.",
         imageUrl: imagea,
         icon: <ControlOutlined />,
     },
     {
         title: "Acompanhe em tempo real",
-        description: "Acompanhe o agendamento e historico dos seus pacientes",
+        description: "Acompanhe o agendamento e historico dos seus pacientes...",
         imageUrl: imageb,
         icon: <HeartOutlined />,
     },
     {
         title: "Emita Declaracoes e Atestados",
-        description: "Emita atestados de forma rapida e pratica",
+        description: "Emita atestados de forma rápida e prática !",
         imageUrl: imagec,
         icon: <FormOutlined />
     },
@@ -49,6 +50,9 @@ const Carousel = () => {
         setActiveIndex(index);
     };
 
+    const navigate = useNavigate();
+    const goToSignUp = () => navigate('/cadastro');
+
     return (
         <div className="carousel-container">
             <div className="carousel-slides">
@@ -56,15 +60,13 @@ const Carousel = () => {
                     <div key={index} className={`slide ${index === activeIndex ? 'active' : ''}`}>
                         <div className="slide-content">
                             <h2>{slide.title}</h2>
-                            <p>{slide.description}</p>
-                            <Btn>CONTRATE AGORA !</Btn>
+                            <p>{slide.description}</p>                           
+                            <Btn onClick={goToSignUp}>CONTRATE AGORA !</Btn>
                         </div>
                         <img src={slide.imageUrl} alt={slide.title} />
                     </div>
                 ))}
             </div>
-
-
         </div>
     );
 };

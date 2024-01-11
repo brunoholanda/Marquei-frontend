@@ -68,7 +68,6 @@ const faqItems = [
     },
 ];
 
-
 function Faq() {
     return (
         <div>

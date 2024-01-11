@@ -123,7 +123,6 @@
   color: #000000;
   font-weight: bold;
   background-color: rgba(255, 255, 255, 0.884);
-  /* Fundo mais opaco ao passar o mouse ou ativo */
 }
 
 .side-option-icon {
@@ -132,11 +131,14 @@
 
 @media screen and (max-width: 768px) {
   .carousel-container {
-    height: 400px;
+    height: 290px;
     margin: 4rem 0 0 0;
     
   }
   
+  .slide-content {
+    max-width: 80%;
+  }
 
   .carousel-slides img {
     display: none;

@@ -7,6 +7,7 @@ import { Wallet, initMercadoPago } from '@mercadopago/sdk-react';
 import { StyledPlanCard, StyledPlanContainer, StyledTextCard } from './Styles';
 import api from '../../components/api/api';
 import { WarningOutlined } from '@ant-design/icons';
+import Btn from 'components/Btn';
 
 const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 const commonDomains = ["gmail.com", "yahoo.com", "hotmail.com", "outlook.com", "live.com"];
@@ -22,7 +23,6 @@ const AuthModal = ({ isVisible, onClose, onLoginSuccess, selectedService }) => {
     const [paymentType, setPaymentType] = useState(null);
     const location = useLocation();
     const { serviceId } = location.state || { serviceId: null };
-    const [paymentMethod, setPaymentMethod] = useState(null);
     const [serviceDetails, setServiceDetails] = useState({ plan: '', monthlyPrice: 0, anualPrice: 0 });
     const [preferenceId, setPreferenceId] = useState(null);
     const [loading, setLoading] = useState(false);
@@ -54,7 +54,6 @@ const AuthModal = ({ isVisible, onClose, onLoginSuccess, selectedService }) => {
         updateEmailSuggestions(newEmail);
     };
 
-    // Handler para selecionar uma sugestão
     const selectSuggestion = (suggestion) => {
         setUsername(suggestion);
         setEmailSuggestions([]);
@@ -83,10 +82,8 @@ const AuthModal = ({ isVisible, onClose, onLoginSuccess, selectedService }) => {
     };
 
     const handleFreeTrial = () => {
-        // Aqui você pode implementar a lógica para iniciar o teste grátis
-        // Por exemplo, pode redirecionar o usuário para uma página de cadastro
         navigate('/cadastro');
-        setShowTrialModal(false); // Fecha o modal após a ação
+        setShowTrialModal(false); 
     };
 
     const handleEmailSubmit = async (e) => {
@@ -177,7 +174,7 @@ const AuthModal = ({ isVisible, onClose, onLoginSuccess, selectedService }) => {
     };
 
     const onSelectPaymentType = async (type, itemDetails) => {
-        const authToken = localStorage.getItem('authToken'); // Supondo que o token de autenticação esteja armazenado no localStorage
+        const authToken = localStorage.getItem('authToken'); 
 
         if (type === 'monthly') {
             if (!preapprovalPlanId) {
@@ -185,16 +182,14 @@ const AuthModal = ({ isVisible, onClose, onLoginSuccess, selectedService }) => {
                 return;
             }
 
-            // Dados que serão enviados para a API
             const paymentData = {
                 payment_type: 'mensal',
-                payment_email: username, // ou o e-mail do usuário autenticado
-                service_id: selectedService.serviceId, // ou outro identificador relevante do serviço
+                payment_email: username, 
+                service_id: selectedService.serviceId, 
                 payment_confirm: false,
             };
 
             try {
-                // Enviando dados de pagamento para a API
                 const response = await fetch(`${BASE_URL}/companies/updatePaymentInfo`, {
                     method: 'POST',
                     headers: {
@@ -207,11 +202,9 @@ const AuthModal = ({ isVisible, onClose, onLoginSuccess, selectedService }) => {
                 const responseData = await response.json();
 
                 if (response.ok) {
-                    // Se a atualização foi bem-sucedida, redireciona para o pagamento mensal
                     const monthlyPaymentUrl = `https://www.mercadopago.com/mlb/debits/new?preapproval_plan_id=${preapprovalPlanId}`;
                     window.location.href = monthlyPaymentUrl;
                 } else {
-                    // Lidar com erros na atualização de informações de pagamento
                     message.error(`Erro ao atualizar informações de pagamento: ${responseData.error || 'Erro desconhecido'}`);
                 }
             } catch (error) {
@@ -230,7 +223,6 @@ const AuthModal = ({ isVisible, onClose, onLoginSuccess, selectedService }) => {
             createPreference(details);
         }
     };
-
 
 
     const calculateAnualSavings = () => {
@@ -344,6 +336,7 @@ const AuthModal = ({ isVisible, onClose, onLoginSuccess, selectedService }) => {
             return (
                 <div style={{ textAlign: 'center' }}>
                     <h2>Escolha o tipo de pagamento</h2>
+                    <p><WarningOutlined /> Ao pagar utilize o mesmo e-mail logado !</p>
                     <StyledPlanContainer>
                         <StyledPlanCard
                             selected={paymentType === 'anual'}
@@ -353,15 +346,23 @@ const AuthModal = ({ isVisible, onClose, onLoginSuccess, selectedService }) => {
                             <h3>Use 12 meses pagando por 10 e Economize R$ {calculateAnualSavings().toFixed(2)} ao ano!</h3>
                             <h2>Pagando Apenas R$ {(serviceDetails.anualPrice / 12).toFixed(2)} por mês</h2>
                             <div>{serviceDetails.persons} profissional(is) teram acesso a plataforma</div>
+                            <Btn onClick={(e) => {
+                                e.stopPropagation();
+                                onSelectPaymentType('anual');
+                            }}>Contratar  🤝</Btn>
                         </StyledPlanCard>
                         <StyledPlanCard
                             selected={paymentType === 'monthly'}
                             onClick={() => onSelectPaymentType('monthly')}
                         >
                             <h2><strong>Plano Mensal 💸</strong></h2>
-                            <h3>Pagamento sem desconto mês a mês</h3>
+                            <h3>Pagamento mês a mês...</h3>
                             <h2>R$ {serviceDetails.monthlyPrice} por mês</h2>
                             <div>{serviceDetails.persons} profissional(is) teram acesso a plataforma</div>
+                            <Btn onClick={(e) => {
+                                e.stopPropagation();
+                                onSelectPaymentType('monthly');
+                            }}>Contratar  🤝</Btn>
                         </StyledPlanCard>
                     </StyledPlanContainer>
                     <p><WarningOutlined /> Ao pagar utilize o mesmo e-mail logado !</p>
@@ -380,9 +381,7 @@ const AuthModal = ({ isVisible, onClose, onLoginSuccess, selectedService }) => {
                                 initialization={{
                                     preferenceId: preferenceId
                                 }}
-
                                 onPaymentSuccess={handlePaymentSuccess} // Exemplo, o nome do prop real depende do SDK
-
                             />
                         )
                     )}

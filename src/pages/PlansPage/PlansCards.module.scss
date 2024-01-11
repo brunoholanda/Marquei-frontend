@@ -1,6 +1,5 @@
-// Arquivo: SelerCards.module.scss
 .containerPlanos {
-  margin: 8rem 0 0 0;
+  margin: 10rem 0 0 0;
 }
 
 .planos {
@@ -8,7 +7,7 @@
   flex-wrap: wrap;
   justify-content: center;
   gap: 20px;
-  
+
 
   &__title {
     text-align: center;
@@ -19,19 +18,24 @@
       font-size: 3rem;
     }
   }
+
+  &__divider {
+    border-bottom: 1px solid #ebeef0;
+    margin: 20px 0;
+  }
 }
 
 .planCard {
   background-color: #ffffff;
   border-radius: 10px;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
   padding: 20px;
-  width: 300px; // ou a largura que você preferir
+  width: 300px;
   position: relative;
   text-align: center;
 
   &.mostSold {
-    border: 2px solid #e9b311; // ou a cor que indica que é o mais vendido
+    border: 2px solid #e9b311;
   }
 
   .mostSoldLabel {
@@ -53,6 +57,7 @@
 
   .price {
     margin: 20px 0;
+
     .originalPrice {
       text-decoration: line-through;
       color: #777777;
@@ -69,18 +74,64 @@
   .duration {
     font-size: 0.8rem;
     color: #666666;
-    margin-bottom: 20px;
+    margin-bottom: 14px;
+    text-align: left;
   }
 
   button {
-    background-color: #3f51b5;
-    color: white;
-    border: none;
-    padding: 10px 20px;
-    border-radius: 5px;
-    cursor: pointer;
-    width: 100%;
-    font-weight: bold;
     margin-top: 10px;
+  }
+}
+
+.testeMarquei {
+  margin: 5rem 0rem;
+  padding: 2rem;
+  text-align: center;
+  background-color: #3f51b5;
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  height: 7rem;
+
+
+  p {
+    color: #fff;
+    font-weight: bold;
+  }
+
+  button {
+    background-color: #fff;
+    color: #666666;
+    font-weight: bold;
+    width: 250px;
+  }
+
+  button:hover {
+    background-color: #fff;
+    color: #666666;
+  }
+
+  img {
+    width: 16rem;
+  }
+}
+
+@media (max-width: 768px) {
+  .containerPlanos {
+    margin: 8rem 0 0 0;
+  }
+
+  .planos__title {
+
+    h2 {
+      font-size: 30px;
+
+    }
+  }
+
+  .testeMarquei {
+    img {
+      display: none;
+    }
   }
 }

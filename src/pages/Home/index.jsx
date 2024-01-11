@@ -6,11 +6,14 @@ import controle from '../../public/home/woman-2.png'
 import digital from '../../public/home/digital.png'
 import Btn from 'components/Btn';
 import PlanCard from 'components/SelerCads';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import Faq from 'components/Faq';
 import computerPhone from '../../public/computerPhone.png';
 
 function Home() {
+  const navigate = useNavigate();
+  const goToSignUp = () => navigate('/cadastro');
+
   return (
     <div>
       <div className={styles.carouselHome}>
@@ -26,7 +29,7 @@ function Home() {
               <li>Conexão com o prontuário eletrônico</li>
               <li>Agenda disponível para acesso a qualquer hora e lugar</li>
             </ul>
-            <Btn>CONFIRA OS PLANOS</Btn>
+            <Btn onClick={goToSignUp} >CONFIRA OS PLANOS</Btn>
           </div>
           <div className={styles.analogica__img}>
             <img src={digital} alt="medica com olhar analitico digital" />
@@ -44,14 +47,14 @@ function Home() {
               <li>Gestão de estoque com controle de entradas e saídas</li>
               <li>Emissão automatizada de termos e documentos</li>
             </ul>
-            <Btn>CONTROLE SUA CLINICA</Btn>
+            <Btn onClick={goToSignUp}>CONTROLE SUA CLINICA</Btn>
           </div>
         </section>
         <section className={styles.analogica}>
           <div className={styles.analogica__texto}>
             <h2>Sua Clínica precisa deixar de ser analógica !</h2>
             <p>Se você está exausto de lidar com planilhas complexas ou se perder em montanhas de papéis, e busca uma maneira eficiente de prevenir sobreposições nos agendamentos dos seus pacientes, o "Marquei" é a solução perfeita para a sua clínica, independentemente do seu tamanho. Com o nosso software de gestão de agendas, simplifique seu dia a dia e concentre-se no que realmente importa: cuidar da saúde dos seus pacientes!</p>
-            <Btn>DEIXAR DE SER ANALOGICA</Btn>
+            <Btn onClick={goToSignUp}>DEIXAR DE SER ANALOGICA</Btn>
           </div>
           <div className={styles.analogica__img}>
             <img src={horas} alt="medica com olhar analitico digital" />
@@ -72,7 +75,7 @@ function Home() {
         </section>
       </div>
       <section className={styles.faq}>
-        <h2>Confira nossas perguntas frequentes</h2>
+        <h2>Confira nossas perguntas frequentes ...</h2>
         <Faq />
       </section>
     </div>

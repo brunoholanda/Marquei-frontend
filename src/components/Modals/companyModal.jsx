@@ -110,17 +110,16 @@ const CompanyDataModal = ({ isVisible, onClose }) => {
     const handleSaveChanges = async () => {
         setLoading(true);
         try {
-            // Atualiza o estado editedData com o endereço completo
             const updatedData = {
                 ...editedData,
-                endereco: enderecoCompleto // Aqui você atribui o endereço completo ao campo 'endereco'
+                endereco: enderecoCompleto 
             };
 
             const formData = new FormData();
             formData.append('nome', updatedData.nome);
             formData.append('telefone', updatedData.telefone);
             formData.append('instagram', updatedData.instagram);
-            formData.append('endereco', updatedData.endereco); // Agora enviando o endereço completo
+            formData.append('endereco', updatedData.endereco); 
 
             if (logoFile) {
                 formData.append('logo', logoFile.originFileObj);
@@ -140,8 +139,6 @@ const CompanyDataModal = ({ isVisible, onClose }) => {
             setLoading(false);
         }
     };
-
-
 
 
     return (

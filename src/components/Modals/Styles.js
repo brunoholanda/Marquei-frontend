@@ -79,10 +79,32 @@ export const StyledPlanContainer = styled.div`
   border-radius: 4px;
   display: flex;
   flex-direction: column;
-
   justify-content: center;
+
+  h2:first-of-type {
+    color: #3f51b5;
+  }
+
   button {
     margin-bottom: .8rem;
+  }
+  
+
+  @media (max-width: 768px) { 
+    width: 100%; 
+    padding: 0 10px; 
+
+    h2 {
+      font-size: 14px;
+    }
+
+    h2:nth-child(1) {
+      font-size: 20px;
+    }
+
+    h3 {
+      font-size: 16px;
+    }
   }
 
 `;
@@ -101,13 +123,29 @@ export const StyledPlanCard = styled.div`
     transform: translateY(-2px);
     box-shadow: 0 6px 12px 0 rgba(0,0,0,0.3);
   }
+
+  button {
+      width: 90%;
+      height: 38px;
+      margin-top: 1rem;
+      color: var(--branco);
+      background-color: var(--azul);
+    }
+
+    button:hover {
+      color: var(--branco);
+      background-color: var(--azul);
+    }
+
+  @media (max-width: 768px) { 
+    width: 88%; 
+    margin: .5rem 0; 
+    padding: .5rem;
+
+  }
 `;
 
 export const StyledTextCard = styled.p`
   text-align: center;
   color: #666666;
 `;
-
-
-
-// Adicione estilizações para outros componentes conforme necessário

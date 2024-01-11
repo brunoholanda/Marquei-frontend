@@ -3,6 +3,10 @@ import styles from './PlansCards.module.scss';
 import { useNavigate } from 'react-router-dom';
 import api from '../../components/api/api';
 import AuthModal from 'components/Modals/AuthModal';
+import { CheckCircleFilled } from '@ant-design/icons';
+import Btn from 'components/Btn';
+import computerPhone from '../../public/computerPhone.png';
+import Faq from 'components/Faq';
 
 const PlansPage = ({ maxProfessionals }) => {
   const navigate = useNavigate();
@@ -74,6 +78,8 @@ const PlansPage = ({ maxProfessionals }) => {
     fetchPlans();
   }, []);
 
+  const goToSignUp = () => navigate('/cadastro')
+
   return (
     <div className={styles.containerPlanos}>
       <div className={styles.planos__title}>
@@ -89,18 +95,81 @@ const PlansPage = ({ maxProfessionals }) => {
               <span className={styles.originalPrice}>R${service.originalPrice}</span>
               R${service.price} <span className={styles.perMonth}>por mês</span>
             </div>
+
+            <Btn onClick={() => handleServiceSelect(service)}>Contratar Agora</Btn>
+            <div className={styles.planos__divider}></div>
+            {['Plus'].includes(service.plan) && (
+              <p>Ideal para profissionais que trabalham sozinhos !</p>
+            )}
             <div className={styles.duration}>
-              Por {service.persons} profissional(is) da saúde, durante {service.duration} meses.
+              <CheckCircleFilled style={{ fontSize: '20px', color: '#3f51b5', marginRight: '10px' }} />
+              Até {service.persons} profissional(is) da saúde.
             </div>
-            <button onClick={() => handleServiceSelect(service)}>Contratar Agora</button>
+            {['Pro', 'Premium'].includes(service.plan) && (
+              <>
+                <div className={styles.duration}>
+                  <CheckCircleFilled style={{ fontSize: '20px', color: '#3f51b5', marginRight: '10px' }} />
+                  Suporte prioritário
+                </div>
+                <div className={styles.duration}>
+                  <CheckCircleFilled style={{ fontSize: '20px', color: '#3f51b5', marginRight: '10px' }} />
+                  Descontos por indicação
+                </div>
+              </>
+            )}
+            {['Premium'].includes(service.plan) && (
+              <>
+                <div className={styles.duration}>
+                  <CheckCircleFilled style={{ fontSize: '20px', color: '#3f51b5', marginRight: '10px' }} />
+                  Personalização de recursos da Plataforma
+                </div>
+                <div className={styles.duration}>
+                  <CheckCircleFilled style={{ fontSize: '20px', color: '#3f51b5', marginRight: '10px' }} />
+                  Funções especificas da área de atuação
+                </div>
+                <div className={styles.duration}>
+                  <CheckCircleFilled style={{ fontSize: '20px', color: '#3f51b5', marginRight: '10px' }} />
+                  Expansão no número de usuários
+                </div>
+              </>
+            )}
+            <div className={styles.duration}>
+              <CheckCircleFilled style={{ fontSize: '20px', color: '#3f51b5', marginRight: '10px' }} />
+              Prontuário digital e emissão de documentos
+            </div>
+            <div className={styles.duration}>
+              <CheckCircleFilled style={{ fontSize: '20px', color: '#3f51b5', marginRight: '10px' }} />
+              Agenda 24 Horas
+            </div>
+            <div className={styles.duration}>
+              <CheckCircleFilled style={{ fontSize: '20px', color: '#3f51b5', marginRight: '10px' }} />
+              Administração Financeira
+            </div>
+            <div className={styles.duration}>
+              <CheckCircleFilled style={{ fontSize: '20px', color: '#3f51b5', marginRight: '10px' }} />
+              Gerenciamento de Agenda Intuitivo
+            </div>
             <AuthModal
               isVisible={showAuthModal}
               onClose={() => setShowAuthModal(false)}
               onLoginSuccess={handleLoginSuccess}
-              selectedService={selectedService} // Pass the selected service details to the AuthModal
+              selectedService={selectedService}
             />
           </div>
         ))}
+      </div>
+      <div className={styles.testeMarquei}>
+        <div>
+          <p>O Marquei É grátis por 7 dias, aproveite e ...</p>
+          <Btn onClick={goToSignUp}>Crie seu cadastro !</Btn>
+        </div>
+        <div>
+          <img src={computerPhone} alt="imagem do sistema marquei agendamentos online" />
+        </div>
+      </div>
+      <div className={styles.planos__title}>
+        <h3>Confira as perguntas mais frequentes...</h3>
+        <Faq />
       </div>
     </div>
   );
