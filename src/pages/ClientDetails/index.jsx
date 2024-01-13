@@ -416,6 +416,7 @@ const ClientDetails = ({ userSpecialties = [] }) => {
                             {(inputProps) => <Input {...inputProps} />}
                         </ReactInputMask>
                     </p>
+                    <p><b>E-Mail:</b> <Input value={editedDetails.client_email} onChange={e => handleInputChange('client_email', e.target.value)} /></p>
                     <p><b>Plano:</b> <Input value={editedDetails.planodental} onChange={e => handleInputChange('planodental', e.target.value)} /></p>
                     <p><b>CPF:</b>
                         <ReactInputMask
