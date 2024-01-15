@@ -399,6 +399,16 @@ const ClientDetails = ({ userSpecialties = [] }) => {
         });
     };
 
+    const formatDate = (dateStr) => {
+        const date = new Date(dateStr);
+        const day = date.getUTCDate().toString().padStart(2, '0');
+        const month = (date.getUTCMonth() + 1).toString().padStart(2, '0');
+        const year = date.getUTCFullYear();
+        return `${day}/${month}/${year}`;
+    };
+    
+    
+
     const tabList = [
         {
             key: '1',
@@ -406,7 +416,7 @@ const ClientDetails = ({ userSpecialties = [] }) => {
             content: (
                 <div className='dadosPessoaisTab'>
                     <p><b>Nome:</b> <Input value={editedDetails.nome || appointmentDetails.nome} onChange={(e) => handleInputChange('nome', e.target.value)} /></p>
-                    <p><b>Data de Nascimento:</b> <Input value={editedDetails.data_nascimento || appointmentDetails.data_nascimento} onChange={(e) => handleInputChange('data_nascimento', e.target.value)} /></p>
+                    <p><b>Data de Nascimento:</b> <Input value={formatDate(editedDetails.data_nascimento) || formatDate(appointmentDetails.data_nascimento)} onChange={(e) => handleInputChange('data_nascimento', e.target.value)} /></p>
                     <p><b>Telefone:</b>
                         <ReactInputMask
                             mask="(99) 9 9999-9999"

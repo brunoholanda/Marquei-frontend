@@ -334,7 +334,7 @@ const handleSpecialtyChange = selected => {
             rules={[{ required: true, message: 'Por favor, insira seu telefone!' }]}
           >
             <Input placeholder="Telefone" />
-          </Form.Item>8
+          </Form.Item>
 
           <Form.Item
             {...formItemLayout}

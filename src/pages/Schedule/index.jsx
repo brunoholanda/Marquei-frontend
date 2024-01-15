@@ -163,8 +163,8 @@ const Schedule = () => {
         nome: values.nome,
         cpf: values.cpf.replace(/\D/g, ''),
         celular: values.celular.replace(/\D/g, ''),
-        planodental: values.planodental, 
-        company_id: company_id, 
+        planodental: values.planodental,
+        company_id: company_id,
 
       };
 
@@ -321,141 +321,142 @@ const Schedule = () => {
 
 
   return (
-    <Form
-      form={form}
-      name="agendamento"
-      layout="vertical"
-      onFinish={onFinish}
-    >
-      <Form.Item
-        name="nome"
-        label="Nome e Sobrenome"
-        rules={[{ required: true, message: 'Por favor, insira seu nome!' }]}
+    <div className='paginaAgendamento'>
+      <Form
+        form={form}
+        name="agendamento"
+        layout="vertical"
+        onFinish={onFinish}
       >
-        <Input placeholder="Seu nome e sobrenome" />
-      </Form.Item>
-      <Form.Item
-        name="cpf"
-        label="CPF"
-        rules={[
-          { required: true, message: 'Por favor, insira seu CPF!' },
-          { validator: (_, value) => validaCPF(value) ? Promise.resolve() : Promise.reject('CPF inválido!') }
-        ]}
-      >
-        <ReactInputMask mask="999.999.999-99" placeholder="000.000.000-00">
-          {(inputProps) => <Input {...inputProps} type="text" />}
-        </ReactInputMask>
-      </Form.Item>
-      <Select
-        showSearch
-        style={{ width: 200, marginBottom: 20 }}
-        placeholder="Selecione um profissional"
-        optionFilterProp="children"
-        onChange={async (value) => {
-          if (value) {
-            setSelectedProfessional(value);
-            const planos = await fetchPlanosSaude(value);
-            setPlanosSaude(planos);
-            form.setFieldsValue({ planodental: '' });
+        <Form.Item
+          name="nome"
+          label="Nome e Sobrenome"
+          rules={[{ required: true, message: 'Por favor, insira seu nome!' }]}
+        >
+          <Input placeholder="Seu nome e sobrenome" />
+        </Form.Item>
+        <Form.Item
+          name="cpf"
+          label="CPF"
+          rules={[
+            { required: true, message: 'Por favor, insira seu CPF!' },
+            { validator: (_, value) => validaCPF(value) ? Promise.resolve() : Promise.reject('CPF inválido!') }
+          ]}
+        >
+          <ReactInputMask mask="999.999.999-99" placeholder="000.000.000-00">
+            {(inputProps) => <Input {...inputProps} type="text" />}
+          </ReactInputMask>
+        </Form.Item>
+        <Select
+          showSearch
+          style={{ width: 200, marginBottom: 20 }}
+          placeholder="Selecione um profissional"
+          optionFilterProp="children"
+          onChange={async (value) => {
+            if (value) {
+              setSelectedProfessional(value);
+              const planos = await fetchPlanosSaude(value);
+              setPlanosSaude(planos);
+              form.setFieldsValue({ planodental: '' });
+            }
+          }}
+          filterOption={(input, option) =>
+            option.children.toLowerCase().indexOf(input.toLowerCase()) >= 0
           }
-        }}
-        filterOption={(input, option) =>
-          option.children.toLowerCase().indexOf(input.toLowerCase()) >= 0
-        }
-        value={selectedProfessional}
-      >
-        {professionals.map((professional) => (
-          <Option key={professional.id} value={professional.id}>
-            {professional.nome}
-          </Option>
-        ))}
-      </Select>
-
-      <Form.Item
-        name="data"
-        label="Data"
-        rules={[{ required: true, message: 'Por favor, selecione uma data!' }]}
-      >
-        <DatePicker
-          format="DD/MM/YYYY"
-          disabledDate={disabledDate}
-          onChange={handleDateChange}
-        />
-      </Form.Item>
-
-      <Form.Item
-        name="horario"
-        label="Horário"
-        rules={[{ required: true, message: 'Por favor, selecione um horário!' }]}
-      >
-        <TimePicker
-          format="HH:mm"
-          minuteStep={15}
-          disabledHours={() => disabledHours}
-        />
-      </Form.Item>
-
-      <Form.Item
-        name="planodental"
-        rules={[{ required: true, message: 'Por favor, selecione um plano dental!' }]}
-      >
-        <Select placeholder="Selecione seu plano dental">
-          {planosSaude.map((plano) => (
-            <Option key={plano.id} value={plano.nome}>
-              {plano.nome}
+          value={selectedProfessional}
+        >
+          {professionals.map((professional) => (
+            <Option key={professional.id} value={professional.id}>
+              {professional.nome}
             </Option>
           ))}
         </Select>
-      </Form.Item>
-      <Form.Item
-        name="celular"
-        label="Celular"
-        rules={[{ required: true, message: 'Por favor, insira seu número de celular!' }]}
-      >
-        <ReactInputMask mask="(99) 9 9999-9999" placeholder="(99) 9 9999-9999">
-          {(inputProps) => <Input {...inputProps} type="tel" />}
-        </ReactInputMask>
-      </Form.Item>
-      <Form.Item
-        name="motivo"
-        label="Motivo da Consulta"
-        rules={[
-          { required: true, message: 'Por favor, descreva o motivo da consulta!' },
-        ]}
-      >
-        <TextArea
-          placeholder="Descreva o motivo da consulta em poucas palavras"
-          rows={4}
-          maxLength={90}
-        />
 
-      </Form.Item>
+        <Form.Item
+          name="data"
+          label="Data"
+          rules={[{ required: true, message: 'Por favor, selecione uma data!' }]}
+        >
+          <DatePicker
+            format="DD/MM/YYYY"
+            disabledDate={disabledDate}
+            onChange={handleDateChange}
+          />
+        </Form.Item>
 
-      <Form.Item>
-        <Button type="primary" htmlType="submit" loading={loading}>
-          Agendar
-        </Button>
-      </Form.Item>
-      <Modal
-        title="Agendamento Recebido!"
-        visible={isModalVisible}
-        onOk={() => {
-          setModalVisible(false);
-          navigate('/');
-        }}
-        onCancel={() => setModalVisible(false)}
-        okText="Fechar"
-        cancelButtonProps={{ style: { display: 'none' } }}
-      >
-        <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '20px' }}>
-          <div style={{ fontSize: '50px', color: 'green' }}>
-            ✓
+        <Form.Item
+          name="horario"
+          label="Horário"
+          rules={[{ required: true, message: 'Por favor, selecione um horário!' }]}
+        >
+          <TimePicker
+            format="HH:mm"
+            minuteStep={15}
+            disabledHours={() => disabledHours}
+          />
+        </Form.Item>
+
+        <Form.Item
+          name="planodental"
+          rules={[{ required: true, message: 'Por favor, selecione um plano dental!' }]}
+        >
+          <Select placeholder="Selecione seu plano dental">
+            {planosSaude.map((plano) => (
+              <Option key={plano.id} value={plano.nome}>
+                {plano.nome}
+              </Option>
+            ))}
+          </Select>
+        </Form.Item>
+        <Form.Item
+          name="celular"
+          label="Celular"
+          rules={[{ required: true, message: 'Por favor, insira seu número de celular!' }]}
+        >
+          <ReactInputMask mask="(99) 9 9999-9999" placeholder="(99) 9 9999-9999">
+            {(inputProps) => <Input {...inputProps} type="tel" />}
+          </ReactInputMask>
+        </Form.Item>
+        <Form.Item
+          name="motivo"
+          label="Motivo da Consulta"
+          rules={[
+            { required: true, message: 'Por favor, descreva o motivo da consulta!' },
+          ]}
+        >
+          <TextArea
+            placeholder="Descreva o motivo da consulta em poucas palavras"
+            rows={4}
+            maxLength={90}
+          />
+
+        </Form.Item>
+
+        <Form.Item>
+          <Button type="primary" htmlType="submit" loading={loading}>
+            Agendar
+          </Button>
+        </Form.Item>
+        <Modal
+          title="Agendamento Recebido!"
+          visible={isModalVisible}
+          onOk={() => {
+            setModalVisible(false);
+            navigate('/');
+          }}
+          onCancel={() => setModalVisible(false)}
+          okText="Fechar"
+          cancelButtonProps={{ style: { display: 'none' } }}
+        >
+          <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '20px' }}>
+            <div style={{ fontSize: '50px', color: 'green' }}>
+              ✓
+            </div>
           </div>
-        </div>
-        Seu agendamento foi recebido com sucesso! Agora é só aguardar que entraremos em contato com você em até 24 horas antes da consulta. Fique à vontade para entrar em contato em nosso número (83) 9 9631-1573.
-      </Modal>
-
-    </Form>
+          Seu agendamento foi recebido com sucesso! Agora é só aguardar que entraremos em contato com você em até 24 horas antes da consulta. Fique à vontade para entrar em contato em nosso número (83) 9 9631-1573.
+        </Modal>
+      </Form>
+    </div>
   );
 };
 
