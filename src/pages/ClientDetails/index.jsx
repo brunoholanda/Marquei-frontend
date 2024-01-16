@@ -19,7 +19,7 @@ const ClientDetails = ({ userSpecialties = [] }) => {
     const { id } = useParams();
     const navigate = useNavigate();
     const [appointmentDetails, setAppointmentDetails] = useState({ nome: '' });
-    const [editedDetails, setEditedDetails] = useState({ nome: '' });
+    const [editedDetails, setEditedDetails] = useState({ nome: '', data_nascimento: '' });
     const [qrCodeUrl, setQrCodeUrl] = useState(null);
     const [isModalVisible, setIsModalVisible] = useState(false);
     const [certificateData, setCertificateData] = useState({
@@ -44,6 +44,8 @@ const ClientDetails = ({ userSpecialties = [] }) => {
         medicamentos: ['']
     });
     const [isReceitaModalVisible, setIsReceitaModalVisible] = useState(false);
+    const [isEmailValid, setEmailValid] = useState(true);
+    const [emailErrorMessage, setEmailErrorMessage] = useState('');
 
     const [actionType, setActionType] = useState(null);
     const [professionalDetails, setProfessionalDetails] = useState([]);
@@ -400,14 +402,44 @@ const ClientDetails = ({ userSpecialties = [] }) => {
     };
 
     const formatDate = (dateStr) => {
-        const date = new Date(dateStr);
-        const day = date.getUTCDate().toString().padStart(2, '0');
-        const month = (date.getUTCMonth() + 1).toString().padStart(2, '0');
-        const year = date.getUTCFullYear();
+        if (!dateStr || dateStr === '0000-00-00') return '';
+
+        const [year, month, day] = dateStr.split('T')[0].split('-');
+        if (!year || !month || !day || year === '0000') return '';
+
         return `${day}/${month}/${year}`;
     };
-    
-    
+
+
+    const handleDateChange = (value) => {
+        if (value.length === 10) {
+            const parts = value.split('/');
+            if (parts.length === 3) {
+                const isoDate = `${parts[2]}-${parts[1]}-${parts[0]}`;
+                handleInputChange('data_nascimento', isoDate);
+            }
+        } else {
+            handleInputChange('data_nascimento', value);
+        }
+    };
+
+    function validateEmail(email) {
+        const re = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,6}$/;
+        return re.test(String(email).toLowerCase());
+    }
+
+
+    function handleEmailChange(value) {
+        handleInputChange('client_email', value);
+        if (!validateEmail(value) && value.length > 0) {
+            setEmailValid(false);
+            setEmailErrorMessage("Por favor, insira um email em um formato válido!");
+        } else {
+            setEmailValid(true);
+            setEmailErrorMessage('');
+        }
+    }
+
 
     const tabList = [
         {
@@ -416,7 +448,15 @@ const ClientDetails = ({ userSpecialties = [] }) => {
             content: (
                 <div className='dadosPessoaisTab'>
                     <p><b>Nome:</b> <Input value={editedDetails.nome || appointmentDetails.nome} onChange={(e) => handleInputChange('nome', e.target.value)} /></p>
-                    <p><b>Data de Nascimento:</b> <Input value={formatDate(editedDetails.data_nascimento) || formatDate(appointmentDetails.data_nascimento)} onChange={(e) => handleInputChange('data_nascimento', e.target.value)} /></p>
+                    <p><b>Data de Nascimento:</b>
+                        <ReactInputMask
+                            mask="99/99/9999"
+                            value={formatDate(editedDetails.data_nascimento)}
+                            onChange={(e) => handleDateChange(e.target.value)}
+                        >
+                            {(inputProps) => <Input {...inputProps} />}
+                        </ReactInputMask>
+                    </p>
                     <p><b>Telefone:</b>
                         <ReactInputMask
                             mask="(99) 9 9999-9999"
@@ -426,7 +466,7 @@ const ClientDetails = ({ userSpecialties = [] }) => {
                             {(inputProps) => <Input {...inputProps} />}
                         </ReactInputMask>
                     </p>
-                    <p><b>E-Mail:</b> <Input value={editedDetails.client_email} onChange={e => handleInputChange('client_email', e.target.value)} /></p>
+                    <p><b>E-Mail:</b> <Input value={editedDetails.client_email} onChange={e => handleEmailChange(e.target.value)} /></p>
                     <p><b>Plano:</b> <Input value={editedDetails.planodental} onChange={e => handleInputChange('planodental', e.target.value)} /></p>
                     <p><b>CPF:</b>
                         <ReactInputMask
@@ -438,8 +478,8 @@ const ClientDetails = ({ userSpecialties = [] }) => {
                             {(inputProps) => <Input {...inputProps} disabled={true} />}
                         </ReactInputMask>
                     </p>
-                    <Button onClick={handleSaveChanges}>Salvar</Button>
-                </div>
+                    {!isEmailValid && <p style={{ color: 'red' }}>{emailErrorMessage}</p>}
+                    <Button onClick={handleSaveChanges} disabled={!isEmailValid}>Salvar</Button>                </div>
             ),
         },
         !isMobile && {
@@ -453,7 +493,7 @@ const ClientDetails = ({ userSpecialties = [] }) => {
         },
         {
             key: '3',
-            tab: isMobile ? 'Atestados' : 'Atestados e Receitas', 
+            tab: isMobile ? 'Atestados' : 'Atestados e Receitas',
             content: (
                 <>
                     <div className='atestados-botoes'>
