@@ -138,7 +138,7 @@ const Schedule = () => {
         const intervalString = intervalResponse.data.intervalo; // "02:00"
         const professionalInterval = parseInt(intervalString.split(":")[0], 10); // Converte "02:00" para 2
 
-        const appointmentsResponse = await api.get('/agendamentos', {
+        const appointmentsResponse = await api.get('/agendamentos/occupied-hours', {
           params: {
             data: formattedDate,
             professional_id: selectedProfessional
