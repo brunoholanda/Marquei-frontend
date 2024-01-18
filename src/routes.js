@@ -25,6 +25,7 @@ import MyPlan from "pages/Professional/MyPlan";
 import HelpCenter from "pages/HelpCenter";
 import ResourcesGrid from "pages/Resources";
 import PlansPage from "pages/PlansPage";
+import CompaniesTable from "pages/Admin";
 
 function ScrollToTop() {
     const { pathname } = useLocation();
@@ -66,9 +67,7 @@ function AppRoutes() {
                     <Route path="/checkout" element={<CheckoutPage />} />
                     <Route path="/resources" element={<ResourcesGrid />} />
                     <Route path="/planos" element={<PlansPage />} />
-
                     <Route path="/ajuda" element={<HelpCenter />} />
-
                     <Route path="/confirm-certificate/:id" element={<AtestadoInfoPage />} />
 
                     <Route path="*" element={<NotFound />} />
@@ -87,6 +86,7 @@ function AppRoutes() {
                     <Route path="/estoque" element={<ProtectedRoute element={<StockControlPage/>} />} />
                     <Route path="/contabilidade" element={<ProtectedRoute element={<Contabilidade/>} />} />
                     <Route path="/planos" element={<ProtectedRoute element={<MyPlan/>} />} />
+                    <Route path="/adminpanel" element={<ProtectedRoute element={<CompaniesTable/>} />} />
 
                     <Route path="*" element={<NotFound />} />
                 </Route>
