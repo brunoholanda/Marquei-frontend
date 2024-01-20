@@ -26,6 +26,7 @@ import HelpCenter from "pages/HelpCenter";
 import ResourcesGrid from "pages/Resources";
 import PlansPage from "pages/PlansPage";
 import CompaniesTable from "pages/Admin";
+import PageBodyClient from "components/PageBodyClient/PageBody";
 
 function ScrollToTop() {
     const { pathname } = useLocation();
@@ -63,14 +64,15 @@ function AppRoutes() {
                 <Route path="/" element={<PageBody />}>
                     <Route index element={<Home />} />
                     <Route path="/cadastro" element={<RegisterScreen />} />
-                    <Route path="/agendar/:company_id" element={<Schedule />} />
                     <Route path="/checkout" element={<CheckoutPage />} />
                     <Route path="/resources" element={<ResourcesGrid />} />
                     <Route path="/planos" element={<PlansPage />} />
                     <Route path="/ajuda" element={<HelpCenter />} />
                     <Route path="/confirm-certificate/:id" element={<AtestadoInfoPage />} />
-
                     <Route path="*" element={<NotFound />} />
+                </Route>
+                <Route element={<PageBodyClient />}>
+                    <Route path="/agendar/:company_id" element={<Schedule />} />
                 </Route>
                 <Route element={<PageBodySystem />}>
                     <Route path="/login" element={<Authentication />} />
@@ -78,16 +80,15 @@ function AppRoutes() {
                     <Route path="/agendamentos" element={<ProtectedRoute element={<Appointments />} />} />
                     <Route path="/allagendamentos" element={<ProtectedRoute element={<AllAppointments />} />} />
                     <Route path="/calendario" element={<ProtectedRoute element={<CalendarPage />} />} />
-                    <Route path="/client-details/:id" element={<ProtectedRoute element={<ClientDetails userSpecialties={storedSpecialties}/>} />} />
+                    <Route path="/client-details/:id" element={<ProtectedRoute element={<ClientDetails userSpecialties={storedSpecialties} />} />} />
                     <Route path="/configs" element={<ProtectedRoute element={<Configs />} />} />
                     <Route path="/professionals/:id" element={<ProtectedRoute element={<DoctorDetails />} />} />
-                    <Route path="/painel" element={<ProtectedRoute element={<DashboardPanel/>} />} />
-                    <Route path="/clientes" element={<ProtectedRoute element={<Pacientes/>} />} />
-                    <Route path="/estoque" element={<ProtectedRoute element={<StockControlPage/>} />} />
-                    <Route path="/contabilidade" element={<ProtectedRoute element={<Contabilidade/>} />} />
-                    <Route path="/planos" element={<ProtectedRoute element={<MyPlan/>} />} />
-                    <Route path="/adminpanel" element={<ProtectedRoute element={<CompaniesTable/>} />} />
-
+                    <Route path="/painel" element={<ProtectedRoute element={<DashboardPanel />} />} />
+                    <Route path="/clientes" element={<ProtectedRoute element={<Pacientes />} />} />
+                    <Route path="/estoque" element={<ProtectedRoute element={<StockControlPage />} />} />
+                    <Route path="/contabilidade" element={<ProtectedRoute element={<Contabilidade />} />} />
+                    <Route path="/planos" element={<ProtectedRoute element={<MyPlan />} />} />
+                    <Route path="/adminpanel" element={<ProtectedRoute element={<CompaniesTable />} />} />
                     <Route path="*" element={<NotFound />} />
                 </Route>
             </Routes>

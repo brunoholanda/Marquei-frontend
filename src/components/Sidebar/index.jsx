@@ -122,7 +122,7 @@ const Sidebar = () => {
   return (
     <Layout style={{ minHeight: '100vh' }}>
       <Sider
-        collapsible={!isMobile} 
+        collapsible={!isMobile}
         collapsed={collapsed}
         onCollapse={setCollapsed}
         className="sidebar"
@@ -135,13 +135,10 @@ const Sidebar = () => {
           mode="inline"
           items={items}
           onClick={onMenuClick}
-          className="custom-menu" 
+          className="custom-menu"
         />
         {!isMobile && (
-
-          <div onClick={toggleCollapsed}>
-            {collapsed ? 'Expandir' : 'Colapsar'}
-          </div>
+          <div onClick={toggleCollapsed}></div>
         )}
       </Sider>
       <Layout>

@@ -1,0 +1,189 @@
+.menuLinks {
+    display: flex;
+    align-items: center;
+
+    a {
+        text-decoration: none;
+        color: var(--branco);
+        margin-left: 3em;
+        font-family: var(--fonte-secundaria);
+        font-size: 1rem;
+        font-weight: 500;
+        cursor: pointer;
+        transition: 0.5s ease;
+
+    }
+
+    a:hover {
+        transform: scale(1.05);
+    }
+}
+
+
+.header {
+    display: flex;
+    align-items: center;
+    justify-content: space-around;
+    position: fixed;
+    padding: 1.5rem;
+    top: 0;
+    width: 100%;
+    z-index: 100;
+    background-color: #3f51b5;
+
+    img {
+        width: 174px;
+        height: 50px;
+    }
+
+    &__mobile {
+        display: none;
+    }
+
+    &__access{
+        margin: 0 5rem 0 0;
+
+        a {
+            text-decoration: none;
+            color: var(--branco);
+            margin-left: 2rem;
+            font-family: var(--fonte-secundaria);
+            font-size: 1rem;
+            font-weight: 500;
+            cursor: pointer;
+
+        }
+
+        a:first-of-type {
+            border: 2px solid var(--branco);
+            padding: .4rem;
+            border-radius: 6px;
+        }
+
+        a:hover {
+            transform: scale(1.05);
+        }
+
+        button {
+            width: 10rem;
+            color: #3f51b5;
+            background-color: var(--branco);
+        }
+
+        button:hover {
+            color: #3f51b5;
+            background-color: var(--branco);
+        }
+    }
+}
+
+.arrow {
+    margin-left: 5px;
+}
+
+.subMenuContainer {
+    position: relative;
+}
+
+.subMenu {
+    position: absolute;
+    top: 100%; /* Isso coloca o submenu logo abaixo do link "Serviços" */
+    left: 50px;
+    display: flex;
+    flex-direction: column;
+    background-color: white;
+    box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2); /* Isso adiciona uma sombra ao submenu */
+    padding: 10px 20px; /* Isso adiciona um pouco de espaço ao redor dos itens do submenu */
+    z-index: 100; 
+    border-radius: 8px;
+   
+    a {
+        font-size: 18px;
+        white-space: nowrap;
+        margin: 0;
+        padding-top: .3rem;
+        cursor: pointer;
+    }
+}
+
+.socialLinks {
+
+    display: flex;
+
+    &__wp, &__git, &__li {
+        width: 30px;
+        height: 30px;
+        background-size: cover;
+        transition: background-image 0.5s ease;
+        margin-right: 1em;
+    }
+
+
+}
+
+@media screen and (max-width: 1024px) {
+    .menuLinks {
+        display: flex;
+        
+        a {
+            margin-left: 1.5em;
+        }
+    }
+    
+    .header {
+        display: flex;
+        align-items: center;
+        justify-content: space-around;
+    
+        img {
+            display: none;
+        }
+    
+        &__mobile {
+            display: none;
+        }
+    }
+}
+
+
+@media screen and (max-width: 768px) {
+
+    .header {
+        justify-content: space-between; // Espaço entre o logo e o ícone do menu mobile
+        padding: 1rem; // Padding menor para dispositivos móveis
+    
+
+        img {
+            display: none;
+        }
+
+        &__mobile {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            
+        }
+
+        &__social {
+            display: flex;
+            margin: 0em 1em;
+        }
+        &__links {
+            display: none;
+        }
+
+        &__access {
+            margin: 0 5rem 0 0;
+
+            a {
+                margin-left: 1rem;
+            }
+    
+            button {
+                width: 7rem;
+            }
+    
+        }   
+
+    }
+}

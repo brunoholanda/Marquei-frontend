@@ -1,4 +1,3 @@
-// style.js
 import styled from 'styled-components';
 import { Form, Input, Button, Card } from 'antd';
 
@@ -16,8 +15,7 @@ export const StyledForm = styled(Form)`
   margin: 0;
   display: center;
   .ant-form-item-label > label {
-    color: #333; // Exemplo
-    // Adicione mais estilos conforme necessário
+    color: #333; 
   }
 `;
 
@@ -65,7 +63,6 @@ export const StyledPlanCard = styled.div`
 
 export const StyledInput = styled(Input)`
   border-radius: 4px;
-  // Adicione mais estilos conforme necessário
 `;
 
 export const StyledButton = styled(Button)`
@@ -75,5 +72,4 @@ export const StyledButton = styled(Button)`
   &:hover {
     background-color: #45a049;
   }
-  // Adicione mais estilos conforme necessário
 `;

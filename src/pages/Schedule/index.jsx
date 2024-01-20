@@ -6,6 +6,7 @@ import './schedule.css';
 import api from 'components/api/api';
 import { useNavigate, useParams } from 'react-router-dom';
 import Holidays from 'date-holidays';
+import { StyledFormClient } from './Style';
 
 
 const { Option } = Select;
@@ -321,7 +322,7 @@ const Schedule = () => {
 
 
   return (
-    <div className='paginaAgendamento'>
+    <StyledFormClient>
       <Form
         form={form}
         name="agendamento"
@@ -456,7 +457,7 @@ const Schedule = () => {
           Seu agendamento foi recebido com sucesso! Agora é só aguardar que entraremos em contato com você em até 24 horas antes da consulta. Fique à vontade para entrar em contato em nosso número (83) 9 9631-1573.
         </Modal>
       </Form>
-    </div>
+    </StyledFormClient>
   );
 };
 

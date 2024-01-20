@@ -1,0 +1,114 @@
+.highHeader {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background-color: var(--azul);
+    color: #ffff;
+    height: 2rem;
+
+    p {
+        margin-left: 3rem;
+        font-size: .9rem;
+        color: #ffff;
+
+    }
+
+    a {
+        color: #ffff;
+        text-decoration: none;
+        margin-right: 3rem;
+    }
+}
+
+.footer {
+    display: flex;
+    margin: 2rem 0 0 0;
+    background-color: var(--cor-de-fundo);
+    padding: 2rem 0;
+
+
+
+    &__topicos {
+        flex: 1;
+        margin-right: 20px;
+        margin: 0 5rem;
+        color: var(--branco);
+
+        img {
+            width: 14rem;
+            margin-top: .8rem;
+        }
+
+        p {
+            line-height: 1.3rem;
+            font-size: .8rem;
+            color: var(--cinza-texto);
+            text-align: left;
+        }
+
+        h3 {
+            color: var(--cinza-texto);
+            font-family: var(--fonte-secundaria);
+            font-weight: bold;
+            font-size: 1.2rem;
+        }
+
+        a {
+            color: var(--cinza-texto);
+            text-decoration: none;
+            margin-bottom: 1rem;
+            font-size: .8rem;
+        }
+
+        a:hover {
+            color: var(--azul);
+        }
+    }
+
+    &__dev {
+        background-color: #212322;
+        padding: 1.2rem;
+        text-align: center;
+
+        p {
+            color: #607D8B;
+            margin: .2rem 0;
+            
+        }
+
+    }
+
+}
+
+.link {
+    display: flex;
+    flex-direction: column;
+
+    a {
+        text-decoration: none;
+        color: var(--cinza-texto);
+        font-weight: 300;
+    }
+
+    a:hover {
+        color: var(--azul);
+    }
+}
+
+@media screen and (max-width: 768px) {
+
+    .footer {
+        display: flex;
+        flex-direction: column;
+        margin: 1.5rem 0 0 0;
+        padding: 1rem 0;
+
+
+        &__topicos {
+            flex: 1;
+            margin-right: 20px;
+            margin: 0 2rem;
+            color: var(--branco);
+        }
+    }
+}
