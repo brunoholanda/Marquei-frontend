@@ -13,6 +13,7 @@ import PlanCard from 'components/SelerCads';
 import MyPlan from './MyPlan';
 import ReactJoyride from 'react-joyride';
 import TrackingPage from 'pages/TrackingPage';
+import ChatComponent from 'components/ChatBot';
 
 function Configs() {
     const [isMobile, setIsMobile] = useState(window.innerWidth < 768);
@@ -350,6 +351,7 @@ function Configs() {
                     </Tabs.TabPane>
                 ))}
             </Tabs>
+            <ChatComponent />
             <ReactJoyride
                 run={runTutorial}
                 steps={steps}
