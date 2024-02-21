@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Form, Input, Button, Select, message, Checkbox, AutoComplete } from 'antd';
+import { Form, Input, Button, Select, message, Checkbox, AutoComplete, Modal } from 'antd';
 import moment from 'moment';
 import ReactInputMask from 'react-input-mask';
 import api from 'components/api/api';
@@ -14,6 +14,8 @@ import {
 } from './Styles';
 import { UserAddOutlined } from '@ant-design/icons';
 import ProfessionalModal from './registerModal';
+import { Navigate } from 'react-router-dom';
+import PlanCard from 'components/SelerCads';
 
 const { Option } = Select;
 const { TextArea } = Input;
@@ -31,6 +33,9 @@ const ScheduleModal = ({ isModalAgendaVisible, handleCancel }) => {
     const [selectedPatient, setSelectedPatient] = useState(null);
     const [planosSaude, setPlanosSaude] = useState([]);
     const [isModalProfessionalVisible, setIsModalProfessionalVisible] = useState(false);
+    const [upgradeModalVisible, setUpgradeModalVisible] = useState(false); // Novo estado para controlar a visibilidade do modal de upgrade
+    const [maxProfessionals, setMaxProfessionals] = useState(null);
+
     const userSpecialties = JSON.parse(localStorage.getItem('userSpecialties') || '[]');
 
     const onSearchPatientName = async (searchText) => {
@@ -110,6 +115,16 @@ const ScheduleModal = ({ isModalAgendaVisible, handleCancel }) => {
         }
     }, [selectedProfessional]);
 
+    const handleUpgrade = () => {
+        // A lógica para redirecionar o usuário para a página de upgrade
+        // Pode ser uma navegação ou abrir um novo componente/modal
+        Navigate('/upgrade');
+        setUpgradeModalVisible(false); // Fecha o modal após o redirecionamento
+    };
+
+    const closeUpgradeModal = () => {
+        setUpgradeModalVisible(false);
+    };
 
     const isWeekend = (date) => {
         const dayOfWeek = date.day();
@@ -350,6 +365,12 @@ const ScheduleModal = ({ isModalAgendaVisible, handleCancel }) => {
     };
 
     const openModalProfessional = () => {
+        if (professionals.length >= maxProfessionals) {
+            // Abre o modal de upgrade em vez de exibir uma mensagem de aviso
+            setUpgradeModalVisible(true);
+            return;
+        }
+        setSelectedProfessional(null);
         setIsModalProfessionalVisible(true);
     };
 
@@ -357,6 +378,41 @@ const ScheduleModal = ({ isModalAgendaVisible, handleCancel }) => {
         setIsModalProfessionalVisible(false);
         setSelectedProfessional(null);
     };
+
+    useEffect(() => {
+        const fetchMaxProfessionals = async () => {
+            const storedCompanyID = localStorage.getItem('companyID');
+            const token = localStorage.getItem('authToken');
+
+            if (storedCompanyID && token) {
+                setLoading(true);
+                try {
+                    // Primeiro, busca os dados da empresa para obter o service_id
+                    const companyResponse = await api.get(`/companies/${storedCompanyID}`, {
+                        headers: {
+                            'Authorization': `Bearer ${token}`
+                        }
+                    });
+                    const serviceId = companyResponse.data.service_id;
+
+                    // Segundo, busca os dados do serviço para obter o número máximo de profissionais
+                    const serviceResponse = await api.get(`/service_details/${serviceId}`, {
+                        headers: {
+                            'Authorization': `Bearer ${token}`
+                        }
+                    });
+                    setMaxProfessionals(serviceResponse.data.persons);
+                } catch (error) {
+                    console.error('Erro ao buscar o número máximo de profissionais:', error);
+                    message.error('Erro ao buscar informações do serviço');
+                } finally {
+                    setLoading(false);
+                }
+            }
+        };
+
+        fetchMaxProfessionals();
+    }, []);
 
 
     return (
@@ -509,6 +565,22 @@ const ScheduleModal = ({ isModalAgendaVisible, handleCancel }) => {
                     />
                 </StyledFormItem>
             </Form>
+            <Modal
+                title="Limite de Profissionais Atingido"
+                visible={upgradeModalVisible}
+                onCancel={closeUpgradeModal}
+                footer={[
+                    <Button key="back" onClick={closeUpgradeModal}>
+                        Cancelar
+                    </Button>,
+                    <Button key="submit" type="primary" onClick={handleUpgrade}>
+                        Fazer Upgrade
+                    </Button>,
+                ]}
+            >
+                <p>Seu plano contratado só permite até {maxProfessionals} profissionais. Caso sua clínica esteja crescendo, faça um upgrade do seu plano.</p>
+                <PlanCard maxProfessionals={maxProfessionals} />
+            </Modal>
         </StyledModal >
     );
 };
