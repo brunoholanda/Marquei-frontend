@@ -86,7 +86,8 @@ const TrackingPage = () => {
                             ? "Seu chamado logo será atendido e faremos o impossível para solucionar sua demanda."
                             : selectedChamado?.answer
                     }
-                </p>            </Modal>
+                </p>
+            </Modal>
         </>
     );
 };

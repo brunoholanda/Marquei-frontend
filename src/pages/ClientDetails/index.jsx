@@ -9,8 +9,9 @@ import ReactInputMask from 'react-input-mask';
 import { SearchOutlined } from '@ant-design/icons';
 import DeclarationPage from './Declaration';
 import ReceitaPage from './Receita';
+import { BASE_URL } from 'config';
+import { Spin } from 'hamburger-react';
 
-const { TabPane } = Tabs;
 
 const ClientDetails = ({ userSpecialties = [] }) => {
     const [isMobile, setIsMobile] = useState(window.innerWidth < 768);
@@ -49,6 +50,7 @@ const ClientDetails = ({ userSpecialties = [] }) => {
 
     const [actionType, setActionType] = useState(null);
     const [professionalDetails, setProfessionalDetails] = useState([]);
+    const [shouldPrint, setShouldPrint] = useState(false);
 
     const certificatePageRef = useRef(null);
     const declarationPageRef = useRef(null);
@@ -129,6 +131,7 @@ const ClientDetails = ({ userSpecialties = [] }) => {
         window.addEventListener('resize', handleResize);
         return () => window.removeEventListener('resize', handleResize);
     }, []);
+    
 
     const handleMedicamentoChange = (index, value) => {
         const newMedicamentos = [...receitaData.medicamentos];
@@ -175,7 +178,7 @@ const ClientDetails = ({ userSpecialties = [] }) => {
                 console.error("Error fetching details:", error);
                 message.error("Error fetching details");
             } finally {
-                setIsLoading(false); // Indica que o carregamento dos dados está completo
+                setIsLoading(false);
             }
         };
 
@@ -268,13 +271,16 @@ const ClientDetails = ({ userSpecialties = [] }) => {
     }
 
     if (isLoading) {
-        return <p>Carregando...</p>;
+        return (
+            <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh' }}>
+                <Spin size="large" />
+            </div>
+        );
     }
 
     if (!appointmentDetails || !editedDetails) {
         return <p>Detalhes do cliente não disponíveis.</p>;
     }
-
 
     const handleCertificateInputChange = (key, value) => {
         setCertificateData(prevData => ({
@@ -384,22 +390,33 @@ const ClientDetails = ({ userSpecialties = [] }) => {
         const patientName = editedDetails.nome;
         const days = certificateData.days;
         const date = certificateData.date;
-
+    
         try {
             const response = await sendLogToBackend(professionalDetails, patientName, days, date);
             const logId = response.data.id;
-            setQrCodeUrl(`http://localhost:3000/#/confirm-certificate/${logId}`); // Atualiza qrCodeUrl
+            setQrCodeUrl(`${BASE_URL}/#/confirm-certificate/${logId}`); 
+            setShouldPrint(true);
         } catch (error) {
             console.error("Erro ao emitir atestado:", error);
             message.error("Ocorreu um erro ao emitir o atestado. Por favor, tente novamente.");
         }
     };
 
+    
     const printCertificate = () => {
         onAtestadoEmitido().then(() => {
-            certificatePageRef.current.handlePrint(); // Supondo que `handlePrint` seja o método de `CertificatePage` que dispara a impressão
+            setTimeout(() => {
+                if (certificatePageRef.current) {
+                    certificatePageRef.current.handlePrint();
+                } else {
+                    console.error("Referência ao componente de certificado não encontrada.");
+                }
+            }, 5000);
+        }).catch(error => {
+            console.error("Erro ao emitir atestado:", error);
         });
     };
+
 
     const formatDate = (dateStr) => {
         if (!dateStr || dateStr === '0000-00-00') return '';
@@ -444,7 +461,7 @@ const ClientDetails = ({ userSpecialties = [] }) => {
     const tabList = [
         {
             key: '1',
-            tab: isMobile ? 'Detalhes' : 'Dados Pessoais',  // Nome da tab ajustado para mobile
+            tab: isMobile ? 'Detalhes' : 'Dados Pessoais',
             content: (
                 <div className='dadosPessoaisTab'>
                     <p><b>Nome:</b> <Input value={editedDetails.nome || appointmentDetails.nome} onChange={(e) => handleInputChange('nome', e.target.value)} /></p>

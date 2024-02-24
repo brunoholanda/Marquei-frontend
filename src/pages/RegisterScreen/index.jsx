@@ -1,11 +1,11 @@
 import React, { useEffect, useState } from 'react';
-import { Form, Input, Select, Button, message, Checkbox, Modal } from 'antd';
+import { Form, Input, Select, Button, message, Checkbox, Modal, Tooltip } from 'antd';
 import styles from './RegisterScreen.css';
 import { BASE_URL } from 'config';
 import { useNavigate } from 'react-router-dom';
 import ReactInputMask from 'react-input-mask';
 import logo from '../../public/logo.png'
-import { CheckOutlined } from '@ant-design/icons';
+import { CheckOutlined, CloseOutlined } from '@ant-design/icons';
 import computerPhone from '../../public/computerPhone.png';
 const { Option } = Select;
 
@@ -19,10 +19,41 @@ const RegisterScreen = () => {
   const [documentTypeLabel, setDocumentTypeLabel] = useState('Digite o CPF');
   const [namePlaceholder, setNamePlaceholder] = useState('Nome completo');
   const [selectedSpecialties, setSelectedSpecialties] = useState([]);
+  const [showTooltip, setShowTooltip] = useState(false);
+  const [passwordValidation, setPasswordValidation] = useState({
+    lengthValid: false,
+    lowercaseValid: false,
+    specialCharValid: false,
+  });
 
-const handleSpecialtyChange = selected => {
-  setSelectedSpecialties(selected);
-};
+  const handlePasswordChange = (e) => {
+    const value = e.target.value;
+    const lengthValid = value.length >= 8;
+    const lowercaseValid = /[a-z]/.test(value);
+    const specialCharValid = /[^A-Za-z0-9]/.test(value);
+
+    setPasswordValidation({
+      lengthValid,
+      lowercaseValid,
+      specialCharValid,
+    });
+  };
+
+
+  const handleFormSubmission = async () => {
+    try {
+      await form.validateFields();
+      setShowTooltip(false);
+      onFinish(form.getFieldsValue());
+    } catch (error) {
+      setShowTooltip(true);
+    }
+  };
+
+
+  const handleSpecialtyChange = selected => {
+    setSelectedSpecialties(selected);
+  };
 
 
   const specialtyOptions = {
@@ -125,13 +156,13 @@ const handleSpecialtyChange = selected => {
 
   const validatePassword = async (_, value) => {
     if (value.length < 8) {
-      return Promise.reject(new Error('A senha deve ter no mínimo 8 caracteres.'));
+      return Promise.reject(new Error(''));
     }
     if (!/[A-Z]/.test(value)) {
-      return Promise.reject(new Error('A senha deve conter pelo menos uma letra maiúscula.'));
+      return Promise.reject(new Error(''));
     }
     if (!/[^A-Za-z0-9]/.test(value)) {
-      return Promise.reject(new Error('A senha deve conter pelo menos um caractere especial.'));
+      return Promise.reject(new Error(''));
     }
     return Promise.resolve();
   };
@@ -144,7 +175,7 @@ const handleSpecialtyChange = selected => {
       },
       body: JSON.stringify({ userId, specialties }),
     });
-  
+
     if (!response.ok) {
       const errorData = await response.json();
       throw new Error(errorData.message || 'Erro ao associar especialidades');
@@ -156,7 +187,7 @@ const handleSpecialtyChange = selected => {
   const onFinish = async (values) => {
     const { idNumber, nome, email, phone, address, password, confirmPassword, profession } = values;
     const specialtiesIds = profession.map(p => specialtyOptions[p]);
-  
+
     const companyData = {
       nome: nome,
       cnpj: idNumber,
@@ -164,12 +195,12 @@ const handleSpecialtyChange = selected => {
       endereco: address,
       service_id: 4, //sempre o id do plano teste da coluna, ajustar em producao
     };
-  
+
     const userData = {
       email,
       password,
     };
-  
+
     try {
       if (password !== confirmPassword) {
         throw new Error('As senhas não coincidem.');
@@ -178,7 +209,7 @@ const handleSpecialtyChange = selected => {
         message.error('Por favor, insira um email válido.');
         return;
       }
-  
+
       const response = await fetch(`${BASE_URL}/companies`, {
         method: 'POST',
         headers: {
@@ -186,18 +217,18 @@ const handleSpecialtyChange = selected => {
         },
         body: JSON.stringify({ companyData, userData }),
       });
-  
+
       if (!response.ok) {
         const errorData = await response.json();
         const errorMessage = errorData.error || 'Erro no registro';
         throw new Error(errorMessage);
       }
-  
+
       const userResponse = await response.json();
       const userId = userResponse.user.id; // Ajuste a chave para corresponder à estrutura da sua resposta
-      
+
       await associateSpecialtiesToUser(userId, specialtiesIds);
-      
+
       message.success('Registro bem-sucedido!');
 
       // Requisição para gerar token temporário
@@ -236,25 +267,25 @@ const handleSpecialtyChange = selected => {
   useEffect(() => {
     form.setFieldsValue({ profession: selectedSpecialties });
   }, [selectedSpecialties, form]);
-  
+
 
   return (
     <div className='register'>
       <div className='formulario'>
         <h2>Experimentar gratuitamente 😊</h2>
-        <p>Não solicitamos metodo de pagamento 💰</p>
+        <p>Não solicitamos método de pagamento 💰</p>
         <Form form={form} onFinish={onFinish}>
           <Form.Item
             name="profession"
             label=""
             rules={[{ required: true, message: 'Por favor, selecione sua profissão!' }]}
           >
-            <p style={{ fontSize: '1rem'}}>Você ou sua clínica é composta por?</p>
+            <p style={{ fontSize: '1rem' }}>Você ou sua clínica é composta por?</p>
             <Select
               mode="multiple"
               placeholder="Selecione a especialidade"
               onChange={handleSpecialtyChange}
-              maxTagCount={5} // Número máximo de itens visíveis
+              maxTagCount={5}
               className="dynamic-width-select"
               style={{ minHeight: 'auto' }}
             >
@@ -324,7 +355,7 @@ const handleSpecialtyChange = selected => {
               { type: 'email', message: 'Por favor, insira um email válido!' }
             ]}
           >
-            <Input placeholder="Email" />
+            <Input placeholder="exemplo@dominio.com" />
           </Form.Item>
 
           <Form.Item
@@ -332,8 +363,11 @@ const handleSpecialtyChange = selected => {
             name="phone"
             label="Telefone"
             rules={[{ required: true, message: 'Por favor, insira seu telefone!' }]}
+            
           >
-            <Input placeholder="Telefone" />
+            <ReactInputMask mask="(99) 9 9999-9999" >
+              {(inputProps) => <Input {...inputProps} placeholder="(99) 9 9999-9999" />}
+            </ReactInputMask>
           </Form.Item>
 
           <Form.Item
@@ -354,9 +388,19 @@ const handleSpecialtyChange = selected => {
               { validator: validatePassword },
             ]}
           >
-            <Input.Password placeholder="Senha" />
+            <Input.Password placeholder="Senha" onChange={handlePasswordChange} />
           </Form.Item>
-
+          <div className='validade-password'>
+            <p>
+              {passwordValidation.lengthValid ? <CheckOutlined style={{ color: 'green' }} /> : <CloseOutlined style={{ color: 'red' }} />} A senha deve conter pelo menos 8 dígitos.;
+            </p>
+            <p>
+              {passwordValidation.lowercaseValid ? <CheckOutlined style={{ color: 'green' }} /> : <CloseOutlined style={{ color: 'red' }} />} Deve conter pelo menos uma letra minúscula;
+            </p>
+            <p>
+              {passwordValidation.specialCharValid ? <CheckOutlined style={{ color: 'green' }} /> : <CloseOutlined style={{ color: 'red' }} />} Deve conter pelo menos um caractere especial.
+            </p>
+          </div>
           <Form.Item
             {...formItemLayout}
             name="confirmPassword"
@@ -385,9 +429,20 @@ const handleSpecialtyChange = selected => {
           </Form.Item>
 
           <Form.Item>
-            <Button type="primary" htmlType="submit" disabled={!isAgreed}>
-              Testar Agora
-            </Button>
+            <Tooltip
+              title="Por favor, preencha todos os campos obrigatórios antes de submeter."
+              visible={showTooltip}
+              placement="top"
+            >
+              <Button
+                type="primary"
+                onClick={handleFormSubmission}
+                disabled={!isAgreed}
+                className={!isAgreed ? "button-disabled" : ""}
+              >
+                Testar agora
+              </Button>
+            </Tooltip>
           </Form.Item>
         </Form>
         <Modal
@@ -406,7 +461,7 @@ const handleSpecialtyChange = selected => {
               😀
             </div>
           </div>
-          Seu cadastro foi recebido com sucesso! Agora você jé pode desfrutar do poder do nosso sistema !
+          Seu cadastro foi recebido com sucesso! Agora você pode desfrutar do poder do nosso sistema !
         </Modal>
       </div>
       <div className='marketing'>

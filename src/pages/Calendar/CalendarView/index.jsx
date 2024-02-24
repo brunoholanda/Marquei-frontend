@@ -101,6 +101,9 @@ const CalendarView = ({ events, onEventClick }) => {
     );
 
 
+    let allViews = ['week', 'work_week', 'day'];
+
+
     useEffect(() => {
         function handleResize() {
             const mobile = window.innerWidth < 768;
@@ -192,6 +195,19 @@ const CalendarView = ({ events, onEventClick }) => {
                 timeslots={1} // Intervalo de tempo para cada slot
                 step={60} // Intervalo entre os slots
                 timeGutterFormat={{ format: 'HH:mm' }} // Formato da coluna de tempo
+                messages={{
+                    next: "Próximo",
+                    previous: "Anterior",
+                    today: "Hoje",
+                    month: "Mês",
+                    week: "Semana",
+                    work_week: "Semana de Trabalho",
+                    day: "Dia",
+                    agenda: "Agenda",
+                    date: "Data",
+                    time: "Hora",
+                    event: "Evento",
+                  }}
             />
         </div>
     );

@@ -37,7 +37,7 @@
     "react-router-dom": "^6.14.0",
     "react-scripts": "5.0.1",
     "react-signature-canvas": "^1.0.6",
-    "react-to-print": "^2.14.15",
+    "react-to-print": "^2.15.1",
     "recharts": "^2.10.3",
     "styled-components": "^6.1.1",
     "web-vitals": "^2.1.4",

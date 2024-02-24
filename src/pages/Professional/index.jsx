@@ -351,7 +351,6 @@ function Configs() {
                     </Tabs.TabPane>
                 ))}
             </Tabs>
-            <ChatComponent />
             <ReactJoyride
                 run={runTutorial}
                 steps={steps}

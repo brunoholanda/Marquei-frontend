@@ -6,6 +6,7 @@ import ReactSignatureCanvas from 'react-signature-canvas';
 import '../../Appointments/Appointments.css';
 import { UserOutlined } from '@ant-design/icons';
 import { useForm } from 'antd/es/form/Form';
+import { Spin } from 'hamburger-react';
 
 const { TabPane } = Tabs;
 
@@ -162,7 +163,13 @@ const DoctorDetails = () => {
         navigate(-1);
     }
 
-    if (!professionalDetails) return <p>Carregando...</p>;
+    if (!professionalDetails) {
+        return (
+          <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh' }}>
+            <Spin size="large" /> 
+          </div>
+        );
+      }
 
     const handleUpdateSignature = async (newSignatureBase64) => {
         try {
