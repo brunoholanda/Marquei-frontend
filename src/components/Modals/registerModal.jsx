@@ -4,7 +4,8 @@ import ReactSignatureCanvas from 'react-signature-canvas';
 import ReactInputMask from 'react-input-mask';
 import { useForm } from 'antd/es/form/Form';
 import api from '../api/api';
-import { StyledFormItem, StyledModal } from './Styles';
+import { StyledFormItem, StyledModal, StyledTextLine } from './Styles';
+import { WarningOutlined } from '@ant-design/icons';
 
 function ProfessionalModal({ isVisible, onClose, initialData, userSpecialties }) {
     const [isEditMode, setIsEditMode] = useState(false);
@@ -245,6 +246,10 @@ function ProfessionalModal({ isVisible, onClose, initialData, userSpecialties })
             case 2:
                 return (
                     <>
+                        <StyledTextLine>
+                            <WarningOutlined style={{color: 'red', fontSize: '18px'}}/>
+                            <p> O login e senha criados a seguir serão usados para emitir atestados e declarações em seu nome, portanto não compartilhe essa senha!</p>
+                        </StyledTextLine>
                         <Form.Item
                             name="login"
                             label="Login"

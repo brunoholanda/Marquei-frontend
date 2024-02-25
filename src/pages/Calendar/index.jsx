@@ -151,7 +151,7 @@ const CalendarPage = () => {
         <div className='calendario'>
             {isMobile && (
                 <div className='mobileAlert'>
-                    Tenha acesso a mais recursos acessando a versão para computador 🖥️
+                    Tenha acesso a mais recursos utilizando a versão para computador 🖥️
                 </div>
             )}
             <h1>Visualização por Calendário <CalendarOutlined /></h1>
@@ -183,7 +183,7 @@ const CalendarPage = () => {
                     </Select.Option>
                 ))}
             </Select>
-            <p>Selecione como deseja ver o calendario <WarningFilled /></p>
+            <p>Selecione como deseja ver o calendário <WarningFilled /></p>
             <CalendarView
                 events={appointments}
                 onEventClick={handleAppointmentClick}

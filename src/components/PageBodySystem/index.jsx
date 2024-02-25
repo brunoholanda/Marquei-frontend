@@ -56,7 +56,7 @@ function Footer() {
                         Indique a um amigo !
                     </span>
                     <span onClick={handleOpenMonthly} className={styles.link}>
-                        Mensalidade Gratis
+                        Mensalidade Grátis
                     </span>
                 </div>
             </div>

@@ -142,10 +142,10 @@ const CertificatePage = React.forwardRef(({ nome, days, date, reason, profession
                 )}
             </div>
             <div className="qr-code-container">
-                <p>Confirme o atestado acessando o QrCode</p>
+                <p>Confirme o atestado utilizando o QrCode</p>
                 {qrCodeUrl && (
                     <>
-                        <QRCode size={100} key={qrCodeUrl} value={qrCodeUrl} />
+                        <QRCode size={90} key={qrCodeUrl} value={qrCodeUrl} />
                     </>
                 )}
             </div>

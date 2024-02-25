@@ -14,6 +14,10 @@
     color: var(--cinza-texto);
 }
 
+.calendario .rbc-time-header {
+    display: none;
+}
+
 .status-indicators {
     display: flex;
     align-items: center;

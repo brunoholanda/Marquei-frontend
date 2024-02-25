@@ -47,6 +47,7 @@ const CustomTooltip = ({ appointment, onConfirm }) => {
 
 const CalendarView = ({ events, onEventClick }) => {
     const [isMobile, setIsMobile] = useState(window.innerWidth < 768);
+    const [modalInfo, setModalInfo] = useState({ isVisible: false, start: null, end: null });
 
     const [view, setView] = useState(isMobile ? 'day' : 'work_week');
     const [isModalAgendarVisible, setModalAgendarVisible] = useState(false);
@@ -101,15 +102,17 @@ const CalendarView = ({ events, onEventClick }) => {
     );
 
 
-    let allViews = ['week', 'work_week', 'day'];
-
+    const handleSelectSlot = ({ start, end }) => {
+        setModalInfo({ isVisible: true, start, end });
+        setModalAgendarVisible(start, end);
+    };
 
     useEffect(() => {
         function handleResize() {
             const mobile = window.innerWidth < 768;
             setIsMobile(mobile);
             if (mobile) {
-                setView('day'); 
+                setView('day');
             }
         }
 
@@ -164,16 +167,16 @@ const CalendarView = ({ events, onEventClick }) => {
                 </Button>
             </div>
             <div className="calendar-controls">
-                <Button type="primary" onClick={() => setModalAgendarVisible(true)}>
+                <Button type="primary" onClick={() => setModalInfo({ isVisible: true, start: null, end: null })}>
                     <PlusOutlined /> Novo Agendamento
                 </Button>
                 <ScheduleModal
-                    isModalAgendaVisible={isModalAgendarVisible}
-                    handleCancel={() => setModalAgendarVisible(false)}
+                    isModalAgendaVisible={modalInfo.isVisible}
+                    handleCancel={() => setModalInfo({ ...modalInfo, isVisible: false })}
+                    start={modalInfo.start}
+                    end={modalInfo.end}
                 />
             </div>
-
-
             <Calendar
                 localizer={localizer}
                 events={events}
@@ -183,18 +186,20 @@ const CalendarView = ({ events, onEventClick }) => {
                 eventPropGetter={eventStyleGetter}
                 defaultDate={moment().toDate()}
                 view={view}
-                views={isMobile ? ['day'] : ['day', 'work_week', 'week']} // Configura as vistas disponíveis com base no dispositivo
+                onSelectSlot={handleSelectSlot}
+                selectable={true}
+                views={isMobile ? ['day'] : ['day', 'work_week', 'week']}
                 components={{
                     header: CustomHeader,
                     event: ({ event }) => (
                         <Event event={event} onEventClick={onEventClick} />
                     ),
                 }}
-                min={minTime} // Horário de início do calendário
-                max={maxTime} // Horário de encerramento do calendário
-                timeslots={1} // Intervalo de tempo para cada slot
-                step={60} // Intervalo entre os slots
-                timeGutterFormat={{ format: 'HH:mm' }} // Formato da coluna de tempo
+                min={minTime}
+                max={maxTime}
+                timeslots={1}
+                step={60}
+                timeGutterFormat={{ format: 'HH:mm' }}
                 messages={{
                     next: "Próximo",
                     previous: "Anterior",
@@ -207,7 +212,7 @@ const CalendarView = ({ events, onEventClick }) => {
                     date: "Data",
                     time: "Hora",
                     event: "Evento",
-                  }}
+                }}
             />
         </div>
     );

@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { message, Button, Tabs, Input, InputNumber, DatePicker, Modal, Table, TimePicker } from 'antd';
 import api from 'components/api/api';
 import { useParams, useNavigate, useLocation } from 'react-router-dom';
@@ -56,6 +56,7 @@ const ClientDetails = ({ userSpecialties = [] }) => {
     const declarationPageRef = useRef(null);
     const receitaPageRef = useRef(null);
     const location = useLocation();
+    const printTriggerRef = useRef();
 
     const canEmitCertificateOrRecipe = userSpecialties.includes(1) || userSpecialties.includes(2);
 
@@ -95,20 +96,12 @@ const ClientDetails = ({ userSpecialties = [] }) => {
         handleAuthModalOpen();
     };
 
-    const sendLogToBackend = async (professionalDetails, patientName, days, date) => {
-        const logText = `${professionalDetails.nome} para ${patientName} de ${days} dias a partir de ${date}!`;
-
-        try {
-            const response = await api.post('/logs_atestados', { text: logText });
-            console.log('Log registrado com sucesso');
-            return response;
-        } catch (error) {
-            console.error('Erro ao registrar log:', error);
-            message.error("Erro ao enviar log para o backend");
-            throw error;
+    useEffect(() => {
+        if (shouldPrint && printTriggerRef.current) {
+            printTriggerRef.current.handlePrint();
+            setShouldPrint(false); // Resetar o estado para evitar impressões repetidas
         }
-    };
-
+    }, [shouldPrint]);
 
     useEffect(() => {
         const fetchProfessionalDetails = async () => {
@@ -131,7 +124,7 @@ const ClientDetails = ({ userSpecialties = [] }) => {
         window.addEventListener('resize', handleResize);
         return () => window.removeEventListener('resize', handleResize);
     }, []);
-    
+
 
     const handleMedicamentoChange = (index, value) => {
         const newMedicamentos = [...receitaData.medicamentos];
@@ -370,10 +363,10 @@ const ClientDetails = ({ userSpecialties = [] }) => {
 
     const handleSearchChange = async (value) => {
         setCertificateData({ ...certificateData, reason: value });
-        if (value.length > 3) {
+        const query = value.toLowerCase();
+        if (query.length > 3) {
             try {
-                const response = await api.get(`cid10/search?query=${value}`);
-
+                const response = await api.get(`cid10/search?query=${query}`);
                 setSearchResults(response.data);
             } catch (error) {
                 console.error('Erro na busca:', error);
@@ -381,20 +374,38 @@ const ClientDetails = ({ userSpecialties = [] }) => {
         }
     };
 
+
     const handleSelectDisease = (result) => {
         setCertificateData({ ...certificateData, reason: result.code });
         setSearchResults([]);
     };
 
-    const onAtestadoEmitido = async () => {
+    const sendLogToBackend = async (professionalDetails, patientName, days, date) => {
+        const logText = `${professionalDetails.nome} para ${patientName} de ${days} dias a partir de ${date}!`;
+
+        try {
+            const response = await api.post('/logs_atestados', { text: logText });
+            console.log('Log registrado com sucesso');
+            return response;
+        } catch (error) {
+            console.error('Erro ao registrar log:', error);
+            message.error("Erro ao enviar log para o backend");
+            throw error;
+        }
+    };
+
+
+    const printCertificate = async () => {
+        console.log('printCertificate chamada'); // Depuração
         const patientName = editedDetails.nome;
         const days = certificateData.days;
         const date = certificateData.date;
-    
+
         try {
+            console.log('Chamando sendLogToBackend', { professionalDetails, patientName, days, date }); // Depuração
             const response = await sendLogToBackend(professionalDetails, patientName, days, date);
             const logId = response.data.id;
-            setQrCodeUrl(`${BASE_URL}/#/confirm-certificate/${logId}`); 
+            setQrCodeUrl(`https://marquei.com.br/api/#/confirm-certificate/${logId}`);
             setShouldPrint(true);
         } catch (error) {
             console.error("Erro ao emitir atestado:", error);
@@ -402,20 +413,7 @@ const ClientDetails = ({ userSpecialties = [] }) => {
         }
     };
 
-    
-    const printCertificate = () => {
-        onAtestadoEmitido().then(() => {
-            setTimeout(() => {
-                if (certificatePageRef.current) {
-                    certificatePageRef.current.handlePrint();
-                } else {
-                    console.error("Referência ao componente de certificado não encontrada.");
-                }
-            }, 5000);
-        }).catch(error => {
-            console.error("Erro ao emitir atestado:", error);
-        });
-    };
+
 
 
     const formatDate = (dateStr) => {
@@ -528,11 +526,13 @@ const ClientDetails = ({ userSpecialties = [] }) => {
                         onCancel={handleCloseModal}
                         footer={[
                             <Button key="back" onClick={handleCloseModal}>Cancelar</Button>,
+                            <Button key="emit" type="primary" onClick={printCertificate}>Emitir</Button>,
                             <ReactToPrint
-                                trigger={() => <Button key="emit" type="primary" onClick={printCertificate}>Emitir</Button>}
+                                trigger={() => <button style={{ display: "none" }}>Print This Out</button>}
                                 content={() => certificatePageRef.current}
-                                onAfterPrint={onAtestadoEmitido} // Chama a função após a impressão bem-sucedida
+                                ref={printTriggerRef}
                             />
+
                         ]}
                     >
                         <p>Preencha os dados para emitir uma atestado ao paciente <b>{appointmentDetails.nome}</b></p>

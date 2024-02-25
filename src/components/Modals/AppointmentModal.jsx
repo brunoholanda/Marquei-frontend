@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { Modal, Button, DatePicker, TimePicker, message } from 'antd';
+import React, { useEffect, useState } from 'react';
+import { Modal, Button, DatePicker, TimePicker, message, notification } from 'antd';
 import api from 'components/api/api'; 
 
 const AppointmentModal = ({
@@ -11,6 +11,8 @@ const AppointmentModal = ({
     const [rescheduleDate, setRescheduleDate] = useState(null);
     const [rescheduleTime, setRescheduleTime] = useState(null);
     const [isRescheduling, setIsRescheduling] = useState(false);
+    const [nomeConsultorio, setNomeConsultorio] = useState('');
+
 
     const resetModal = () => {
         setIsRescheduling(false);
@@ -82,6 +84,29 @@ const AppointmentModal = ({
         handleClose();
     };
 
+    const showNotification = (type, message) => {
+        notification[type]({
+            message: message,
+        });
+    };
+
+    useEffect(() => {
+        const fetchNomeConsultorio = async () => {
+            const companyID = localStorage.getItem('companyID');
+            if (companyID) {
+                try {
+                    const response = await api.get(`/companies/${companyID}`);
+                    setNomeConsultorio(response.data.nome);
+                } catch (error) {
+                    console.error('Erro ao buscar nome do consultório:', error);
+                    showNotification('error', 'Erro ao buscar nome do consultório.');
+                }
+            }
+        };
+
+        fetchNomeConsultorio();
+    }, []);
+
     return (
         <Modal
             title="O que você gostaria de fazer com este agendamento?"
@@ -150,7 +175,7 @@ const AppointmentModal = ({
                             key="whatsapp"
                             className="button-whats modal-btn"
                             onClick={() => {
-                                const message = `Oi, sou do consultório da Dr. Waleska e estou falando aqui para saber se você deseja confirmar sua consulta agendada para ${currentAppointment.data} às ${currentAppointment.horario}?`;
+                                const message = `Oi, sou do consultório ${nomeConsultorio} e estou falando aqui para saber se você deseja confirmar sua consulta agendada para ${currentAppointment.data} às ${currentAppointment.horario}?`;
                                 const phoneNumber = currentAppointment.celular.replace(/[^0-9]/g, "");
                                 window.open(`https://api.whatsapp.com/send?phone=+55${phoneNumber}&text=${encodeURIComponent(message)}`, '_blank');
                             }}>

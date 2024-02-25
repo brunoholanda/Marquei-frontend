@@ -20,7 +20,7 @@ import PlanCard from 'components/SelerCads';
 const { Option } = Select;
 const { TextArea } = Input;
 
-const ScheduleModal = ({ isModalAgendaVisible, handleCancel }) => {
+const ScheduleModal = ({ isModalAgendaVisible, handleCancel, start }) => {
     const [form] = Form.useForm();
     const [loading, setLoading] = useState(false);
     const [diasSemana, setDiasSemana] = useState([]);
@@ -99,6 +99,16 @@ const ScheduleModal = ({ isModalAgendaVisible, handleCancel }) => {
         'Sábado': 6,
         'Domingo': 0
     };
+
+    useEffect(() => {
+        if (start) {
+            form.setFieldsValue({
+                data: moment(start),
+                horario: moment(start)
+            });
+        }
+    }, [start, form]);
+    
 
     useEffect(() => {
         if (selectedProfessional) {

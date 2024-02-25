@@ -149,3 +149,12 @@ export const StyledTextCard = styled.p`
   text-align: center;
   color: #666666;
 `;
+
+export const StyledTextLine = styled.div`
+  text-align: center;
+  color: #666666;
+
+  p {
+    margin: 0;
+  }
+`;

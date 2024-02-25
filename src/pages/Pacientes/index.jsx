@@ -94,11 +94,10 @@ const Pacientes = () => {
         return () => window.removeEventListener('resize', handleResize);
     }, []);
 
-    // Função para truncar o nome
     const formatName = (name) => {
         const nameParts = name.split(' ');
         if (nameParts.length > 3) {
-            return `${nameParts[0]} ${nameParts[1]} ${nameParts[2]}`; // Retorna apenas os três primeiros nomes
+            return `${nameParts[0]} ${nameParts[1]} ${nameParts[2]}`;
         }
         return name;
     };

@@ -280,7 +280,7 @@ const RegisterScreen = () => {
             label=""
             rules={[{ required: true, message: 'Por favor, selecione sua profissão!' }]}
           >
-            <p style={{ fontSize: '1rem' }}>Você ou sua clínica é composta por?</p>
+            <p style={{ fontSize: '1rem' }}>Você ou sua clínica são compostos por?</p>
             <Select
               mode="multiple"
               placeholder="Selecione a especialidade"
