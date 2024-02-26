@@ -281,7 +281,7 @@ const ControleAgenda = () => {
         <div>
 
             <h1>Controle da Agenda <ControlOutlined /></h1>
-            <p>Aqui você inclui datas ou horários em que não poderá atender seus clientes. <WarningFilled /></p>
+            <p>Aqui você inclui seu padrão de atendiemnto semanal que ficará disponivel no link de agendamento.<WarningFilled /></p>
             <div className='padrao-semanal-mobile'>
                 <Select
                     className="select-professional"

@@ -1,11 +1,12 @@
 import React, { useEffect, useState } from 'react';
 import { Button, Input, Table, message, notification } from 'antd';
 import api from 'components/api/api';
-import { EyeOutlined, TeamOutlined, WarningFilled, WhatsAppOutlined } from '@ant-design/icons';
+import { EyeOutlined, PlusCircleOutlined, PlusOutlined, TeamOutlined, WarningFilled, WhatsAppOutlined } from '@ant-design/icons';
 import debounce from 'lodash/debounce';
 
 import '../ClientDetails/ClientDetails.css';
 import { useNavigate } from 'react-router-dom';
+import AddClientsModal from 'components/Modals/AddClientsModal';
 const { Search } = Input;
 
 const Pacientes = () => {
@@ -16,7 +17,12 @@ const Pacientes = () => {
     const [setAppointmentHistory] = useState([]);
     const [initialLoad, setInitialLoad] = useState(true);
     const [nomeConsultorio, setNomeConsultorio] = useState('');
+    const [showAddClientModal, setShowAddClientModal] = useState(false);
 
+    const handleOpenAddClientsModal = () => {
+         setShowAddClientModal(true);
+     };
+ 
     useEffect(() => {
         const fetchNomeConsultorio = async () => {
             const companyID = localStorage.getItem('companyID');
@@ -110,8 +116,8 @@ const Pacientes = () => {
             render: (text) => isMobile ? formatName(text) : text,
 
         },
-      
-      
+
+
     ];
 
     if (!isMobile) {
@@ -135,7 +141,7 @@ const Pacientes = () => {
                     const mensagem = `Oi, ${primeiroNome} ${saudacao}, sou do consultório ${nomeConsultorio}, tudo bem?`;
 
                     return (
-                        <div style={{ display: 'flex', justifyContent: 'space-between', width: 'fit-content', alignItems: 'center'}}>
+                        <div style={{ display: 'flex', justifyContent: 'space-between', width: 'fit-content', alignItems: 'center' }}>
                             <Button type='primary' onClick={() => handleViewDetails(record.id)}>Detalhes <EyeOutlined /></Button>
                             <Button
                                 key={`whatsapp-${record.id}`}
@@ -161,9 +167,9 @@ const Pacientes = () => {
                 const primeiroNome = record.nome.split(" ")[0];
                 const saudacao = getSaudacao();
                 const mensagem = `Oi, ${primeiroNome} ${saudacao}, sou do consultório ${nomeConsultorio}, tudo bem?`;
-    
+
                 return (
-                    <div style={{ display: 'flex', justifyContent: 'space-between', width: 'fit-content', alignItems: 'center'}}>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', width: 'fit-content', alignItems: 'center' }}>
                         <Button type='primary' onClick={() => handleViewDetails(record.id)} icon={<EyeOutlined />}>{!isMobile && 'Detalhes'}</Button>
                         <Button
                             key={`whatsapp-${record.id}`}
@@ -257,6 +263,7 @@ const Pacientes = () => {
     }, [selectedClient]);
 
 
+
     return (
         <div className='tabela'>
             <h1>Clientes <TeamOutlined /></h1>
@@ -264,13 +271,24 @@ const Pacientes = () => {
             <Search
                 placeholder="Digite o nome ou CPF"
                 onSearch={onSearch}
-                style={{ width: isMobile ? '100%' : '50%', marginBottom: 20 }}  // Estilo condicional baseado no estado isMobile
+                style={{ width: isMobile ? '100%' : '50%', marginBottom: 20 }} 
             />
+            <Button
+                style={{marginLeft: '15px'}}
+                type='primary'
+                onClick={handleOpenAddClientsModal}
+            >
+                <PlusOutlined /> Adicionar Cliente
+            </Button>
             <Table
                 columns={columns}
                 dataSource={clientes}
                 rowKey="id"
                 loading={loading}
+            />
+            <AddClientsModal 
+                isModalAddClientsVisible={showAddClientModal}
+                onCloseAddClients={() => setShowAddClientModal(false)}
             />
         </div>
     );

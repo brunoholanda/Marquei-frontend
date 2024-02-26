@@ -396,16 +396,14 @@ const ClientDetails = ({ userSpecialties = [] }) => {
 
 
     const printCertificate = async () => {
-        console.log('printCertificate chamada'); // Depuração
         const patientName = editedDetails.nome;
         const days = certificateData.days;
         const date = certificateData.date;
 
         try {
-            console.log('Chamando sendLogToBackend', { professionalDetails, patientName, days, date }); // Depuração
             const response = await sendLogToBackend(professionalDetails, patientName, days, date);
             const logId = response.data.id;
-            setQrCodeUrl(`https://marquei.com.br/api/#/confirm-certificate/${logId}`);
+            setQrCodeUrl(`https://marquei.com.br/#/confirm-certificate/${logId}`);
             setShouldPrint(true);
         } catch (error) {
             console.error("Erro ao emitir atestado:", error);

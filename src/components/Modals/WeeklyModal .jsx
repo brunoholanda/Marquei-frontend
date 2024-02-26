@@ -179,6 +179,20 @@ const WeeklyModal = ({ isVisible, setIsVisible, selectedProfessional }) => {
         }));
     };
 
+    const replicateTimeIntervals = () => {
+        const firstDayId = daysOfWeek.find(day => day.ativo).id;
+        const firstDayIntervals = timeIntervals[firstDayId];
+      
+        const newTimeIntervals = { ...timeIntervals };
+        daysOfWeek.forEach(day => {
+          if (day.id !== firstDayId) {
+            newTimeIntervals[day.id] = { ...firstDayIntervals };
+          }
+        });
+      
+        setTimeIntervals(newTimeIntervals);
+      };
+
 
     return (
         <Modal
@@ -195,6 +209,7 @@ const WeeklyModal = ({ isVisible, setIsVisible, selectedProfessional }) => {
             ]}
         >
             <p>Aqui você configura os dias da semana e intervalos de tempo que sua agenda estará disponível para seus clientes:</p>
+            <Button type='primary' onClick={replicateTimeIntervals} style={{marginBottom: '10px', width: '100%'}}>Replicar Horários</Button>
             <div>
                 {sortedDaysOfWeek.map(day => (
                     <div key={day.id}>

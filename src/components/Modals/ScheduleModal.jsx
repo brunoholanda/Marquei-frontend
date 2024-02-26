@@ -11,11 +11,13 @@ import {
     StyledDatePicker,
     StyledTimePicker,
     StyledDateTime,
+    StyledFormItemName,
 } from './Styles';
-import { UserAddOutlined } from '@ant-design/icons';
+import { PlusOutlined, UserAddOutlined } from '@ant-design/icons';
 import ProfessionalModal from './registerModal';
 import { Navigate } from 'react-router-dom';
 import PlanCard from 'components/SelerCads';
+import AddClientsModal from './AddClientsModal';
 
 const { Option } = Select;
 const { TextArea } = Input;
@@ -35,8 +37,13 @@ const ScheduleModal = ({ isModalAgendaVisible, handleCancel, start }) => {
     const [isModalProfessionalVisible, setIsModalProfessionalVisible] = useState(false);
     const [upgradeModalVisible, setUpgradeModalVisible] = useState(false); // Novo estado para controlar a visibilidade do modal de upgrade
     const [maxProfessionals, setMaxProfessionals] = useState(null);
+    const [showAddClientModal, setShowAddClientModal] = useState(false);
 
     const userSpecialties = JSON.parse(localStorage.getItem('userSpecialties') || '[]');
+
+    const handleOpenAddClientsModal = () => {
+        setShowAddClientModal(true);
+    };
 
     const onSearchPatientName = async (searchText) => {
         if (searchText.length < 4) {
@@ -108,7 +115,7 @@ const ScheduleModal = ({ isModalAgendaVisible, handleCancel, start }) => {
             });
         }
     }, [start, form]);
-    
+
 
     useEffect(() => {
         if (selectedProfessional) {
@@ -439,7 +446,6 @@ const ScheduleModal = ({ isModalAgendaVisible, handleCancel, start }) => {
                 </Button>,
             ]}
             style={{ top: '5%' }}
-
         >
             <Form
                 form={form}
@@ -447,18 +453,27 @@ const ScheduleModal = ({ isModalAgendaVisible, handleCancel, start }) => {
                 layout="vertical"
                 onFinish={onFinish}
             >
-                <StyledFormItem
-                    name="nome"
-                    rules={[{ required: true, message: 'Por favor, insira o nome do paciente!' }]}
-                >
-                    <AutoComplete
-                        placeholder="&#128269; Nome do paciente"
-                        onSearch={onSearchPatientName}
-                        onSelect={onSelectPatient}
-                        options={patientSuggestions}
-                        style={{ width: '100%' }}
-                    />
-                </StyledFormItem>
+                <StyledFormItemName>
+                    <StyledFormItem
+                        name="nome"
+                        rules={[{ required: true, message: 'Por favor, insira o nome do paciente!' }]}
+                    >
+                        <AutoComplete
+                            placeholder="&#128269; Nome do paciente"
+                            onSearch={onSearchPatientName}
+                            onSelect={onSelectPatient}
+                            options={patientSuggestions}
+                            style={{ width: '100%' }}
+                        />
+                    </StyledFormItem>
+                    <Button
+                        style={{ marginLeft: '15px' }}
+                        type='primary'
+                        onClick={handleOpenAddClientsModal}
+                    >
+                        <PlusOutlined /> Adicionar Cliente
+                    </Button>
+                </StyledFormItemName>
                 <StyledFormItem
                     name="cpf"
                     label="CPF"
@@ -541,9 +556,9 @@ const ScheduleModal = ({ isModalAgendaVisible, handleCancel, start }) => {
                 </StyledDateTime>
                 <StyledFormItem
                     name="planodental"
-                    rules={[{ required: true, message: 'Por favor, selecione um plano dental!' }]}
+                    rules={[{ required: true, message: 'Por favor, selecione uma forma de pagamento!' }]}
                 >
-                    <StyledSelect placeholder="Selecione seu plano dental">
+                    <StyledSelect placeholder="Forma de pagamento">
                         {planosSaude.map((plano) => (
                             <Option key={plano.id} value={plano.nome}>
                                 {plano.nome}
@@ -591,6 +606,10 @@ const ScheduleModal = ({ isModalAgendaVisible, handleCancel, start }) => {
                 <p>Seu plano contratado só permite até {maxProfessionals} profissionais. Caso sua clínica esteja crescendo, faça um upgrade do seu plano.</p>
                 <PlanCard maxProfessionals={maxProfessionals} />
             </Modal>
+            <AddClientsModal
+                isModalAddClientsVisible={showAddClientModal}
+                onCloseAddClients={() => setShowAddClientModal(false)}
+            />
         </StyledModal >
     );
 };

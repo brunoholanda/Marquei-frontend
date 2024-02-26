@@ -36,6 +36,16 @@ export const StyledFormItem = styled(Form.Item)`
   margin-bottom: 14px;
 `;
 
+export const StyledFormItemName = styled.div`
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  
+  .ant-form-item {
+    width: 100%;
+  }
+`;
+
 export const StyledInput = styled(Input)`
   border-radius: 4px;
 `;
@@ -158,3 +168,44 @@ export const StyledTextLine = styled.div`
     margin: 0;
   }
 `;
+
+
+export const ModalTitle = styled.div`
+  color: var(--cinza-texto);
+`;
+export const StyledClientModal = styled(Modal)`
+
+`;
+
+export const StyledFormClient = styled(Form)`
+  margin: 2rem 1rem;
+
+  .emailinput {
+    width: 100%;
+    margin: 0 2rem 0 0;
+  }
+`;
+
+export const ModalClientRow = styled.div`
+  display: flex;
+  justify-content: space-between;
+
+  @media (max-width: 768px) { 
+    flex-direction: column;
+  }
+`;
+
+export const DividerLine = styled.div`
+  border-bottom: 1px solid #f0f0f0;
+  width: 100%;
+`;
+
+export const ActionsButtonsModal = styled.div`
+  display: flex;
+  justify-content: space-between;
+  margin: 1rem 1rem 0 1rem;
+
+`;
+
+
+
