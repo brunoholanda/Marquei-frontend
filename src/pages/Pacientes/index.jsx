@@ -262,7 +262,9 @@ const Pacientes = () => {
         fetchAppointmentHistory();
     }, [selectedClient]);
 
-
+    const onClientAdded = (newClient) => {
+        setClientes(prevClientes => [...prevClientes, newClient]);
+    };
 
     return (
         <div className='tabela'>
@@ -289,6 +291,7 @@ const Pacientes = () => {
             <AddClientsModal 
                 isModalAddClientsVisible={showAddClientModal}
                 onCloseAddClients={() => setShowAddClientModal(false)}
+                onClientAdded={onClientAdded}
             />
         </div>
     );

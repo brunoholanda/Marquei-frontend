@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Form, Input, Button, Select, message, Checkbox, AutoComplete, Modal } from 'antd';
+import { Form, Input, Button, Select, message, Checkbox, AutoComplete, Modal, notification } from 'antd';
 import moment from 'moment';
 import ReactInputMask from 'react-input-mask';
 import api from 'components/api/api';
@@ -75,11 +75,11 @@ const ScheduleModal = ({ isModalAgendaVisible, handleCancel, start }) => {
 
 
     const onSelectPatient = (value, option) => {
-        setSelectedPatient(option.data);
+        setSelectedPatient(option?.data);
         form.setFieldsValue({
-            cpf: option.data.cpf,
-            celular: option.data.celular,
-            planodental: option.data.planodental,
+            cpf: option.data?.cpf,
+            celular: option.data?.celular,
+            planodental: option.data?.planodental,
         });
     };
 
@@ -212,10 +212,8 @@ const ScheduleModal = ({ isModalAgendaVisible, handleCancel, start }) => {
 
     const onFinish = async (values) => {
         setLoading(true);
-
         try {
             const storedCompanyID = localStorage.getItem('companyID');
-
             const clientData = {
                 nome: values.nome,
                 cpf: values.cpf.replace(/\D/g, ''),
@@ -234,7 +232,7 @@ const ScheduleModal = ({ isModalAgendaVisible, handleCancel, start }) => {
                 company_id: storedCompanyID
             };
 
-            let clientResponse = await api.get(`/clients/cpf/${clientData.cpf}`).catch(error => error.response);
+            let clientResponse = await api.get(`/clients/cpf/${clientData.cpf}?company_id=${clientData.company_id}`).catch(error => error.response);
 
             if (clientResponse && clientResponse.status === 404) {
                 clientResponse = await api.post('/clients', clientData);
@@ -242,17 +240,16 @@ const ScheduleModal = ({ isModalAgendaVisible, handleCancel, start }) => {
 
             if (clientResponse && clientResponse.data && clientResponse.data.id) {
                 agendamentoData.client_id = clientResponse.data.id;
-
                 const agendamentoResponse = await api.post('/agendamentos', agendamentoData);
-
                 if (agendamentoResponse.data && agendamentoResponse.data.error) {
                     message.error(agendamentoResponse.data.error);
                 } else {
-                    message.success('Agendamento feito com sucesso!');
+                    notification.success({ message: 'Agendamento feito com sucesso!' });
                     form.resetFields();
                     resetAndCloseModal();
                 }
             } else {
+                console.error('Erro na resposta do cliente:', clientResponse);
                 throw new Error(clientResponse.data.message || 'Erro ao criar ou recuperar o cliente.');
             }
         } catch (error) {
@@ -466,13 +463,15 @@ const ScheduleModal = ({ isModalAgendaVisible, handleCancel, start }) => {
                             style={{ width: '100%' }}
                         />
                     </StyledFormItem>
-                    <Button
-                        style={{ marginLeft: '15px' }}
-                        type='primary'
-                        onClick={handleOpenAddClientsModal}
-                    >
-                        <PlusOutlined /> Adicionar Cliente
-                    </Button>
+                    {/* 
+<Button
+    style={{ marginLeft: '15px' }}
+    type='primary'
+    onClick={handleOpenAddClientsModal}
+>
+    <PlusOutlined /> Adicionar Cliente
+</Button>
+*/}
                 </StyledFormItemName>
                 <StyledFormItem
                     name="cpf"
@@ -550,7 +549,9 @@ const ScheduleModal = ({ isModalAgendaVisible, handleCancel, start }) => {
                         <StyledTimePicker
                             format="HH:mm"
                             minuteStep={15}
-                            disabledHours={() => getDisabledHours(form.getFieldValue('data'), bookedHours)}
+                            disabledTime={() => ({
+                                disabledHours: () => getDisabledHours(form.getFieldValue('data'), bookedHours)
+                            })}
                         />
                     </StyledFormItem>
                 </StyledDateTime>

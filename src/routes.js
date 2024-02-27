@@ -27,6 +27,7 @@ import ResourcesGrid from "pages/Resources";
 import PlansPage from "pages/PlansPage";
 import CompaniesTable from "pages/Admin";
 import PageBodyClient from "components/PageBodyClient/PageBody";
+import DeclationInfoPage from "pages/ConfirmDeclaration";
 
 function ScrollToTop() {
     const { pathname } = useLocation();
@@ -48,14 +49,20 @@ function AppRoutes() {
         setIsAuthenticated(!!token);
     }, []);
 
-    function ProtectedRoute({ element }) {
+    function ProtectedRoute({ element, allowedCompanyIds }) {
         const token = localStorage.getItem('authToken');
+        const userCompanyId = parseInt(localStorage.getItem('companyID'), 10);
+        
         if (!token) {
             return <Navigate to="/login" replace state={{ from: window.location.pathname }} />;
         }
+        
+        if (allowedCompanyIds && !allowedCompanyIds.includes(userCompanyId)) {
+            return <Navigate to="/painel" />;
+        }
+        
         return element;
     }
-
 
     return (
         <HashRouter>
@@ -69,6 +76,7 @@ function AppRoutes() {
                     <Route path="/planos" element={<PlansPage />} />
                     <Route path="/ajuda" element={<HelpCenter />} />
                     <Route path="/confirm-certificate/:id" element={<AtestadoInfoPage />} />
+                    <Route path="/confirm-declaration/:id" element={<DeclationInfoPage />} />
                     <Route path="*" element={<NotFound />} />
                 </Route>
                 <Route element={<PageBodyClient />}>
@@ -88,7 +96,7 @@ function AppRoutes() {
                     <Route path="/estoque" element={<ProtectedRoute element={<StockControlPage />} />} />
                     <Route path="/contabilidade" element={<ProtectedRoute element={<Contabilidade />} />} />
                     <Route path="/planos" element={<ProtectedRoute element={<MyPlan />} />} />
-                    <Route path="/adminpanel" element={<ProtectedRoute element={<CompaniesTable />} />} />
+                    <Route path="/adminpanel" element={<ProtectedRoute element={<CompaniesTable />} allowedCompanyIds={[1]} />} />
                     <Route path="*" element={<NotFound />} />
                 </Route>
             </Routes>

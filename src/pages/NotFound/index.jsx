@@ -12,6 +12,7 @@ export default function NotFound() {
             <img src={erro404} alt="imagem da pagina de erro" />
             <div>
                 <h1>Ops... Página não encontrada... Clique em voltar!</h1>
+                <p>Provavelemnte a página que você tentou acessar ainda está em produção, logo mais muito mais funcionalidades ficarão disponiveis</p>
                 <div onClick={() => navegar(-1)}>
                     <Btn>VOLTAR</Btn>
                 </div>

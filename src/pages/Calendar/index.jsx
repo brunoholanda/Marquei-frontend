@@ -6,6 +6,7 @@ import './calendar.css'
 import { CalendarOutlined, WarningFilled } from '@ant-design/icons';
 import AppointmentModal from '../../components/Modals/AppointmentModal';
 import { Select, message } from 'antd';
+import { io } from 'socket.io-client';
 
 const CalendarPage = () => {
     const [isMobile, setIsMobile] = useState(false);
@@ -138,14 +139,41 @@ const CalendarPage = () => {
 
 
     const handleProfessionalChange = (professionalId) => {
+        console.log("Profissional selecionado:", professionalId);
         setSelectedProfessional(professionalId);
         fetchAppointments(professionalId);
     };
 
     const updateAppointments = () => {
-        fetchAppointments(selectedProfessional);
+        if(selectedProfessional) {
+            fetchAppointments(selectedProfessional);
+        } else {
+            console.error("Nenhum profissional selecionado ao tentar atualizar agendamentos.");
+        }
     };
-
+    useEffect(() => {
+        const socket = io('wss://marquei.com.br/socket.io/', {
+            path: "/socket.io",
+            transports: ['websocket'], // Removido 'polling' para forçar WebSocket sobre SSL
+            secure: true,
+            rejectUnauthorized: false,
+        });
+        
+        socket.on('connect', () => {
+            console.log("Conectado ao WebSocket");
+            socket.emit('join', 'calendar');
+        });
+    
+        socket.on('newAppointment', (data) => {
+            console.log("Novo agendamento recebido:", data);
+            updateAppointments();
+        });
+    
+        return () => {
+            socket.disconnect();
+        };
+    }, []);
+    
 
     return (
         <div className='calendario'>

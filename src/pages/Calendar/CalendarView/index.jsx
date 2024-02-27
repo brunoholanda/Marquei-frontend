@@ -55,7 +55,7 @@ const CalendarView = ({ events, onEventClick }) => {
     const showWorkWeek = () => setView('work_week');
     const showFullWeek = () => setView('week');
     const showToday = () => setView('day');
-    const [timeRange, setTimeRange] = useState({ min: 7, max: 22 }); // Horários padrão
+    const [timeRange, setTimeRange] = useState({ min: 7, max: 22 });
 
     const setFullDay = () => {
         console.log("Configurando para Dia Inteiro");
@@ -95,11 +95,20 @@ const CalendarView = ({ events, onEventClick }) => {
         };
     };
 
-    const CustomHeader = ({ label }) => (
-        <div style={{ fontWeight: 'bold', fontSize: '18px' }}>
-            {label}
-        </div>
-    );
+    const CustomHeader = ({ label }) => {
+        const parts = label.split(' ');
+        if (parts.length > 1) {
+            const dayOfWeek = parts[1];
+            parts[1] = dayOfWeek.charAt(0).toUpperCase() + dayOfWeek.slice(1);
+        }
+        const newLabel = parts.join(' ');
+        return (
+            <div style={{ fontWeight: 'bold', fontSize: '18px', color: '#666666' }}>
+                {newLabel}
+            </div>
+        );
+    };
+
 
 
     const handleSelectSlot = ({ start, end }) => {
@@ -194,6 +203,7 @@ const CalendarView = ({ events, onEventClick }) => {
                     event: ({ event }) => (
                         <Event event={event} onEventClick={onEventClick} />
                     ),
+                    day: { header: CustomHeader },
                 }}
                 min={minTime}
                 max={maxTime}

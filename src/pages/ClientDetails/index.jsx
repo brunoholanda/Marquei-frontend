@@ -243,7 +243,7 @@ const ClientDetails = ({ userSpecialties = [] }) => {
 
                 const appointmentsWithProfessionalNames = await Promise.all(filteredAppointments.map(async (appointment) => {
                     const professionalResponse = await api.get(`/professionals/${appointment.professional_id}`);
-                    appointment.professionalName = professionalResponse.data.nome; // Supondo que a resposta tenha um campo 'nome'
+                    appointment.professionalName = professionalResponse.data.nome;
                     return appointment;
                 }));
 
@@ -358,7 +358,7 @@ const ClientDetails = ({ userSpecialties = [] }) => {
         {
             title: 'Detalhes',
             dataIndex: 'notes',
-            key: 'notes',render: (text, record) => (
+            key: 'notes', render: (text, record) => (
                 <>
                     <span style={{ marginRight: '10px' }}>
                         {text.substring(0, 10) + (text.length > 10 ? '...' : '')}
@@ -462,8 +462,13 @@ const ClientDetails = ({ userSpecialties = [] }) => {
         setSearchResults([]);
     };
 
-    const sendLogToBackend = async (professionalDetails, patientName, days, date) => {
-        const logText = `${professionalDetails.nome} para ${patientName} de ${days} dias a partir de ${date}!`;
+    const sendLogToBackend = async (type, professionalDetails, patientName, days, date, startTime, endTime) => {
+        let logText;
+        if (type === 'certificate') {
+            logText = `${professionalDetails.nome} para ${patientName} de ${days} dias a partir de ${date}!`;
+        } else if (type === 'declaration') {
+            logText = `Declaração para ${patientName}: provando que compareceu em nosso estabelecimento no dia ${date} das ${startTime} às ${endTime}.`;
+        }
 
         try {
             const response = await api.post('/logs_atestados', { text: logText });
@@ -492,6 +497,20 @@ const ClientDetails = ({ userSpecialties = [] }) => {
         }
     };
 
+    const printDeclaration = async () => {
+        const patientName = editedDetails.nome;
+        const { date, startTime, endTime } = declarationData;
+
+        try {
+            const response = await sendLogToBackend('declaration', professionalDetails, patientName, null, date, startTime, endTime);
+            const logId = response.data.id;
+            setQrCodeUrl(`https://marquei.com.br/#/confirm-declaration/${logId}`);
+            setShouldPrint(true); // Certifique-se de que este estado está sendo utilizado de maneira apropriada para a declaração
+        } catch (error) {
+            console.error("Erro ao emitir declaração:", error);
+            message.error("Ocorreu um erro ao emitir a declaração. Por favor, tente novamente.");
+        }
+    };
 
 
 
@@ -675,11 +694,16 @@ const ClientDetails = ({ userSpecialties = [] }) => {
                         onCancel={() => setIsDeclarationModalVisible(false)}
                         footer={[
                             <Button key="back" onClick={() => setIsDeclarationModalVisible(false)}>Cancelar</Button>,
+                            <Button key="emit" type="primary" onClick={printDeclaration}>Emitir Declaração</Button>,
                             <ReactToPrint
-                                trigger={() => <Button type="primary">Emitir Declaração</Button>}
+                                trigger={() => <button style={{ display: "none" }}>Print This Out</button>}
                                 content={() => declarationPageRef.current}
+                                ref={printTriggerRef}
                             />
+
                         ]}
+
+
                     >
                         <p>Selecione a data e o intervalo de horas para a declaração de comparecimento:</p>
                         <div style={{ marginBottom: '10px' }}>
@@ -777,6 +801,7 @@ const ClientDetails = ({ userSpecialties = [] }) => {
             </div>
             <div style={{ display: 'none' }}>
                 <DeclarationPage
+                    qrCodeUrl={qrCodeUrl}
                     nome={editedDetails.nome}
                     date={declarationData.date}
                     startTime={declarationData.startTime}

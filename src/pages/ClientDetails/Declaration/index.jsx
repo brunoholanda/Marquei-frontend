@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import '../Atestado/Atestado.css';
-import { message } from 'antd';
+import { QRCode, message } from 'antd';
 import api from 'components/api/api';
 import { BASE_URL } from 'config';
 import insta from '../../../public/icons/insta.png';
@@ -8,12 +8,17 @@ import wp from '../../../public/icons/wp-hover.png';
 import { CompassOutlined } from '@ant-design/icons';
 
 
-const DeclarationPage = React.forwardRef(({ nome,  date, professionalId, startTime, endTime }, ref) => {
+const DeclarationPage = React.forwardRef(({ nome, date, professionalId, startTime, endTime, qrCodeUrl }, ref) => {
     const [professionalDetails, setProfessionalDetails] = useState(null);
     const [companyDetails, setCompanyDetails] = useState(null);
     const [logoUrl, setLogoUrl] = useState(null);
+    const [qrKey, setQrKey] = useState(Date.now());
 
-
+    useEffect(() => {
+        if (qrCodeUrl) {
+            setQrKey(Date.now());
+        }
+    }, [qrCodeUrl]);
     const getCurrentDateFormatted = () => {
         const today = new Date();
         const day = today.getDate();
@@ -130,6 +135,14 @@ const DeclarationPage = React.forwardRef(({ nome,  date, professionalId, startTi
                                 <p>Emitido em, {getCurrentDateFormatted()}</p>
                             </div>
                         )}
+                    </>
+                )}
+            </div>
+            <div className="qr-code-container">
+                <p>Confirme a declaração acessando o QrCode</p>
+                {qrCodeUrl && (
+                    <>
+                        <QRCode size={90} key={qrCodeUrl} value={qrCodeUrl} />
                     </>
                 )}
             </div>
