@@ -12,8 +12,8 @@
     padding: 0;
     margin: 0;
     border: 1px solid #ccc;
-    max-height: 200px; 
-    overflow-y: auto; 
+    max-height: 200px;
+    overflow-y: auto;
 }
 
 .search-results-list li {
@@ -37,12 +37,17 @@
     margin: 1rem 0;
 }
 
+.divider-line {
+    border-bottom: 1px solid #f0f0f0;
+    width: 100%;
+}
+
 @media (max-width: 768px) {
     .clienteDetails {
         margin: 2rem 1.5rem;
-    
+
     }
-    
+
     .clienteDetails h1 {
         font-size: 20px;
     }
@@ -51,7 +56,8 @@
         width: 17.5rem;
     }
 
-    .historicoConsultasTab, .orcamentosTab {
+    .historicoConsultasTab,
+    .orcamentosTab {
         display: none;
     }
 

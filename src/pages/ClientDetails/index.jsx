@@ -1,15 +1,14 @@
-import React, { useState, useEffect, useRef, useCallback } from 'react';
-import { message, Button, Tabs, Input, InputNumber, DatePicker, Modal, Table, TimePicker } from 'antd';
+import React, { useState, useEffect, useRef } from 'react';
+import { message, Button, Tabs, Input, InputNumber, DatePicker, Modal, Table, TimePicker, Select, notification } from 'antd';
 import api from 'components/api/api';
 import { useParams, useNavigate, useLocation } from 'react-router-dom';
 import './ClientDetails.css';
 import CertificatePage from './Atestado';
 import ReactToPrint from 'react-to-print';
 import ReactInputMask from 'react-input-mask';
-import { SearchOutlined } from '@ant-design/icons';
+import { ExpandAltOutlined, PlusOutlined, SearchOutlined } from '@ant-design/icons';
 import DeclarationPage from './Declaration';
 import ReceitaPage from './Receita';
-import { BASE_URL } from 'config';
 import { Spin } from 'hamburger-react';
 
 
@@ -49,7 +48,7 @@ const ClientDetails = ({ userSpecialties = [] }) => {
     const [emailErrorMessage, setEmailErrorMessage] = useState('');
 
     const [actionType, setActionType] = useState(null);
-    const [professionalDetails, setProfessionalDetails] = useState([]);
+    const [professionalDetails] = useState([]);
     const [shouldPrint, setShouldPrint] = useState(false);
 
     const certificatePageRef = useRef(null);
@@ -57,8 +56,16 @@ const ClientDetails = ({ userSpecialties = [] }) => {
     const receitaPageRef = useRef(null);
     const location = useLocation();
     const printTriggerRef = useRef();
-
+    const [clientNotesData, setClientNotesData] = useState([]);
+    const [isModalInsertNotesVisible, setIsModalInsertNotesVisible] = useState(false);
+    const [noteText, setNoteText] = useState('');
     const canEmitCertificateOrRecipe = userSpecialties.includes(1) || userSpecialties.includes(2);
+    const [selectedProfessional, setSelectedProfessional] = useState(null);
+    const [professionals, setProfessionals] = useState([]);
+    const [selectedProfessionalName, setSelectedProfessionalName] = useState('');
+    const [isFullNoteModalVisible, setIsFullNoteModalVisible] = useState(false);
+    const [fullNoteDetails, setFullNoteDetails] = useState({});
+
 
     const handleOpenModal = () => {
         setIsModalVisible(true);
@@ -99,25 +106,51 @@ const ClientDetails = ({ userSpecialties = [] }) => {
     useEffect(() => {
         if (shouldPrint && printTriggerRef.current) {
             printTriggerRef.current.handlePrint();
-            setShouldPrint(false); // Resetar o estado para evitar impressões repetidas
+            setShouldPrint(false);
         }
     }, [shouldPrint]);
 
     useEffect(() => {
-        const fetchProfessionalDetails = async () => {
-            if (professionalId) {
+        const fetchProfessionals = async () => {
+            const storedCompanyID = localStorage.getItem('companyID');
+            const token = localStorage.getItem('authToken');
+
+            if (storedCompanyID && token) {
                 try {
-                    const response = await api.get(`/professionals/${professionalId}`);
-                    setProfessionalDetails(response.data);
+                    const response = await api.get(`/professionals?company_id=${storedCompanyID}`, {
+                        headers: {
+                            'Authorization': `Bearer ${token}`
+                        },
+                    });
+
+                    if (response.status !== 200) {
+                        throw new Error('Falha ao buscar dados dos profissionais');
+                    }
+                    setProfessionals(response.data);
                 } catch (error) {
-                    console.error("Erro ao buscar detalhes do profissional:", error);
-                    message.error("Erro ao buscar detalhes do profissional");
+                    console.error('Error fetching professionals:', error);
                 }
+            } else {
+                console.error('Company ID or auth token not found in local storage');
+            }
+        };
+        fetchProfessionals();
+    }, []);
+
+
+    useEffect(() => {
+        const fetchNotes = async () => {
+            try {
+                const response = await api.get(`/clients/${clientId}/notes`);
+                setClientNotesData(response.data);
+            } catch (error) {
+                console.error("Erro ao buscar anotações", error);
             }
         };
 
-        fetchProfessionalDetails();
-    }, [professionalId]);
+        fetchNotes();
+    }, [clientId]);
+
 
     useEffect(() => {
         const handleResize = () => setIsMobile(window.innerWidth < 768);
@@ -146,7 +179,6 @@ const ClientDetails = ({ userSpecialties = [] }) => {
     useEffect(() => {
         const fetchDetails = async () => {
             try {
-                console.log('Fetching details for ID:', id);
                 const isFromPacientes = location.state?.from === 'Pacientes';
                 let clientId = id;
 
@@ -155,14 +187,12 @@ const ClientDetails = ({ userSpecialties = [] }) => {
                     const appointmentData = appointmentResponse.data;
                     clientId = appointmentData.client_id;
                     setAppointmentDetails(appointmentData);
-                    console.log('Fetched appointment data:', appointmentData);
                 }
 
                 const clientResponse = await api.get(`/clients/${clientId}`);
                 const clientData = clientResponse.data;
                 setClientId(clientId);
                 setEditedDetails(clientData);
-                console.log('Fetched client data:', clientData);
 
                 const clientNotesResponse = await api.get(`/clients/${clientId}/notes`);
                 const clientNotesData = clientNotesResponse.data;
@@ -198,7 +228,6 @@ const ClientDetails = ({ userSpecialties = [] }) => {
 
 
         const fetchAppointmentHistory = async () => {
-            console.log("Iniciando fetchAppointmentHistory com clientId:", clientId);
 
             if (!clientId) {
                 console.error("clientId não está definido.");
@@ -207,10 +236,8 @@ const ClientDetails = ({ userSpecialties = [] }) => {
 
             try {
                 const storedCompanyID = localStorage.getItem('companyID');
-                console.log("Utilizando companyID:", storedCompanyID);
 
                 const historyResponse = await api.get(`/todos-agendamentos?client_id=${clientId}&company_id=${storedCompanyID}`);
-                console.log("Resposta da API para o histórico de agendamentos:", historyResponse.data);
 
                 const filteredAppointments = historyResponse.data.filter(appointment => appointment.status === 1);
 
@@ -221,7 +248,6 @@ const ClientDetails = ({ userSpecialties = [] }) => {
                 }));
 
                 const sortedAppointments = orderByDate(appointmentsWithProfessionalNames);
-                console.log("Compromissos ordenados:", sortedAppointments);
                 setAppointmentHistory(sortedAppointments);
             } catch (error) {
                 console.error("Erro ao buscar histórico de agendamentos:", error);
@@ -282,6 +308,11 @@ const ClientDetails = ({ userSpecialties = [] }) => {
         }));
     };
 
+    const handleShowFullNoteModal = (record) => {
+        setFullNoteDetails(record); // Agora, armazena todo o registro
+        setIsFullNoteModalVisible(true);
+    };
+
 
     const columns = [
         {
@@ -303,6 +334,41 @@ const ClientDetails = ({ userSpecialties = [] }) => {
             title: 'Quem Atendeu',
             dataIndex: 'professionalName',
         },
+    ];
+
+
+
+    const prontuarioCollumns = [
+        {
+            title: 'Data',
+            dataIndex: 'date',
+            key: 'date',
+            render: text => formatDate(text),
+        },
+        {
+            title: 'Paciente',
+            dataIndex: 'nome',
+            key: 'nome',
+        },
+        {
+            title: 'Profissional',
+            dataIndex: 'professional_name',
+            key: 'professionalName',
+        },
+        {
+            title: 'Detalhes',
+            dataIndex: 'notes',
+            key: 'notes',render: (text, record) => (
+                <>
+                    <span style={{ marginRight: '10px' }}>
+                        {text.substring(0, 10) + (text.length > 10 ? '...' : '')}
+                    </span>
+                    <Button size="small" type='primary' onClick={() => handleShowFullNoteModal(record)}>
+                        <ExpandAltOutlined />Expandir
+                    </Button>
+                </>
+            ),
+        }
     ];
 
     const handleAuthModalOpen = () => {
@@ -352,14 +418,30 @@ const ClientDetails = ({ userSpecialties = [] }) => {
 
 
     const handleSaveNotes = async () => {
+        const storedCompanyID = localStorage.getItem('companyID');
+        const noteData = {
+            nome: editedDetails.nome,
+            professional_name: selectedProfessionalName,
+            date: new Date().toISOString(),
+            notes: noteText,
+            client_id: clientId,
+            company_id: storedCompanyID,
+        };
+
         try {
-            await api.post(`/clients/${clientId}/notes`, { notes: clientNotes });
-            message.success("Observações salvas com sucesso!");
+            const response = await api.post(`/clients/${clientId}/notes`, noteData);
+            setIsModalInsertNotesVisible(false);
+            const newNote = response.data;
+            newNote.date = formatDate(newNote.date);
+            setClientNotesData(prevNotes => [...prevNotes, newNote]);
+            notification.success({ message: 'Informação inserida com sucesso!' });
         } catch (error) {
-            console.error("Erro ao salvar observações", error);
-            message.error("Erro ao salvar observações");
+            console.error("Erro ao inserir Informação", error);
+            notification.error({ message: 'Erro ao inserir Informação' });
         }
     };
+
+
 
     const handleSearchChange = async (value) => {
         setCertificateData({ ...certificateData, reason: value });
@@ -385,7 +467,6 @@ const ClientDetails = ({ userSpecialties = [] }) => {
 
         try {
             const response = await api.post('/logs_atestados', { text: logText });
-            console.log('Log registrado com sucesso');
             return response;
         } catch (error) {
             console.error('Erro ao registrar log:', error);
@@ -453,6 +534,29 @@ const ClientDetails = ({ userSpecialties = [] }) => {
         }
     }
 
+    const showModalInsertNotes = () => {
+        setIsModalInsertNotesVisible(true);
+    };
+
+    const handleCancel = () => {
+        setIsModalInsertNotesVisible(false);
+    };
+
+    const handleChangeNotes = (e) => {
+        setNoteText(e.target.value);
+    };
+
+    const handleProfessionalChange = (professionalId) => {
+        const professional = professionals.find(p => p.id === professionalId);
+
+        if (professional) {
+            setSelectedProfessional(professionalId);
+            setSelectedProfessionalName(professional.nome);
+        } else {
+            setSelectedProfessional(null);
+            setSelectedProfessionalName('');
+        }
+    };
 
     const tabList = [
         {
@@ -644,16 +748,13 @@ const ClientDetails = ({ userSpecialties = [] }) => {
         },
         {
             key: '5',
-            tab: 'Anotações',
+            tab: 'Prontuário',
             content: (
                 <div style={{ marginBottom: '16px' }}>
-                    <Input.TextArea
-                        rows={4}
-                        value={clientNotes}
-                        onChange={(e) => setClientNotes(e.target.value)}
-                        style={{ marginBottom: '8px' }}
-                    />
-                    <Button type='primary' onClick={handleSaveNotes}>Salvar Anotações</Button>
+                    <Button type="primary" onClick={showModalInsertNotes} style={{ marginBottom: '16px' }}>
+                        <PlusOutlined />Adicionar Informações
+                    </Button>
+                    <Table dataSource={clientNotesData} columns={prontuarioCollumns} />
                 </div>),
         },
     ].filter(Boolean);
@@ -722,7 +823,50 @@ const ClientDetails = ({ userSpecialties = [] }) => {
                     onChange={handleCredentialChange}
                 />
             </Modal>
-
+            <Modal
+                title="Prontuário Eletrônico 📝"
+                visible={isModalInsertNotesVisible}
+                onOk={handleSaveNotes}
+                onCancel={handleCancel}
+                okText="Salvar"
+                cancelText="Cancelar"
+                width={650}
+            >
+                <p>Aqui você pode inserir informações pertinentes ao Paciente.</p>
+                <Select
+                    showSearch
+                    style={{ width: '220px', marginBottom: '20px' }}
+                    placeholder="Selecione um profissional"
+                    onChange={handleProfessionalChange}
+                    value={selectedProfessional}
+                >
+                    {professionals.map(professional => (
+                        <Select.Option key={professional.id} value={professional.id}>
+                            {professional.nome}
+                        </Select.Option>
+                    ))}
+                </Select>
+                <Input.TextArea
+                    rows={4}
+                    value={noteText}
+                    onChange={handleChangeNotes}
+                    placeholder="Digite aqui as informações relevantes do paciente..."
+                />
+            </Modal>
+            <Modal
+                title="Detalhes da Informção 📝"
+                visible={isFullNoteModalVisible}
+                onOk={() => setIsFullNoteModalVisible(false)}
+                onCancel={() => setIsFullNoteModalVisible(false)}
+                okText="Fechar"
+                cancelButtonProps={{ style: { display: 'none' } }}
+            >
+                <div className='divider-line'></div>
+                <p><strong>Paciente</strong> {editedDetails.nome}</p>
+                <p><strong>Informação inserida por:</strong> {fullNoteDetails.professional_name} em {formatDate(fullNoteDetails.date)}</p>
+                <p><strong>Informação Completa: </strong>{fullNoteDetails.notes}</p>
+                <div className='divider-line'></div>
+            </Modal>
         </div>
     );
 }

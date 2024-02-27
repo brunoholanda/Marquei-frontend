@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Modal, Select, Input, DatePicker, notification, message, Button } from 'antd';
+import { Select, Input, DatePicker, notification, message, Button } from 'antd';
 import api from '../api/api';
 import { Form } from 'antd';
 import ReactInputMask from 'react-input-mask';
