@@ -1,7 +1,7 @@
 import axios from 'axios';
 
 const api = axios.create({
-  baseURL: 'https://marquei.com.br/api/',
+  baseURL: 'http://127.0.0.1:3333/api/',
 });
 
 // Adiciona um interceptador de requisições

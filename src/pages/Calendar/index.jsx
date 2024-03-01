@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import api from 'components/api/api';
 import CalendarView from './CalendarView';
 import moment from 'moment';
@@ -80,8 +80,10 @@ const CalendarPage = () => {
 
             const events = response.data.map(appointment => {
                 const startDate = moment(appointment.data + ' ' + appointment.horario, 'DD/MM/YYYY HH:mm').toDate();
-                const endDate = moment(startDate).add(1, 'hours').toDate();
-
+                const endDate = appointment.end_time
+                ? moment(appointment.data + ' ' + appointment.end_time, 'DD/MM/YYYY HH:mm').toDate()
+                : moment(startDate).add(1, 'hours').toDate(); // Fallback para 1 hora depois se não houver end_time
+                
                 return {
                     title: `${appointment.nome}`,
                     start: startDate,
@@ -118,6 +120,7 @@ const CalendarPage = () => {
             backgroundColor: backgroundColor,
             borderRadius: '0px',
             opacity: 0.8,
+            fontSize: '1px',
             color: 'black',
             border: '5px',
             display: 'block'
@@ -144,36 +147,67 @@ const CalendarPage = () => {
         fetchAppointments(professionalId);
     };
 
+
+
     const updateAppointments = () => {
-        if(selectedProfessional) {
+        if (selectedProfessional) {
             fetchAppointments(selectedProfessional);
         } else {
             console.error("Nenhum profissional selecionado ao tentar atualizar agendamentos.");
         }
     };
+
+    const selectedProfessionalRef = useRef(selectedProfessional);
+    selectedProfessionalRef.current = selectedProfessional;
+
     useEffect(() => {
-        const socket = io('wss://marquei.com.br/socket.io/', {
+        const socket = io('wss://marquei.com.br', {
             path: "/socket.io",
-            transports: ['websocket'], // Removido 'polling' para forçar WebSocket sobre SSL
+            transports: ['websocket'],
             secure: true,
-            rejectUnauthorized: false,
         });
-        
+    
         socket.on('connect', () => {
             console.log("Conectado ao WebSocket");
             socket.emit('join', 'calendar');
         });
     
+        socket.on('connect_error', (error) => {
+            console.error('Connection Error:', error);
+        });
+    
         socket.on('newAppointment', (data) => {
             console.log("Novo agendamento recebido:", data);
-            updateAppointments();
+    
+            // Sempre atualize os agendamentos quando receber uma nova notificação
+            // Isso assume que você deseja atualizar a lista completa de agendamentos
+            // para o profissional atualmente selecionado, ou realizar outra ação relevante.
+            if (selectedProfessional) {
+                console.log("Atualizando agendamentos para o profissional atual.");
+                fetchAppointments(selectedProfessionalRef.current);
+            } else {
+                console.log("Nenhum profissional selecionado. Considerar mostrar notificação ou atualizar toda a lista.");
+            }
         });
     
         return () => {
             socket.disconnect();
         };
-    }, []);
     
+    }, [selectedProfessional]); // Dependendo de selectedProfessional para recarregar a lista quando muda
+    
+
+    useEffect(() => {
+        selectedProfessionalRef.current = selectedProfessional;
+      }, [selectedProfessional]);
+      
+
+    useEffect(() => {
+        if (selectedProfessional) {
+            fetchAppointments(selectedProfessional);
+        }
+    }, [selectedProfessional]);
+
 
     return (
         <div className='calendario'>

@@ -14,6 +14,19 @@
     color: var(--cinza-texto);
 }
 
+.rbc-day-slot .rbc-events-container {
+    margin-right: 0px;
+}
+
+.calendario .rbc-event-label {
+    font-size: 72%;
+    font-weight: bold;
+}
+
+.calendario .rbc-event-content  {
+    font-size: 72%;
+}
+
 .calendario .rbc-row:nth-child(n+2) {
     display: none;
 }

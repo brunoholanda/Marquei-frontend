@@ -224,10 +224,13 @@ const ScheduleModal = ({ isModalAgendaVisible, handleCancel, start }) => {
 
             const data = values.data.format('DD/MM/YYYY');
             const horario = values.horario.format('HH:mm');
+            const end_time = values.end_time.format('HH:mm');
+
             const agendamentoData = {
                 ...values,
                 data,
                 horario,
+                end_time,
                 professional_id: selectedProfessional,
                 company_id: storedCompanyID
             };
@@ -543,15 +546,65 @@ const ScheduleModal = ({ isModalAgendaVisible, handleCancel, start }) => {
 
                     <StyledFormItem
                         name="horario"
-                        label="Horário"
+                        label="Horário de Início"
                         rules={[{ required: true, message: 'Por favor, selecione um horário!' }]}
                     >
                         <StyledTimePicker
                             format="HH:mm"
-                            minuteStep={15}
+                            minuteStep={5}
                             disabledTime={() => ({
                                 disabledHours: () => getDisabledHours(form.getFieldValue('data'), bookedHours)
                             })}
+                        />
+                    </StyledFormItem>
+
+                    <StyledFormItem
+                        name="end_time"
+                        label="Horário Final"
+                        rules={[
+                            { required: true, message: 'Por favor, selecione o horário final!' },
+                            ({ getFieldValue }) => ({
+                                validator(_, value) {
+                                    if (!value || getFieldValue('horario').isBefore(value)) {
+                                        return Promise.resolve();
+                                    }
+                                    return Promise.reject(new Error('O horário final deve ser após o horário de início!'));
+                                },
+                            }),
+                        ]}
+                    >
+                        <StyledTimePicker
+                            format="HH:mm"
+                            minuteStep={5}
+                            disabledTime={() => {
+                                const startTime = form.getFieldValue('horario');
+                                const startTimeMoment = startTime ? moment(startTime, 'HH:mm') : null;
+
+                                const disabledHours = () => {
+                                    const hours = [];
+                                    if (startTimeMoment) {
+                                        for (let hour = 0; hour < startTimeMoment.hour(); hour++) {
+                                            hours.push(hour);
+                                        }
+                                    }
+                                    return hours;
+                                };
+
+                                const disabledMinutes = (selectedHour) => {
+                                    const minutes = [];
+                                    if (startTimeMoment && selectedHour === startTimeMoment.hour()) {
+                                        for (let minute = 0; minute <= startTimeMoment.minute(); minute++) {
+                                            minutes.push(minute);
+                                        }
+                                    }
+                                    return minutes;
+                                };
+
+                                return {
+                                    disabledHours: disabledHours,
+                                    disabledMinutes: disabledMinutes,
+                                };
+                            }}
                         />
                     </StyledFormItem>
                 </StyledDateTime>
