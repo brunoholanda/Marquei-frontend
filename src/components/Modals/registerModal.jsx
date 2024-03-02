@@ -6,8 +6,9 @@ import { useForm } from 'antd/es/form/Form';
 import api from '../api/api';
 import { StyledFormItem, StyledModal, StyledTextLine } from './Styles';
 import { WarningOutlined } from '@ant-design/icons';
+import { useAuth } from 'context/AuthContext';
 
-function ProfessionalModal({ isVisible, onClose, initialData, userSpecialties }) {
+function ProfessionalModal({ isVisible, onClose, initialData }) {
     const [isEditMode, setIsEditMode] = useState(false);
 
     const [nome, setNome] = useState("");
@@ -29,22 +30,26 @@ function ProfessionalModal({ isVisible, onClose, initialData, userSpecialties })
     const [currentStep, setCurrentStep] = useState(0);
     const [isModalVisible, setIsModalVisible] = useState(isVisible);
     const [form] = useForm();
+    const { authData } = useAuth();
+    const companyID = authData.companyID;
+    const userSpecialties = authData.userSpecialties || [];
+
 
     const getRegistroOptions = () => {
         const options = [];
-        if (userSpecialties.includes(1)) {
+        if (userSpecialties?.includes(1)) {
             options.push(<Select.Option value="CRM">CRM</Select.Option>);
         }
-        if (userSpecialties.includes(2)) {
+        if (userSpecialties?.includes(2)) {
             options.push(<Select.Option value="CRO">CRO</Select.Option>);
         }
-        if (userSpecialties.includes(3)) {
+        if (userSpecialties?.includes(3)) {
             options.push(<Select.Option value="CRP">CRP</Select.Option>);
         }
-        if (userSpecialties.includes(4)) {
+        if (userSpecialties?.includes(4)) {
             options.push(<Select.Option value="CREFITO">CREFITO</Select.Option>);
         }
-        if (userSpecialties.includes(5)) {
+        if (userSpecialties?.includes(5)) {
             options.push(<Select.Option value="CRN">CRN</Select.Option>);
         }
         return options;
@@ -336,8 +341,7 @@ function ProfessionalModal({ isVisible, onClose, initialData, userSpecialties })
 
     const handleSubmit = async () => {
         try {
-            const company_id = localStorage.getItem('companyID');
-            if (!company_id) {
+            if (!companyID) {
                 message.error('ID da empresa não encontrado. Faça o login novamente.');
                 return;
             }
@@ -356,7 +360,7 @@ function ProfessionalModal({ isVisible, onClose, initialData, userSpecialties })
                 assinatura: signatureBase64,
                 estado: estadoSelecionado,
                 planosaude_id: selectedPlanosIds, // Adicionado array de IDs dos planos de saúde
-                company_id,
+                company_id: companyID,
                 login,
                 senha
             };

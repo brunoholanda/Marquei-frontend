@@ -7,6 +7,7 @@ import debounce from 'lodash/debounce';
 import '../ClientDetails/ClientDetails.css';
 import { useNavigate } from 'react-router-dom';
 import AddClientsModal from 'components/Modals/AddClientsModal';
+import { useAuth } from 'context/AuthContext';
 const { Search } = Input;
 
 const Pacientes = () => {
@@ -18,14 +19,14 @@ const Pacientes = () => {
     const [initialLoad, setInitialLoad] = useState(true);
     const [nomeConsultorio, setNomeConsultorio] = useState('');
     const [showAddClientModal, setShowAddClientModal] = useState(false);
-
+    const { authData } = useAuth();
+    const companyID = authData.companyID;
     const handleOpenAddClientsModal = () => {
          setShowAddClientModal(true);
      };
  
     useEffect(() => {
         const fetchNomeConsultorio = async () => {
-            const companyID = localStorage.getItem('companyID');
             if (companyID) {
                 try {
                     const response = await api.get(`/companies/${companyID}`);
@@ -38,7 +39,7 @@ const Pacientes = () => {
         };
 
         fetchNomeConsultorio();
-    }, []);
+    }, [companyID]);
 
     const navigate = useNavigate();
     const showNotification = (type, message) => {
@@ -52,8 +53,6 @@ const Pacientes = () => {
 
         if (!cleanedValue.trim()) return;
         setLoading(true);
-
-        const companyID = localStorage.getItem('companyID');
 
         if (!companyID) {
             setLoading(false);
@@ -197,7 +196,6 @@ const Pacientes = () => {
         if (initialLoad) {
             setLoading(true);
 
-            const companyID = localStorage.getItem('companyID');
 
             if (!companyID) {
                 setLoading(false);
@@ -229,11 +227,10 @@ const Pacientes = () => {
         const fetchAppointmentHistory = async () => {
             if (selectedClient && selectedClient.id) {
                 try {
-                    const storedCompanyID = localStorage.getItem('companyID');
                     const historyResponse = await api.get(`/todos-agendamentos`, {
                         params: {
                             client_id: selectedClient.id,
-                            company_id: storedCompanyID,
+                            company_id: companyID,
                         },
                     });
 

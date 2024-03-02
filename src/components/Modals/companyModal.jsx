@@ -5,6 +5,7 @@ import { BASE_URL } from 'config';
 
 import api from '../api/api';
 import axios from 'axios';
+import { useAuth } from 'context/AuthContext';
 
 const CompanyDataModal = ({ isVisible, onClose }) => {
     const [companyData, setCompanyData] = useState({});
@@ -17,6 +18,8 @@ const CompanyDataModal = ({ isVisible, onClose }) => {
     const [referencia, setReferencia] = useState('');
     const [enderecoViaCep, setEnderecoViaCep] = useState({});
     const [enderecoEmpresa, setEnderecoEmpresa] = useState('');
+    const { authData } = useAuth();
+    const companyID = authData.companyID;
 
     const fetchEnderecoByCep = async (cep) => {
         if (cep.length === 8) {
@@ -38,15 +41,13 @@ const CompanyDataModal = ({ isVisible, onClose }) => {
 
     useEffect(() => {
         const fetchCompanyData = async () => {
-            const storedCompanyID = localStorage.getItem('companyID');
-            const token = localStorage.getItem('authToken');
 
-            if (storedCompanyID && token) {
+            if (companyID && authData.authToken) {
                 setLoading(true);
                 try {
-                    const response = await api.get(`/companies/${storedCompanyID}`, {
+                    const response = await api.get(`/companies/${companyID}`, {
                         headers: {
-                            'Authorization': `Bearer ${token}`
+                            'Authorization': `Bearer ${authData.authToken}`
                         },
                     });
 
@@ -70,7 +71,7 @@ const CompanyDataModal = ({ isVisible, onClose }) => {
         if (isVisible) {
             fetchCompanyData();
         }
-    }, [isVisible]);
+    }, [companyID, authData.authToken, isVisible]);
 
     useEffect(() => {
         setEditedData(companyData);

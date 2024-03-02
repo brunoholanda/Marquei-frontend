@@ -5,6 +5,7 @@ import { BASE_URL } from 'config';
 
 import api from '../../../components/api/api';
 import axios from 'axios';
+import { useAuth } from 'context/AuthContext';
 
 const CompanyData = () => {
     const [companyData, setCompanyData] = useState({});
@@ -17,6 +18,8 @@ const CompanyData = () => {
     const [referencia, setReferencia] = useState('');
     const [enderecoViaCep, setEnderecoViaCep] = useState({});
     const [enderecoEmpresa, setEnderecoEmpresa] = useState('');
+    const { authData } = useAuth();
+    const companyID = authData.companyID;
 
     const fetchEnderecoByCep = async (cep) => {
         if (cep.length === 8) {
@@ -38,15 +41,13 @@ const CompanyData = () => {
 
     useEffect(() => {
         const fetchCompanyData = async () => {
-            const storedCompanyID = localStorage.getItem('companyID');
-            const token = localStorage.getItem('authToken');
 
-            if (storedCompanyID && token) {
+            if (companyID && authData.authToken) {
                 setLoading(true);
                 try {
-                    const response = await api.get(`/companies/${storedCompanyID}`, {
+                    const response = await api.get(`/companies/${companyID}`, {
                         headers: {
-                            'Authorization': `Bearer ${token}`
+                            'Authorization': `Bearer ${authData.authToken}`
                         },
                     });
 
@@ -68,7 +69,7 @@ const CompanyData = () => {
         };
 
             fetchCompanyData();
-    }, []);
+}, [companyID, authData.authToken]);
 
     useEffect(() => {
         setEditedData(companyData);

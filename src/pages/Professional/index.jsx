@@ -3,17 +3,16 @@ import { Table, Button, Spin, message, Modal, Tabs } from 'antd';
 import api from '../../components/api/api';
 import ProfessionalModal from '../../components/Modals/registerModal';
 import { Link, Navigate } from 'react-router-dom';
-import { DeleteOutlined, IdcardOutlined, UserAddOutlined, UserDeleteOutlined, UserSwitchOutlined } from '@ant-design/icons';
+import { DeleteOutlined, IdcardOutlined, UserAddOutlined, UserSwitchOutlined } from '@ant-design/icons';
 import '../Appointments/Appointments.css';
 import CompanyDataModal from '../../components/Modals/companyModal';
-import { TabPane } from 'react-bootstrap';
 import CompanyData from './CmpanyData';
 import ControleAgenda from './ControleAgenda';
 import PlanCard from 'components/SelerCads';
 import MyPlan from './MyPlan';
 import ReactJoyride from 'react-joyride';
 import TrackingPage from 'pages/TrackingPage';
-import ChatComponent from 'components/ChatBot';
+import { useAuth } from 'context/AuthContext';
 
 function Configs() {
     const [isMobile, setIsMobile] = useState(window.innerWidth < 768);
@@ -23,10 +22,15 @@ function Configs() {
     const [selectedProfessional, setSelectedProfessional] = useState(null);
     const [isCompanyModalVisible, setIsCompanyModalVisible] = useState(false);
     const [companyData, setCompanyData] = useState(null);
-    const userSpecialties = JSON.parse(localStorage.getItem('userSpecialties') || '[]');
     const [maxProfessionals, setMaxProfessionals] = useState(null);
     const [upgradeModalVisible, setUpgradeModalVisible] = useState(false); // Novo estado para controlar a visibilidade do modal de upgrade
     const [runTutorial, setRunTutorial] = useState(false);
+    const { authData } = useAuth();
+    const companyID = authData.companyID;
+    const userSpecialties = authData.userSpecialties;
+
+
+
     const [steps, setSteps] = useState([
         {
             target: '.add-professional-button', // Classe CSS única para o botão Adicionar Profissional
@@ -52,24 +56,19 @@ function Configs() {
 
     useEffect(() => {
         const fetchMaxProfessionals = async () => {
-            const storedCompanyID = localStorage.getItem('companyID');
-            const token = localStorage.getItem('authToken');
 
-            if (storedCompanyID && token) {
+            if (companyID && authData.authToken) {
                 setLoading(true);
                 try {
-                    // Primeiro, busca os dados da empresa para obter o service_id
-                    const companyResponse = await api.get(`/companies/${storedCompanyID}`, {
+                    const companyResponse = await api.get(`/companies/${companyID}`, {
                         headers: {
-                            'Authorization': `Bearer ${token}`
+                            'Authorization': `Bearer ${authData.authToken}`
                         }
                     });
                     const serviceId = companyResponse.data.service_id;
-
-                    // Segundo, busca os dados do serviço para obter o número máximo de profissionais
                     const serviceResponse = await api.get(`/service_details/${serviceId}`, {
                         headers: {
-                            'Authorization': `Bearer ${token}`
+                            'Authorization': `Bearer ${authData.authToken}`
                         }
                     });
                     setMaxProfessionals(serviceResponse.data.persons);
@@ -83,7 +82,7 @@ function Configs() {
         };
 
         fetchMaxProfessionals();
-    }, []);
+    }, [companyID, authData.authToken]);
 
     useEffect(() => {
         const fetchCompanyData = async () => {
@@ -104,15 +103,13 @@ function Configs() {
     };
     useEffect(() => {
         const fetchProfessionals = async () => {
-            const storedCompanyID = localStorage.getItem('companyID');
-            const token = localStorage.getItem('authToken');
 
-            if (storedCompanyID && token) {
+            if (companyID && authData.authToken) {
                 setLoading(true);
                 try {
-                    const response = await api.get(`/professionals?company_id=${storedCompanyID}`, {
+                    const response = await api.get(`/professionals?company_id=${companyID}`, {
                         headers: {
-                            'Authorization': `Bearer ${token}`
+                            'Authorization': `Bearer ${authData.authToken}`
                         },
                     });
 
@@ -131,7 +128,7 @@ function Configs() {
             }
         };
         fetchProfessionals();
-    }, []);
+    }, [companyID, authData.authToken]);
 
     useEffect(() => {
         const handleResize = () => setIsMobile(window.innerWidth < 768);

@@ -3,20 +3,18 @@ import { Table, Form, Input, InputNumber, Button, notification, Alert, Modal } f
 import api from 'components/api/api'; // Importe sua instância de API configurada
 import './Estoque.css';
 import { BarChartOutlined, WarningOutlined } from '@ant-design/icons';
+import { useAuth } from 'context/AuthContext';
 const StockControlPage = () => {
     const [form] = Form.useForm();
     const [stockItems, setStockItems] = useState([]);
     const [itemsCloseToEnd, setItemsCloseToEnd] = useState(0); // Novo estado
     const [isModalVisible, setIsModalVisible] = useState(false);
     const [editingItem, setEditingItem] = useState(null);
+    const { authData } = useAuth();
+    const companyID = authData.companyID;
 
-
-    useEffect(() => {
-        loadStockItems(); // Carrega itens de estoque ao iniciar a página
-    }, []);
 
     const loadStockItems = async () => {
-        const companyID = localStorage.getItem('companyID'); // Obtenha o companyID do local storage
 
         try {
             const response = await api.get('/stock-items', {
@@ -35,7 +33,6 @@ const StockControlPage = () => {
     };
 
     const handleSubmit = async (values) => {
-        const companyID = localStorage.getItem('companyID'); // Obtenha o companyID do local storage
 
         try {
             const response = await api.post('/stock-items', {
@@ -97,6 +94,13 @@ const StockControlPage = () => {
             notification.error({ message: 'Erro ao atualizar item', description: error.message });
         }
     };
+
+
+    useEffect(() => {
+        if (companyID) {
+            loadStockItems(); // Carrega itens de estoque ao iniciar a página
+        }
+    }, [companyID]);
 
     const closeModal = () => {
         form.resetFields();  // Resetando o formulário

@@ -204,8 +204,67 @@ export const ActionsButtonsModal = styled.div`
   display: flex;
   justify-content: space-between;
   margin: 1rem 1rem 0 1rem;
-
 `;
+
+
+export const StyledFooterAgendamento = styled.div`
+  display: flex;
+  justify-content: space-between;
+  width: 100%;
+  margin: 0;
+
+  .ant-modal-footer {
+    margin: 0;
+    padding: 0;
+  }
+
+  button {
+    margin: 1rem .8rem 0 0;
+  }
+
+  @media (max-width: 768px) { 
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    
+    button {
+    margin: 1rem .5rem;
+    width: 100%;
+
+  }
+  }
+`;
+
+export const StyledModalContent = styled.div`
+  display: flex;
+  justify-content: space-between;
+  width: 100%;
+`;
+
+export const StyledButtonsAgendamento = styled.div`
+  display: flex;
+  justify-content: space-between;
+  width: 100%;
+
+  button {
+    margin: 0;
+  }
+`;
+
+
+export const StyledContainerReagendar = styled.div`
+  display: flex;
+  justify-content: center;
+  margin: 2rem 0;
+
+  .ant-picker {
+    margin-right: 1.5rem;
+  }
+  
+`;
+
+
+
 
 
 

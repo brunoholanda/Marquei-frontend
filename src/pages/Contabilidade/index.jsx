@@ -7,13 +7,15 @@ import { CalculatorOutlined, MinusCircleOutlined, PlusCircleOutlined } from "@an
 import TabPane from "antd/es/tabs/TabPane";
 import * as FileSaver from 'file-saver';
 import * as XLSX from 'xlsx';
+import { useAuth } from "context/AuthContext";
 
 const TransactionModal = ({ type, isVisible, onClose, onSubmit }) => {
   const [amount, setAmount] = useState('');
   const [description, setDescription] = useState('');
   const [isRecurrent, setIsRecurrent] = useState(false);
   const [recurrenceMonths, setRecurrenceMonths] = useState(1);
-
+  const { authData } = useAuth();
+  const companyID = authData.companyID;
 
   const handleSubmit = () => {
     if (!amount || isNaN(amount) || (isRecurrent && recurrenceMonths < 1)) {
@@ -96,6 +98,8 @@ const Contabilidade = () => {
   const [monthlyProfit, setMonthlyProfit] = useState([]);
   const [transactions, setTransactions] = useState([]);
   const [date, setDate] = useState(null);
+  const { authData } = useAuth();
+  const companyID = authData.companyID;
 
   const handleDateChange = (date) => {
     if (date) {
@@ -130,8 +134,11 @@ const Contabilidade = () => {
   }, []);
 
   useEffect(() => {
-    fetchBalanceAndTransactions();
-  }, []);
+    if (companyID) {
+      fetchBalanceAndTransactions();
+      fetchTransactions();
+    }
+  }, [companyID]);
 
   useEffect(() => {
     const handleResize = () => setIsMobile(window.innerWidth < 768);
@@ -167,7 +174,7 @@ const Contabilidade = () => {
   const handleTransactionSubmit = async (transactionData) => {
     try {
       const payload = {
-        company_id: localStorage.getItem('companyID'),
+        company_id: companyID,
         receita: transactionData.type === 'income' ? transactionData.amount : 0,
         descricao_receita: transactionData.type === 'income' ? transactionData.description : '',
         recorrencia_receita: transactionData.type === 'income' ? transactionData.isRecurrent : false,
@@ -202,7 +209,6 @@ const Contabilidade = () => {
   };
 
   const fetchTransactionsForMonth = async (month, year) => {
-    const companyID = localStorage.getItem('companyID');
 
     if (!companyID) {
       console.error('company_id não está disponível.');

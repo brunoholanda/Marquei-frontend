@@ -13,6 +13,7 @@ import {
 
 
 import { CheckOutlined } from '@ant-design/icons';
+import { useAuth } from 'context/AuthContext';
 const PlanCard = ({ plan, isCurrent }) => {
     const price = parseFloat(plan.price).toFixed(2);
 
@@ -75,29 +76,27 @@ function MyPlan() {
     const [loading, setLoading] = useState(false);
     const [plans, setPlans] = useState([]);
     const [currentPlanId, setCurrentPlanId] = useState(null);
-
+    const { authData } = useAuth(); 
+    const companyID = authData.companyID
     const orderPlans = (a, b) => {
         const order = { 'Plus': 1, 'Pro': 2, 'Premium': 3, 'Plano Teste': 4 };
         return (order[a.plan] || 5) - (order[b.plan] || 5);
     };
 
     useEffect(() => {
-        const storedCompanyID = localStorage.getItem('companyID');
-        const token = localStorage.getItem('authToken');
-
         const fetchPlans = async () => {
-            if (storedCompanyID && token) {
+            if (companyID && authData.authToken) {
                 setLoading(true);
                 try {
                     // Fetch the company's current plan
-                    const companyResponse = await api.get(`/companies/${storedCompanyID}`, {
-                        headers: { 'Authorization': `Bearer ${token}` }
+                    const companyResponse = await api.get(`/companies/${companyID}`, {
+                        'Authorization': `Bearer ${authData.authToken}`
                     });
                     setCurrentPlanId(companyResponse.data.service_id);
 
                     // Fetch all plans
                     const plansResponse = await api.get('/services', {
-                        headers: { 'Authorization': `Bearer ${token}` }
+                        headers: { 'Authorization': `Bearer ${authData.authToken}` }
                     });
                     setPlans(plansResponse.data);
                 } catch (error) {
@@ -110,7 +109,7 @@ function MyPlan() {
         };
 
         fetchPlans();
-    }, []);
+    }, [companyID, authData.authToken]);
 
     return (
         <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', width: '100%', marginTop: '20px' }}>

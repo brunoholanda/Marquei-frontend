@@ -2,6 +2,9 @@ import React, { useState, useEffect } from 'react';
 import api from 'components/api/api';
 import { Button, Form, Input, Modal, Select, Table, notification } from 'antd';
 import { useForm } from 'antd/es/form/Form';
+import { StyledTableCompanies } from './Style';
+import { WhatsAppOutlined } from '@ant-design/icons';
+
 
 const { Option } = Select;
 
@@ -27,28 +30,40 @@ const CompaniesTable = () => {
 
   const showEditModal = (company) => {
     setEditingCompany(company);
+
     form.setFieldsValue({
       nome: company.nome,
       cnpj: company.cnpj,
-      payment_type: company.payment_type, // Isso deve corresponder ao valor do Select, como "anual" ou "mensal"
+      payment_type: company.payment_type,
       service_id: company.service_id,
       payment_confirm: company.payment_confirm,
+      token_expiration: company.token_expiration || '',
     });
+
     setIsModalVisible(true);
   };
-
 
 
   const handleOk = async () => {
     try {
       const values = await form.validateFields();
+
       await api.put(`/companies/${editingCompany.company_id}`, {
-        ...values
+        nome: values.nome,
+        payment_type: values.payment_type,
+        service_id: values.service_id,
+        payment_confirm: values.payment_confirm,
       });
-      setCompanies(prevCompanies => {
-        return prevCompanies.map(c => c.company_id === editingCompany.company_id ? { ...c, ...values } : c);
-      });
-      notification.success({ message: 'Empresa atualizada com sucesso com sucesso!' });
+
+      if (values.token_expiration) {
+        await api.put(`/companies/${editingCompany.company_id}/updateTokenExpiration`, {
+          token_expiration: values.token_expiration,
+        });
+      }
+
+      const updatedCompanies = await api.get('/companies');
+      setCompanies(updatedCompanies.data);
+      notification.success({ message: 'Empresa atualizada com sucesso!' });
       setIsModalVisible(false);
       form.resetFields();
     } catch (error) {
@@ -70,7 +85,78 @@ const CompaniesTable = () => {
       title: 'Nome',
       dataIndex: 'nome',
       key: 'name',
+      filterDropdown: ({ setSelectedKeys, selectedKeys, confirm, clearFilters }) => (
+        <div style={{ padding: 8 }}>
+          <Input
+            placeholder="Pesquisar nome"
+            value={selectedKeys[0]}
+            onChange={e => setSelectedKeys(e.target.value ? [e.target.value] : [])}
+            onPressEnter={() => confirm()}
+            style={{ marginBottom: 8, display: 'block' }}
+          />
+          <Button
+            type="primary"
+            onClick={() => confirm()}
+            size="small"
+            style={{ width: 90 }}
+          >
+            Pesquisar
+          </Button>
+          <Button onClick={() => clearFilters()} size="small" style={{ width: 90 }}>
+            Resetar
+          </Button>
+        </div>
+      ),
+      onFilter: (value, record) => record.nome.toString().toLowerCase().includes(value.toLowerCase()),
     },
+    {
+      title: 'CNPJ/CPF',
+      dataIndex: 'cnpj',
+      key: 'cnpj',
+      filterDropdown: ({ setSelectedKeys, selectedKeys, confirm, clearFilters }) => (
+        <div style={{ padding: 8 }}>
+          <Input
+            placeholder="Pesquisar CNPJ/CPF"
+            value={selectedKeys[0]}
+            onChange={e => setSelectedKeys(e.target.value ? [e.target.value] : [])}
+            onPressEnter={() => confirm()}
+            style={{ marginBottom: 8, display: 'block' }}
+          />
+          <Button
+            type="primary"
+            onClick={() => confirm()}
+            size="small"
+            style={{ width: 90, marginRight: 8 }}
+          >
+            Pesquisar
+          </Button>
+          <Button onClick={() => clearFilters()} size="small" style={{ width: 90 }}>
+            Resetar
+          </Button>
+        </div>
+      ),
+      onFilter: (value, record) => record.cnpj.toString().toLowerCase().includes(value.toLowerCase()),
+    },
+    {
+      title: 'Contato',
+      dataIndex: 'telefone',
+      key: 'telefone',
+      render: (text, record) => {
+
+        const phoneNumber = text ? text.replace(/[^0-9]/g, "") : '';
+        const whatsappLink = phoneNumber ? `https://wa.me/${phoneNumber}` : 'javascript:void(0);';
+        
+        return (
+          <>
+            {text || 'Não disponível'}
+            <a href={whatsappLink} target="_blank" rel="noopener noreferrer">
+              <Button icon={<WhatsAppOutlined />} shape="circle" style={{ marginLeft: 8 }} disabled={!phoneNumber} />
+            </a>
+          </>
+        );
+      },
+    },
+    
     {
       title: 'Plano',
       dataIndex: 'service_id',
@@ -88,6 +174,12 @@ const CompaniesTable = () => {
       render: text => text ? 'Confirmado' : 'Pendente',
     },
     {
+      title: 'Data de Expiração do Token',
+      dataIndex: 'token_expiration',
+      key: 'token_expiration',
+    },
+
+    {
       title: 'Ações',
       key: 'actions',
       render: (_, record) => (
@@ -100,7 +192,10 @@ const CompaniesTable = () => {
 
   return (
     <>
-      <Table columns={columns} dataSource={companies} loading={loading} />
+      <StyledTableCompanies>
+        <h2>Administralção de clientes</h2>
+        <Table columns={columns} dataSource={companies} loading={loading} />
+      </StyledTableCompanies>
       <Modal title="Editar Empresa" visible={isModalVisible} onOk={handleOk} onCancel={handleCancel}>
         <Form
           form={form}
@@ -109,9 +204,6 @@ const CompaniesTable = () => {
           initialValues={{ ...editingCompany }}
         >
           <Form.Item label="Nome" name="nome">
-            <Input />
-          </Form.Item>
-          <Form.Item label="CNPJ" name="cnpj">
             <Input />
           </Form.Item>
           <Form.Item label="Contrato" name="payment_type">
@@ -134,6 +226,9 @@ const CompaniesTable = () => {
               <Option value={true}>Pago</Option>
               <Option value={false}>Em aberto</Option>
             </Select>
+          </Form.Item>
+          <Form.Item label="Acesso até" name="token_expiration">
+            <Input placeholder="YYYY-MM-DD HH:mm:ss" />
           </Form.Item>
         </Form>
       </Modal>

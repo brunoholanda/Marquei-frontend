@@ -3,23 +3,23 @@ import { Button, Input, Table, Tooltip, message } from 'antd';
 import api from 'components/api/api';
 import { CheckCircleOutlined, CloseCircleOutlined, ExclamationCircleOutlined, HistoryOutlined, SearchOutlined, WarningFilled } from '@ant-design/icons';
 import './History.module.css';
+import { useAuth } from 'context/AuthContext';
 const AllAppointments = () => {
     const [isMobile, setIsMobile] = useState(window.innerWidth < 768);
     const [appointments, setAppointments] = useState([]);
     const [loading, setLoading] = useState(false);
     const [filteredAppointments, setFilteredAppointments] = useState([]);
-
+    const { authData } = useAuth();
+    const companyID = authData.companyID;
 
     const fetchAllAppointments = async () => {
-        const storedCompanyID = localStorage.getItem('companyID');
-        const token = localStorage.getItem('authToken');
-
         setLoading(true);
-        if (storedCompanyID && token) {
+        
+        if (companyID && authData.authToken) {
             try {
-                const response = await api.get(`/todos-agendamentos?company_id=${storedCompanyID}`, {
+                const response = await api.get(`/todos-agendamentos?company_id=${companyID}`, {
                     headers: {
-                        'Authorization': `Bearer ${token}`
+                        'Authorization': `Bearer ${authData.authToken}`
                     },
                 });
                 if (response.status !== 200) {

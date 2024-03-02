@@ -18,6 +18,7 @@ import ProfessionalModal from './registerModal';
 import { Navigate } from 'react-router-dom';
 import PlanCard from 'components/SelerCads';
 import AddClientsModal from './AddClientsModal';
+import { useAuth } from 'context/AuthContext';
 
 const { Option } = Select;
 const { TextArea } = Input;
@@ -38,8 +39,9 @@ const ScheduleModal = ({ isModalAgendaVisible, handleCancel, start }) => {
     const [upgradeModalVisible, setUpgradeModalVisible] = useState(false); // Novo estado para controlar a visibilidade do modal de upgrade
     const [maxProfessionals, setMaxProfessionals] = useState(null);
     const [showAddClientModal, setShowAddClientModal] = useState(false);
-
-    const userSpecialties = JSON.parse(localStorage.getItem('userSpecialties') || '[]');
+    const { authData } = useAuth();
+    const companyID = authData.companyID;
+    const userSpecialties = authData.userSpecialties;
 
     const handleOpenAddClientsModal = () => {
         setShowAddClientModal(true);
@@ -52,21 +54,24 @@ const ScheduleModal = ({ isModalAgendaVisible, handleCancel, start }) => {
         }
 
         try {
-            const companyID = localStorage.getItem('companyID'); // Substitua 'companyID' pela chave correta se for diferente
-            const response = await api.get('/clients', {
-                params: {
-                    company_id: companyID,
-                },
-            })
-            const filteredPatients = response.data.filter(patient =>
-                patient.nome.toLowerCase().includes(searchText.toLowerCase())
-            );
-            const suggestions = filteredPatients.map(patient => ({
-                label: patient.nome,
-                value: patient.nome,
-                data: patient
-            }));
-            setPatientSuggestions(suggestions);
+            if (companyID) {
+                const response = await api.get('/clients', {
+                    params: {
+                        company_id: companyID,
+                    },
+                });
+                const filteredPatients = response.data.filter(patient =>
+                    patient.nome.toLowerCase().includes(searchText.toLowerCase())
+                );
+                const suggestions = filteredPatients.map(patient => ({
+                    label: patient.nome,
+                    value: patient.nome,
+                    data: patient
+                }));
+                setPatientSuggestions(suggestions);
+            } else {
+                console.error('Company ID not found in context');
+            }
         } catch (error) {
             console.error('Erro ao buscar pacientes', error);
             message.error('Erro ao buscar pacientes');
@@ -133,10 +138,8 @@ const ScheduleModal = ({ isModalAgendaVisible, handleCancel, start }) => {
     }, [selectedProfessional]);
 
     const handleUpgrade = () => {
-        // A lógica para redirecionar o usuário para a página de upgrade
-        // Pode ser uma navegação ou abrir um novo componente/modal
         Navigate('/upgrade');
-        setUpgradeModalVisible(false); // Fecha o modal após o redirecionamento
+        setUpgradeModalVisible(false);
     };
 
     const closeUpgradeModal = () => {
@@ -213,13 +216,12 @@ const ScheduleModal = ({ isModalAgendaVisible, handleCancel, start }) => {
     const onFinish = async (values) => {
         setLoading(true);
         try {
-            const storedCompanyID = localStorage.getItem('companyID');
             const clientData = {
                 nome: values.nome,
                 cpf: values.cpf.replace(/\D/g, ''),
                 celular: values.celular.replace(/\D/g, ''),
                 planodental: values.planodental,
-                company_id: storedCompanyID
+                company_id: companyID
             };
 
             const data = values.data.format('DD/MM/YYYY');
@@ -232,7 +234,7 @@ const ScheduleModal = ({ isModalAgendaVisible, handleCancel, start }) => {
                 horario,
                 end_time,
                 professional_id: selectedProfessional,
-                company_id: storedCompanyID
+                company_id: companyID
             };
 
             let clientResponse = await api.get(`/clients/cpf/${clientData.cpf}?company_id=${clientData.company_id}`).catch(error => error.response);
@@ -349,10 +351,9 @@ const ScheduleModal = ({ isModalAgendaVisible, handleCancel, start }) => {
 
     useEffect(() => {
         const fetchProfessionals = async () => {
-            const storedCompanyID = localStorage.getItem('companyID');
 
             try {
-                const response = await api.get(`/professionals?company_id=${storedCompanyID}`);
+                const response = await api.get(`/professionals?company_id=${companyID}`);
 
                 if (response.status !== 200) {
                     throw new Error('Falha ao buscar dados dos profissionais');
@@ -364,7 +365,7 @@ const ScheduleModal = ({ isModalAgendaVisible, handleCancel, start }) => {
         };
 
         fetchProfessionals();
-    }, []);
+    }, [companyID]);
 
     const fetchPlanosSaude = async (professionalId) => {
         try {
@@ -398,24 +399,21 @@ const ScheduleModal = ({ isModalAgendaVisible, handleCancel, start }) => {
 
     useEffect(() => {
         const fetchMaxProfessionals = async () => {
-            const storedCompanyID = localStorage.getItem('companyID');
-            const token = localStorage.getItem('authToken');
+   
 
-            if (storedCompanyID && token) {
+            if (companyID && authData.authToken) {
                 setLoading(true);
                 try {
-                    // Primeiro, busca os dados da empresa para obter o service_id
-                    const companyResponse = await api.get(`/companies/${storedCompanyID}`, {
+                    const companyResponse = await api.get(`/companies/${companyID}`, {
                         headers: {
-                            'Authorization': `Bearer ${token}`
+                            'Authorization': `Bearer ${authData.authToken}`
                         }
                     });
                     const serviceId = companyResponse.data.service_id;
 
-                    // Segundo, busca os dados do serviço para obter o número máximo de profissionais
                     const serviceResponse = await api.get(`/service_details/${serviceId}`, {
                         headers: {
-                            'Authorization': `Bearer ${token}`
+                            'Authorization': `Bearer ${authData.authToken}`
                         }
                     });
                     setMaxProfessionals(serviceResponse.data.persons);
@@ -429,7 +427,7 @@ const ScheduleModal = ({ isModalAgendaVisible, handleCancel, start }) => {
         };
 
         fetchMaxProfessionals();
-    }, []);
+    }, [companyID, authData.authToken]);
 
 
     return (

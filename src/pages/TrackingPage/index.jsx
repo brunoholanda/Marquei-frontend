@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Table, message, Modal, Tooltip } from 'antd';
 import api from '../../components/api/api';
 import { CheckCircleOutlined, CloseCircleOutlined, ExclamationCircleOutlined, RetweetOutlined } from '@ant-design/icons';
+import { useAuth } from 'context/AuthContext';
 
 const statusText = {
     null: 'A Iniciar',
@@ -12,12 +13,13 @@ const statusText = {
 const TrackingPage = () => {
     const [chamados, setChamados] = useState([]);
     const [selectedChamado, setSelectedChamado] = useState(null);
+    const { authData } = useAuth(); 
+    const companyID = authData.companyID
 
     useEffect(() => {
         const fetchChamados = async () => {
             try {
-                const companyId = localStorage.getItem('companyID');
-                const response = await api.get(`/chamados/${companyId}`);
+                const response = await api.get(`/chamados/${companyID}`);
                 setChamados(response.data);
             } catch (error) {
                 message.error('Erro ao buscar chamados');
@@ -25,7 +27,7 @@ const TrackingPage = () => {
         };
 
         fetchChamados();
-    }, []);
+    }, [companyID]);
 
     const columns = [
         {

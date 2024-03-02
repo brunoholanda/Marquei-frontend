@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { Modal, Select, Input, message, Button } from 'antd';
 import api from '../api/api';
 import ReactInputMask from 'react-input-mask';
+import { useAuth } from 'context/AuthContext';
 
 const { Option } = Select;
 
@@ -11,11 +12,12 @@ const RecommendationModal = ({ modalRecommendationisVisible, modalRecommendation
     const [inputPhone, setInputPhone] = useState('');
     const [isSuccessModalVisible, setIsSuccessModalVisible] = useState(false);
     const [isLoading, setIsLoading] = useState(false);
-
+    const { authData } = useAuth();
+    const companyID = authData.companyID;
     const handleRecommend = async () => {
         setIsLoading(true);
         try {
-            const companyId = localStorage.getItem('companyID');
+            const companyId = companyID;
             if (!selectedOption || !inputName.trim() || !inputPhone.trim()) {
                 message.error('Por favor, preencha todos os campos!');
                 setIsLoading(false);

@@ -15,6 +15,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import { Layout, Menu, theme } from 'antd';
 import ReactJoyride from 'react-joyride';
 import './Sidebar.css';
+import { useAuth } from 'context/AuthContext';
 
 const { Header, Sider } = Layout;
 
@@ -29,7 +30,8 @@ function getItem(label, key, icon, children, url) {
 
 const Sidebar = () => {
   const [isMobile, setIsMobile] = useState(window.innerWidth < 768);
-
+  const { authData, logout } = useAuth();
+  const userSpecialties = authData.userSpecialties || [];
   const [runTutorial, setRunTutorial] = useState(false);
   const [steps, setSteps] = useState([
     {
@@ -81,15 +83,15 @@ const Sidebar = () => {
   } = theme.useToken();
 
   const isAuthenticated = !!localStorage.getItem('authToken');
+  
   if (!isAuthenticated) {
     return null;
   }
-  const userSpecialties = JSON.parse(localStorage.getItem('userSpecialties') || '[]');
 
   const handleLogout = () => {
-    localStorage.removeItem('authToken');
+    logout(); 
     navigate('/login');
-  };
+};
 
   const onMenuClick = (e) => {
     if (e.key === 'logout') {
@@ -109,7 +111,7 @@ const Sidebar = () => {
     getItem('Configurações', '6', <SettingOutlined style={{ fontSize: iconSize }} />, null, '/configs'),
     !isMobile && getItem('Estoque', '7', <BarChartOutlined style={{ fontSize: iconSize }} />, null, '/estoque'),
     getItem('Contabilidade', '8', <CalculatorOutlined style={{ fontSize: iconSize }} />, null, '/contabilidade'),
-    userSpecialties.includes(5) && getItem('Plano Alimentar', '10', <AppleOutlined style={{ fontSize: iconSize }} />, null, '/plano_alimentar'),
+    userSpecialties?.includes(5) && getItem('Plano Alimentar', '10', <AppleOutlined style={{ fontSize: iconSize }} />, null, '/plano_alimentar'),
     isAuthenticated && getItem('Sair do Sistema', 'logout', <LogoutOutlined style={{ fontSize: iconSize }} />, null, null), // Conditional item
   ].filter(Boolean);
 

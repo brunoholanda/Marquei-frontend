@@ -2,10 +2,12 @@
 import React from 'react';
 import { Modal, Button, Input, message } from 'antd';
 import { LinkOutlined } from '@ant-design/icons';
+import { useAuth } from 'context/AuthContext';
 
-const ScheduleLinkModal = ({ isLinkModalVisible, onLinkModalClose, companyID }) => {
+const ScheduleLinkModal = ({ isLinkModalVisible, onLinkModalClose }) => {
+  const { authData } = useAuth();
+  const companyID = authData.companyID;
     const generateScheduleLink = () => {
-        const companyID = localStorage.getItem('companyID');
         return `${window.location.origin}/#/agendar/${companyID}`;
       };
       

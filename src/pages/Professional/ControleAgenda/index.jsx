@@ -9,6 +9,7 @@ import WeeklyModal from '../../../components/Modals/WeeklyModal ';
 import ScheduleLinkModal from 'components/Modals/ScheduleLinkModal';
 import ReactJoyride from 'react-joyride';
 import './ControleAgenda.module.css';
+import { useAuth } from 'context/AuthContext';
 const { Option } = Select;
 
 const ControleAgenda = () => {
@@ -24,8 +25,10 @@ const ControleAgenda = () => {
     const [professionals, setProfessionals] = useState([]);
     const [selectedProfessional, setSelectedProfessional] = useState(null);
     const [isLinkModalVisible, setIsLinkModalVisible] = useState(false);
-    const companyID = localStorage.getItem('companyID');
+    const { authData } = useAuth();
+    const companyID = authData.companyID;
     const [runTutorial, setRunTutorial] = useState();
+
     const [steps, setSteps] = useState([
         {
             target: '.select-professional',
@@ -45,14 +48,12 @@ const ControleAgenda = () => {
 
     useEffect(() => {
         const fetchProfessionals = async () => {
-            const storedCompanyID = localStorage.getItem('companyID');
-            const token = localStorage.getItem('authToken');
 
-            if (storedCompanyID && token) {
+            if (companyID && authData.authToken) {
                 try {
-                    const response = await api.get(`/professionals?company_id=${storedCompanyID}`, {
+                    const response = await api.get(`/professionals?company_id=${companyID}`, {
                         headers: {
-                            'Authorization': `Bearer ${token}`
+                            'Authorization': `Bearer ${authData.authToken}`
                         },
                     });
 
@@ -67,8 +68,8 @@ const ControleAgenda = () => {
                 console.error('Company ID or auth token not found in local storage');
             }
         };
-        fetchProfessionals();
-    }, []);
+     fetchProfessionals();
+}, [companyID, authData.authToken]); 
 
     useEffect(() => {
         const handleResize = () => setIsMobile(window.innerWidth < 768);
@@ -141,7 +142,7 @@ const ControleAgenda = () => {
             render: (text, record) => moment(record.date, 'DD/MM/YYYY').format('dddd')
         }] : []),
         {
-            title:  isMobile ? 'Intervalo' : 'Intervalo de Tempo',
+            title: isMobile ? 'Intervalo' : 'Intervalo de Tempo',
             dataIndex: 'time',
             key: 'time',
             render: (text, record) => {
@@ -160,26 +161,26 @@ const ControleAgenda = () => {
             key: 'action',
             render: (text, record) => (
                 <>
-                <Button
-                    icon={<EditOutlined />}
-                    onClick={() => handleEdit(record)}
-                    type="primary"
-                    title="Editar horário"
-                    style={{ marginLeft: '10px' }}
-                >
-                    {isMobile ? '' : 'Editar'}
-                </Button>
-                <Button
-                    icon={<DeleteOutlined />}
-                    onClick={() => handleDelete(record.id)}
-                    type="primary"
-                    danger
-                    title="Excluir"
-                    style={{ marginLeft: '10px' }}
-                >
-                    {isMobile ? '' : 'Excluir'}
-                </Button>
-            </>
+                    <Button
+                        icon={<EditOutlined />}
+                        onClick={() => handleEdit(record)}
+                        type="primary"
+                        title="Editar horário"
+                        style={{ marginLeft: '10px' }}
+                    >
+                        {isMobile ? '' : 'Editar'}
+                    </Button>
+                    <Button
+                        icon={<DeleteOutlined />}
+                        onClick={() => handleDelete(record.id)}
+                        type="primary"
+                        danger
+                        title="Excluir"
+                        style={{ marginLeft: '10px' }}
+                    >
+                        {isMobile ? '' : 'Excluir'}
+                    </Button>
+                </>
             )
         }
     ];

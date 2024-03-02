@@ -8,6 +8,7 @@ import { BookOutlined, CheckCircleOutlined, CloseCircleOutlined, ExclamationCirc
 import { Link } from 'react-router-dom';
 import AppointmentModal from '../../components/Modals/AppointmentModal';
 import ScheduleModal from '../../components/Modals/ScheduleModal';
+import { useAuth } from 'context/AuthContext';
 
 const Appointments = () => {
     const [appointments, setAppointments] = useState([]);
@@ -18,7 +19,8 @@ const Appointments = () => {
     const [professionals, setProfessionals] = useState([]);
     const [selectedProfessional, setSelectedProfessional] = useState(null);
     const [isModalAgendarVisible, setModalAgendarVisible] = useState(false);
-
+    const { authData } = useAuth();
+    const companyID = authData.companyID;
     const fetchAppointments = async (date, professionalId) => {
         if (!professionalId) {
             message.error("Por favor, selecione um profissional primeiro.");
@@ -41,14 +43,12 @@ const Appointments = () => {
 
     useEffect(() => {
         const fetchProfessionals = async () => {
-            const storedCompanyID = localStorage.getItem('companyID');
-            const token = localStorage.getItem('authToken');
+            if (companyID && authData.authToken) {
 
-            if (storedCompanyID && token) {
                 try {
-                    const response = await api.get(`/professionals?company_id=${storedCompanyID}`, {
+                    const response = await api.get(`/professionals?company_id=${companyID}`, {
                         headers: {
-                            'Authorization': `Bearer ${token}`
+                            'Authorization': `Bearer ${authData.authToken}`
                         },
                     });
 
@@ -62,9 +62,9 @@ const Appointments = () => {
             } else {
                 console.error('Company ID or auth token not found in local storage');
             }
-        };
-        fetchProfessionals();
-    }, []);
+   };
+    fetchProfessionals();
+}, [companyID, authData.authToken]);
 
     const handleProfessionalChange = (professionalId) => {
         setSelectedProfessional(professionalId);

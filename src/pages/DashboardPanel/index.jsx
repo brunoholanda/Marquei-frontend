@@ -6,6 +6,7 @@ import './DashboardPanel.css';
 import { Select } from 'antd';
 import { Checkbox } from 'antd';
 import { DashboardOutlined } from '@ant-design/icons';
+import { useAuth } from 'context/AuthContext';
 
 const { Option } = Select;
 
@@ -22,7 +23,9 @@ const DashboardPanel = () => {
     const [selectedProfessional, setSelectedProfessional] = useState(null);
     const [professionalsList, setProfessionalsList] = useState([]);
     const [selectedYear, setSelectedYear] = useState(new Date().getFullYear());
-
+    const { authData } = useAuth();
+    const companyID = authData.companyID;
+    
     const [appointmentData, setAppointmentData] = useState({
         confirmed: 0,
         cancelled: 0,
@@ -85,14 +88,12 @@ const DashboardPanel = () => {
 
     useEffect(() => {
         const fetchData = async () => {
-            const storedCompanyID = localStorage.getItem('companyID');
-            const token = localStorage.getItem('authToken');
-
-            if (storedCompanyID && token) {
+ 
+            if (companyID && authData.authToken) {
                 try {
-                    const response = await api.get(`/agendamentos?company_id=${storedCompanyID}`, {
+                    const response = await api.get(`/agendamentos?company_id=${companyID}`, {
                         headers: {
-                            'Authorization': `Bearer ${token}`
+                            'Authorization': `Bearer ${authData.authToken}`
                         },
                     });
 
@@ -164,17 +165,16 @@ const DashboardPanel = () => {
 
 
         fetchData();
-    }, [timeFilter, selectedYear, selectedMonth, viewOtherMonths, viewProfessionalsFilter, selectedProfessional]);
+    }, [timeFilter, selectedYear, selectedMonth, viewOtherMonths, viewProfessionalsFilter, selectedProfessional, companyID, authData.authToken]);
 
     useEffect(() => {
         const fetchProfessionals = async () => {
-            const storedCompanyID = localStorage.getItem('companyID');
-            const token = localStorage.getItem('authToken');
-            if (storedCompanyID && token) {
+
+            if (companyID && authData.authToken) {
                 try {
-                    const response = await api.get(`/professionals?company_id=${storedCompanyID}`, {
+                    const response = await api.get(`/professionals?company_id=${companyID}`, {
                         headers: {
-                            'Authorization': `Bearer ${token}`
+                            'Authorization': `Bearer ${authData.authToken}`
                         },
                     });
                     if (response.status === 200) {
@@ -187,8 +187,7 @@ const DashboardPanel = () => {
         };
 
         fetchProfessionals();
-    }, []);
-
+    }, [companyID, authData.authToken]);
 
 
     useEffect(() => {

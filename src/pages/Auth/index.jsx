@@ -1,12 +1,12 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
+import { Button, Input, Modal, message } from 'antd';
+import { LockOutlined } from '@ant-design/icons';
 import styles from './Auth.module.scss';
 import { BASE_URL } from 'config';
 import Btn from 'components/Btn';
-import { Button, Input, Modal, message } from 'antd';
-import { jwtDecode } from 'jwt-decode';
 import PlanCard from 'components/SelerCads';
-import { LockOutlined } from '@ant-design/icons';
+import { useAuth } from 'context/AuthContext'; // Importação do hook useAuth
 
 const Authentication = () => {
   const [username, setUsername] = useState('');
@@ -17,10 +17,11 @@ const Authentication = () => {
   const [resetEmail, setResetEmail] = useState('');
 
   const navigate = useNavigate();
+  const { updateAuthData } = useAuth(); // Uso do hook useAuth
 
   const handleLogin = async (e) => {
     e.preventDefault();
-  
+
     try {
       const response = await fetch(`${BASE_URL}/auth/login`, {
         method: 'POST',
@@ -29,7 +30,7 @@ const Authentication = () => {
         },
         body: JSON.stringify({ username, password }),
       });
-  
+
       if (!response.ok) {
         const error = await response.json();
         if (error.message === "Token inválido ou expirado") {
@@ -41,15 +42,17 @@ const Authentication = () => {
       } else {
         const { token, company_id, user_specialties } = await response.json();
         console.log('Logged in company ID:', company_id);
-  
+
         if (typeof company_id === 'undefined') {
           throw new Error('Informações do usuário ou da empresa não estão disponíveis.');
         }
-  
-        localStorage.setItem('authToken', token);
-        localStorage.setItem('companyID', company_id);
-        localStorage.setItem('userSpecialties', JSON.stringify(user_specialties));
-  
+
+        updateAuthData({
+          authToken: token,
+          companyID: company_id,
+          userSpecialties: user_specialties,
+        });
+
         setUsername('');
         setPassword('');
         navigate('/calendario');
@@ -60,9 +63,7 @@ const Authentication = () => {
   };
   
 
-  const showPasswordResetModal = () => {
-    setPasswordResetModalVisible(true);
-  };
+
 
   const handlePasswordReset = async () => {
     try {
@@ -84,6 +85,10 @@ const Authentication = () => {
     } finally {
       setPasswordResetModalVisible(false);
     }
+  };
+
+  const showPasswordResetModal = () => {
+    setPasswordResetModalVisible(true);
   };
 
   return (

@@ -8,6 +8,7 @@ import { StyledPlanCard, StyledPlanContainer, StyledTextCard } from './Styles';
 import api from '../../components/api/api';
 import { WarningOutlined } from '@ant-design/icons';
 import Btn from 'components/Btn';
+import { useAuth } from 'context/AuthContext';
 
 const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 const commonDomains = ["gmail.com", "yahoo.com", "hotmail.com", "outlook.com", "live.com"];
@@ -30,7 +31,8 @@ const AuthModal = ({ isVisible, onClose, onLoginSuccess, selectedService }) => {
     const [emailSuggestions, setEmailSuggestions] = useState([]);
     const [preapprovalPlanId, setPreapprovalPlanId] = useState('');
     const [showTrialModal, setShowTrialModal] = useState(false);  // Novo estado para controlar a visibilidade do modal de teste grátis
-
+    const { authData } = useAuth();
+    const companyID = authData.companyID;
     const validateEmail = (username) => {
         return emailRegex.test(username);
     }
@@ -67,7 +69,7 @@ const AuthModal = ({ isVisible, onClose, onLoginSuccess, selectedService }) => {
                 headers: {
                     'Content-Type': 'application/json',
                 },
-                body: JSON.stringify({ username }),
+                body: JSON.stringify({ username, company_id: companyID }), 
             });
             const data = await response.json();
             setIsUserExist(data.exists);

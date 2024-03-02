@@ -10,9 +10,10 @@ import { ExpandAltOutlined, PlusOutlined, SearchOutlined } from '@ant-design/ico
 import DeclarationPage from './Declaration';
 import ReceitaPage from './Receita';
 import { Spin } from 'hamburger-react';
+import { useAuth } from 'context/AuthContext';
 
 
-const ClientDetails = ({ userSpecialties = [] }) => {
+const ClientDetails = () => {
     const [isMobile, setIsMobile] = useState(window.innerWidth < 768);
 
     const [isLoading, setIsLoading] = useState(true);
@@ -59,12 +60,16 @@ const ClientDetails = ({ userSpecialties = [] }) => {
     const [clientNotesData, setClientNotesData] = useState([]);
     const [isModalInsertNotesVisible, setIsModalInsertNotesVisible] = useState(false);
     const [noteText, setNoteText] = useState('');
-    const canEmitCertificateOrRecipe = userSpecialties.includes(1) || userSpecialties.includes(2);
     const [selectedProfessional, setSelectedProfessional] = useState(null);
     const [professionals, setProfessionals] = useState([]);
     const [selectedProfessionalName, setSelectedProfessionalName] = useState('');
     const [isFullNoteModalVisible, setIsFullNoteModalVisible] = useState(false);
     const [fullNoteDetails, setFullNoteDetails] = useState({});
+    const { authData } = useAuth();
+    const companyID = authData.companyID;
+    const userSpecialties = authData.userSpecialties || [];
+
+    const canEmitCertificateOrRecipe = userSpecialties.includes(1) || userSpecialties.includes(2);
 
 
     const handleOpenModal = () => {
@@ -112,14 +117,12 @@ const ClientDetails = ({ userSpecialties = [] }) => {
 
     useEffect(() => {
         const fetchProfessionals = async () => {
-            const storedCompanyID = localStorage.getItem('companyID');
-            const token = localStorage.getItem('authToken');
 
-            if (storedCompanyID && token) {
+            if (companyID && authData.authToken) {
                 try {
-                    const response = await api.get(`/professionals?company_id=${storedCompanyID}`, {
+                    const response = await api.get(`/professionals?company_id=${companyID}`, {
                         headers: {
-                            'Authorization': `Bearer ${token}`
+                            'Authorization': `Bearer ${authData.authToken}`
                         },
                     });
 
@@ -135,7 +138,7 @@ const ClientDetails = ({ userSpecialties = [] }) => {
             }
         };
         fetchProfessionals();
-    }, []);
+    }, [companyID, authData.authToken]);
 
 
     useEffect(() => {
@@ -233,11 +236,9 @@ const ClientDetails = ({ userSpecialties = [] }) => {
                 console.error("clientId não está definido.");
                 return;
             }
-
             try {
-                const storedCompanyID = localStorage.getItem('companyID');
 
-                const historyResponse = await api.get(`/todos-agendamentos?client_id=${clientId}&company_id=${storedCompanyID}`);
+                const historyResponse = await api.get(`/todos-agendamentos?client_id=${clientId}&company_id=${companyID}`);
 
                 const filteredAppointments = historyResponse.data.filter(appointment => appointment.status === 1);
 
@@ -418,14 +419,13 @@ const ClientDetails = ({ userSpecialties = [] }) => {
 
 
     const handleSaveNotes = async () => {
-        const storedCompanyID = localStorage.getItem('companyID');
         const noteData = {
             nome: editedDetails.nome,
             professional_name: selectedProfessionalName,
             date: new Date().toISOString(),
             notes: noteText,
             client_id: clientId,
-            company_id: storedCompanyID,
+            company_id: companyID,
         };
 
         try {

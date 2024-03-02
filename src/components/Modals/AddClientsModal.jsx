@@ -6,6 +6,7 @@ import ReactInputMask from 'react-input-mask';
 import { validaCpf } from 'utils/validadeDocs';
 import { suggestEmails } from 'utils/commonMailDomains';
 import { ActionsButtonsModal, DividerLine, ModalClientRow, ModalTitle, StyledClientModal, StyledFormClient } from './Styles';
+import { useAuth } from 'context/AuthContext';
 
 const { Option } = Select;
 
@@ -15,7 +16,9 @@ const AddClientsModal = ({ isModalAddClientsVisible, onCloseAddClients, onClient
     const [filteredOptions, setFilteredOptions] = useState([]);
     const [inputValue, setInputValue] = useState("");
     const [emailSuggestions, setEmailSuggestions] = useState([]);
-
+    const { authData } = useAuth();
+    const companyID = authData.companyID;
+    
     const handleEmailChange = (event) => {
         const emailInput = event.target.value;
         const suggestions = suggestEmails(emailInput);
@@ -49,7 +52,7 @@ const AddClientsModal = ({ isModalAddClientsVisible, onCloseAddClients, onClient
                 ...values,
                 planodental: planoNome,
                 cpf: cpfLimpo,
-                company_id: localStorage.getItem('companyID'),
+                company_id: companyID,
             });
 
             onClientAdded(response.data); // Callback to update clients list in Pacientes component

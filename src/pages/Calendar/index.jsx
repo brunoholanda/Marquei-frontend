@@ -7,6 +7,7 @@ import { CalendarOutlined, WarningFilled } from '@ant-design/icons';
 import AppointmentModal from '../../components/Modals/AppointmentModal';
 import { Select, message } from 'antd';
 import { io } from 'socket.io-client';
+import { useAuth } from 'context/AuthContext';
 
 const CalendarPage = () => {
     const [isMobile, setIsMobile] = useState(false);
@@ -16,7 +17,8 @@ const CalendarPage = () => {
     const [professionals, setProfessionals] = useState([]);
     const [selectedProfessional, setSelectedProfessional] = useState(null);
     const [loading, setLoading] = useState(false);
-
+    const { authData } = useAuth();
+    const companyID = authData.companyID;
     const handleAppointmentClick = (appointment) => {
         setCurrentAppointment(appointment);
         setIsModalVisible(true);
@@ -41,14 +43,11 @@ const CalendarPage = () => {
 
     useEffect(() => {
         const fetchProfessionals = async () => {
-            const storedCompanyID = localStorage.getItem('companyID');
-            const token = localStorage.getItem('authToken');
-
-            if (storedCompanyID && token) {
+            if (companyID && authData.authToken) {
                 try {
-                    const response = await api.get(`/professionals?company_id=${storedCompanyID}`, {
+                    const response = await api.get(`/professionals?company_id=${companyID}`, {
                         headers: {
-                            'Authorization': `Bearer ${token}`
+                            'Authorization': `Bearer ${authData.authToken}`
                         },
                     });
 
@@ -64,7 +63,7 @@ const CalendarPage = () => {
             }
         };
         fetchProfessionals();
-    }, []);
+    }, [companyID, authData.authToken]); 
 
 
     const fetchAppointments = async (professionalId) => {

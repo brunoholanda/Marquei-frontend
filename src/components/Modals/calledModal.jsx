@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Modal, Select, Input, message, Button } from 'antd';
 import api from '../api/api';
+import { useAuth } from 'context/AuthContext';
 
 const { Option } = Select;
 
@@ -8,12 +9,13 @@ const CalledModal = ({ isVisible, onClose }) => {
   const [selectedOption, setSelectedOption] = useState(null);
   const [inputText, setInputText] = useState('');
   const [ticketNumber, setTicketNumber] = useState(null);
-
+  const { authData } = useAuth();
+  const companyID = authData.companyID;
 
 
   const handleOpenCalled = async () => {
     try {
-      const companyId = localStorage.getItem('companyID');
+      const companyId = companyID;
       const response = await api.post('/chamados', {
         type: selectedOption,
         description: inputText,
