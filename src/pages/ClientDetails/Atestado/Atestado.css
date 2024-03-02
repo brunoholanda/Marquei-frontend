@@ -5,7 +5,7 @@
     background-color: white;
     margin: 20px 80px;
     box-sizing: border-box;
-    font-family:  var(--fonte-principal);
+    font-family: var(--fonte-principal);
     padding: 50px;
     line-height: 1.6;
     position: relative;
@@ -29,7 +29,8 @@
 }
 
 .certificate-page p {
-    font-size: 22px;
+    font-size: 18px;
+    text-align: center;
     color: var(--cinza-texto);
 
 }
@@ -38,7 +39,7 @@
     display: flex;
     justify-content: center;
     margin-bottom: 30px;
-    font-size: 40px;
+    font-size: 35px;
     font-weight: bold;
     color: var(--cinza-texto);
     text-align: center;
@@ -49,7 +50,7 @@
 }
 
 .indented-text {
-    text-indent: 55px; 
+    text-indent: 55px;
 }
 
 .indented-text li {
@@ -91,9 +92,9 @@
     /* Defina a altura como 100% para centralizar verticalmente */
 }
 
-.certificate-contato{
-    padding: 0;  
-    display: flex;  
+.certificate-contato {
+    padding: 0;
+    display: flex;
     justify-content: center;
 }
 
@@ -129,16 +130,10 @@
 
 .footer {
     position: absolute;
-    bottom: -10px;
-    /* Posiciona o rodapé na parte inferior da página */
+    bottom: 0;
     width: 100%;
-    /* O rodapé deve ter a largura total da página */
     text-align: center;
-    /* Centraliza o texto do rodapé */
-    background-image: url(../../../public/bg-rodape.png);
-    background-repeat: no-repeat;
-    background-position: center calc(100% + 10px);
-    /* Ajuste 10px para deslocar a imagem mais para baixo */
-    padding-bottom: 80px;
-    background-size: contain;
+    background-position: center bottom;
+    background-size: cover;
+    margin-bottom: 4rem;
 }

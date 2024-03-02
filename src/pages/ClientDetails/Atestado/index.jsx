@@ -60,10 +60,8 @@ const CertificatePage = React.forwardRef(({ nome, days, date, reason, profession
             const img = new Image();
             img.src = companyDetails.logo_path;
             setLogoUrl(`${BASE_URL}/${companyDetails.logo_path}`);
-
             img.onload = () => {
                 if (isMounted) {
-                    console.log("Imagem carregada com sucesso.");
                     setCompanyDetails(prevDetails => ({ ...prevDetails }));
                 }
             };
@@ -71,7 +69,6 @@ const CertificatePage = React.forwardRef(({ nome, days, date, reason, profession
                 console.error("Erro ao carregar a imagem:", e);
             };
         }
-
         return () => {
             isMounted = false;
         };
@@ -93,7 +90,7 @@ const CertificatePage = React.forwardRef(({ nome, days, date, reason, profession
             </div>
             <div className="certificate-body">
                 <p className="indented-text">
-                    Informo para os devidos fins que {nome} precisa ficar afastado(a) de suas atividades por um período de {days} dia(s) a partir de {date}. Motivo: {reason}
+                    Informo para os devidos fins que {nome} precisa ficar afastado(a) de suas atividades por um período de {days} dia(s) a partir de {date}. CID10: {reason}
                 </p>
             </div>
             <div className="certificate-signature">
@@ -135,7 +132,7 @@ const CertificatePage = React.forwardRef(({ nome, days, date, reason, profession
                         {companyDetails && (
                             <div className='certificate-endereco'>
                                 <p><CompassOutlined /> {companyDetails.endereco}<br /></p>
-                                <p>Emitido em, {getCurrentDateFormatted()}</p>
+                                <p>Emitido em {getCurrentDateFormatted()}</p>
                             </div>
                         )}
                     </>
@@ -149,8 +146,6 @@ const CertificatePage = React.forwardRef(({ nome, days, date, reason, profession
                     </>
                 )}
             </div>
-
-
         </div>
     );
 });

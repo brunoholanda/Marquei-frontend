@@ -34,7 +34,6 @@ const DoctorDetails = () => {
         const fetchDetails = async () => {
             try {
                 const response = await api.get(`/professionals/${id}`);
-                console.log("Dados recebidos:", response.data);
                 setProfessionalDetails(response.data);
                 setEditedDetails(response.data);
                 setCep(response.data.cep || ""); // Adiciona esta linha para definir o CEP inicial
@@ -178,7 +177,6 @@ const DoctorDetails = () => {
                 assinatura: newSignatureBase64
             };
 
-            console.log('Enviando assinatura:', payload);
             const response = await api.put(`/professionals/${id}`, payload);
 
             if (response.status === 200) {

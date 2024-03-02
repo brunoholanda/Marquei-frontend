@@ -1,5 +1,4 @@
 import React, { createContext, useState, useEffect, useContext } from 'react';
-import { message } from 'antd';
 import { BASE_URL } from 'config';
 
 const AuthContext = createContext();
@@ -34,14 +33,13 @@ export const AuthProvider = ({ children }) => {
                 throw new Error('Não foi possível obter os detalhes da empresa.');
             }
         } catch (error) {
-            message.error(error.message);
+            console.error(error.message);
         }
     };
 
     const updateAuthData = (data) => {
         setAuthData(data);
         localStorage.setItem('authToken', data.authToken);
-        localStorage.setItem('userSpecialties', JSON.stringify(data.userSpecialties));
     };
 
     const logout = () => {

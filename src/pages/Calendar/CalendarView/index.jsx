@@ -58,7 +58,6 @@ const CalendarView = ({ events, onEventClick }) => {
     const [timeRange, setTimeRange] = useState({ min: 7, max: 22 });
 
     const setFullDay = () => {
-        console.log("Configurando para Dia Inteiro");
         setTimeRange({ min: 0, max: 23 });
     };
     const setDefaultTime = () => setTimeRange({ min: 7, max: 22 });

@@ -9,7 +9,6 @@ const DeclationInfoPage = () => {
     useEffect(() => {
         api.get(`/logs_atestados/${id}`)
         .then(response => {
-            console.log("Resposta da API:", response);
             setAtestadoInfo(response.data);
         })
         .catch(error => {

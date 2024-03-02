@@ -49,7 +49,7 @@ const ClientDetails = () => {
     const [emailErrorMessage, setEmailErrorMessage] = useState('');
 
     const [actionType, setActionType] = useState(null);
-    const [professionalDetails] = useState([]);
+    const [professionalDetails, setProfessionalDetails] = useState([]);
     const [shouldPrint, setShouldPrint] = useState(false);
 
     const certificatePageRef = useRef(null);
@@ -393,11 +393,22 @@ const ClientDetails = () => {
         try {
             const response = await api.post('/professionals/authenticate', {
                 login: professionalCredentials.matricula,
-                senha: professionalCredentials.senha
+                senha: professionalCredentials.senha,
             });
 
             if (response.data.autenticado) {
                 setProfessionalId(response.data.professional_id);
+
+                // Atualize os detalhes do profissional autenticado
+                const professionalInfo = professionals.find(p => p.id === response.data.professional_id);
+                if (professionalInfo) {
+                    setProfessionalDetails(professionalInfo); // Assumindo que setProfessionalDetails é uma função de atualização de estado
+                } else {
+                    // Caso não encontre no cache, busca na API (assumindo que há uma rota para isso)
+                    const professionalDetailsResponse = await api.get(`/professionals/${response.data.professional_id}`);
+                    setProfessionalDetails(professionalDetailsResponse.data);
+                }
+
                 handleAuthModalClose();
 
                 if (actionType === 'certificate') {
@@ -415,6 +426,7 @@ const ClientDetails = () => {
             message.error("Erro na autenticação");
         }
     };
+
 
 
 
@@ -467,7 +479,12 @@ const ClientDetails = () => {
         if (type === 'certificate') {
             logText = `${professionalDetails.nome} para ${patientName} de ${days} dias a partir de ${date}!`;
         } else if (type === 'declaration') {
-            logText = `Declaração para ${patientName}: provando que compareceu em nosso estabelecimento no dia ${date} das ${startTime} às ${endTime}.`;
+            logText = `Declaração emitida por ${professionalDetails.nome} para ${patientName}: provando que compareceu em nosso estabelecimento no dia ${date} das ${startTime} às ${endTime}.`;
+        }
+
+        if (!logText) {
+            console.error('Log text is null or undefined');
+            throw new Error('Não é possível enviar log com texto vazio.');
         }
 
         try {
@@ -481,13 +498,14 @@ const ClientDetails = () => {
     };
 
 
+
     const printCertificate = async () => {
         const patientName = editedDetails.nome;
         const days = certificateData.days;
         const date = certificateData.date;
 
         try {
-            const response = await sendLogToBackend(professionalDetails, patientName, days, date);
+            const response = await sendLogToBackend('certificate', professionalDetails, patientName, days, date);
             const logId = response.data.id;
             setQrCodeUrl(`https://marquei.com.br/#/confirm-certificate/${logId}`);
             setShouldPrint(true);
@@ -575,6 +593,16 @@ const ClientDetails = () => {
             setSelectedProfessional(null);
             setSelectedProfessionalName('');
         }
+    };
+
+    const compareTime = (startTimeString, endTimeString) => {
+        const [startHour, startMinute] = startTimeString.split(':').map(Number);
+        const [endHour, endMinute] = endTimeString.split(':').map(Number);
+
+        if (endHour < startHour || (endHour === startHour && endMinute < startMinute)) {
+            return false; // A hora de fim é menor que a hora de início
+        }
+        return true; // A hora de fim é válida
     };
 
     const tabList = [
@@ -702,8 +730,6 @@ const ClientDetails = () => {
                             />
 
                         ]}
-
-
                     >
                         <p>Selecione a data e o intervalo de horas para a declaração de comparecimento:</p>
                         <div style={{ marginBottom: '10px' }}>
@@ -722,7 +748,13 @@ const ClientDetails = () => {
                             <div style={{ marginLeft: '18px' }}>
                                 <TimePicker
                                     format="HH:mm"
-                                    onChange={(time, timeString) => setDeclarationData({ ...declarationData, endTime: timeString })}
+                                    onChange={(time, timeString) => {
+                                        if (declarationData.startTime && !compareTime(declarationData.startTime, timeString)) {
+                                            notification.error( {message:'A hora de fim não pode ser menor que a hora de início.'});
+                                        } else {
+                                            setDeclarationData({ ...declarationData, endTime: timeString });
+                                        }
+                                    }}
                                     placeholder="Hora de Fim"
                                 />
                             </div>

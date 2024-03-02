@@ -30,7 +30,7 @@ function getItem(label, key, icon, children, url) {
 
 const Sidebar = () => {
   const [isMobile, setIsMobile] = useState(window.innerWidth < 768);
-  const { authData, logout } = useAuth();
+  const { authData, logout, companyID } = useAuth();
   const userSpecialties = authData.userSpecialties || [];
   const [runTutorial, setRunTutorial] = useState(false);
   const [steps, setSteps] = useState([
@@ -113,6 +113,8 @@ const Sidebar = () => {
     getItem('Contabilidade', '8', <CalculatorOutlined style={{ fontSize: iconSize }} />, null, '/contabilidade'),
     userSpecialties?.includes(5) && getItem('Plano Alimentar', '10', <AppleOutlined style={{ fontSize: iconSize }} />, null, '/plano_alimentar'),
     isAuthenticated && getItem('Sair do Sistema', 'logout', <LogoutOutlined style={{ fontSize: iconSize }} />, null, null), // Conditional item
+    authData.companyID === 1 && getItem('Administrador', '12', <SettingOutlined style={{ fontSize: iconSize }} />, null, '/adminpanel'),
+
   ].filter(Boolean);
 
   if (!isAuthenticated) {

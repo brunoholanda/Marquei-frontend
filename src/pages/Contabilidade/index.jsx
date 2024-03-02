@@ -297,7 +297,6 @@ const Contabilidade = () => {
   const fetchMonthlyProfit = async (year) => {
     try {
       const response = await api.get(`/contabilidades/lucro-mensal-detalhado?year=${year}`);
-      console.log(response.data);
       setMonthlyProfit(response.data);
     } catch (error) {
       console.error("Erro ao buscar o lucro mensal", error);

@@ -55,7 +55,6 @@ const ReceitaPage = React.forwardRef(({ nome, professionalId, medicamentos }, re
 
             img.onload = () => {
                 if (isMounted) {
-                    console.log("Imagem carregada com sucesso.");
                     setCompanyDetails(prevDetails => ({ ...prevDetails }));
                 }
             };

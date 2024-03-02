@@ -32,6 +32,13 @@
         margin-bottom: 0.5rem;
     }
 
+    .captcha {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin: 0 0 1.5rem 0;
+    }
+
     .inputField {
         width: 100%;
         padding: 10px;
@@ -73,6 +80,13 @@
         }
     }
 }
+
+.error {
+    color: red; 
+    margin-top: 8px;
+    font-size: 14px;
+    text-align: center;
+  }
 
 @media (max-width: 768px) {
     .autenticar {

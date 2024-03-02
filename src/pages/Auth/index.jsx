@@ -6,7 +6,8 @@ import styles from './Auth.module.scss';
 import { BASE_URL } from 'config';
 import Btn from 'components/Btn';
 import PlanCard from 'components/SelerCads';
-import { useAuth } from 'context/AuthContext'; // Importação do hook useAuth
+import { useAuth } from 'context/AuthContext';
+import ReCAPTCHA from 'react-google-recaptcha';
 
 const Authentication = () => {
   const [username, setUsername] = useState('');
@@ -15,12 +16,22 @@ const Authentication = () => {
   const [expiredTokenMessage, setExpiredTokenMessage] = useState('');
   const [isPasswordResetModalVisible, setPasswordResetModalVisible] = useState(false);
   const [resetEmail, setResetEmail] = useState('');
+  const [loginError, setLoginError] = useState('');
+  const [recaptchaToken, setRecaptchaToken] = useState('');
 
   const navigate = useNavigate();
-  const { updateAuthData } = useAuth(); // Uso do hook useAuth
+  const { updateAuthData } = useAuth();
+
 
   const handleLogin = async (e) => {
     e.preventDefault();
+    setLoginError('');
+
+    if (!recaptchaToken) {
+      setLoginError('Por favor, confirme que você não é um robô.');
+      return;
+    }
+
 
     try {
       const response = await fetch(`${BASE_URL}/auth/login`, {
@@ -28,7 +39,7 @@ const Authentication = () => {
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ username, password }),
+        body: JSON.stringify({ username, password, recaptchaToken }),
       });
 
       if (!response.ok) {
@@ -41,7 +52,6 @@ const Authentication = () => {
         }
       } else {
         const { token, company_id, user_specialties } = await response.json();
-        console.log('Logged in company ID:', company_id);
 
         if (typeof company_id === 'undefined') {
           throw new Error('Informações do usuário ou da empresa não estão disponíveis.');
@@ -55,13 +65,14 @@ const Authentication = () => {
 
         setUsername('');
         setPassword('');
+        setRecaptchaToken('');
         navigate('/calendario');
       }
     } catch (error) {
+      setLoginError(error.message || 'Erro ao fazer login.');
       message.error(error.message);
     }
   };
-  
 
 
 
@@ -118,8 +129,17 @@ const Authentication = () => {
             onChange={(e) => setPassword(e.target.value)}
             required
           />
+          {loginError && <div className={styles.error}>{loginError}</div>}
+
+        </div>
+        <div className={styles.captcha}>
+          <ReCAPTCHA
+            sitekey="6LdQaYcpAAAAAHaX_ZIhgaOTN0olO9KyoijpMNTH"
+            onChange={(token) => setRecaptchaToken(token)}
+          />
         </div>
         <Btn type="submit" className={styles.loginButton}>Entrar</Btn>
+
         <div className={styles.forgotPassword}>
           <Button type="link" onClick={showPasswordResetModal}>
             Esqueci minha senha

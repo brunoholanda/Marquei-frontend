@@ -62,7 +62,6 @@ const AddClientsModal = ({ isModalAddClientsVisible, onCloseAddClients, onClient
             form.resetFields();
         } catch (error) {
             console.error("Erro ao tentar salvar o cliente:", error);
-            console.log("Campos com erro:", error.errorFields);
             notification.error({ message: 'CPF do Cliente já cadastrado !' });
         }
     };
@@ -70,9 +69,7 @@ const AddClientsModal = ({ isModalAddClientsVisible, onCloseAddClients, onClient
     useEffect(() => {
         const fetchPlanos = async () => {
             try {
-                console.log("Buscando planos de saúde");
                 const response = await api.get(`/planos_medicos`);
-                console.log("Resposta da API (planos de saúde):", response);
 
                 if (response.status === 200) {
                     setPlanosSaude(response.data);

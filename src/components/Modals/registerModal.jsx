@@ -463,7 +463,6 @@ function ProfessionalModal({ isVisible, onClose, initialData }) {
                         handleSubmit(values);
                     })
                     .catch((info) => {
-                        console.log('Validate Failed:', info);
                     });
             }}        >
             <Form layout="vertical" form={form}>

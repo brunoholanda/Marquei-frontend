@@ -141,7 +141,6 @@ const CalendarPage = () => {
 
 
     const handleProfessionalChange = (professionalId) => {
-        console.log("Profissional selecionado:", professionalId);
         setSelectedProfessional(professionalId);
         fetchAppointments(professionalId);
     };
@@ -167,7 +166,6 @@ const CalendarPage = () => {
         });
     
         socket.on('connect', () => {
-            console.log("Conectado ao WebSocket");
             socket.emit('join', 'calendar');
         });
     
@@ -176,16 +174,10 @@ const CalendarPage = () => {
         });
     
         socket.on('newAppointment', (data) => {
-            console.log("Novo agendamento recebido:", data);
     
-            // Sempre atualize os agendamentos quando receber uma nova notificação
-            // Isso assume que você deseja atualizar a lista completa de agendamentos
-            // para o profissional atualmente selecionado, ou realizar outra ação relevante.
             if (selectedProfessional) {
-                console.log("Atualizando agendamentos para o profissional atual.");
                 fetchAppointments(selectedProfessionalRef.current);
             } else {
-                console.log("Nenhum profissional selecionado. Considerar mostrar notificação ou atualizar toda a lista.");
             }
         });
     

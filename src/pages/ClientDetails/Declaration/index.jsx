@@ -60,7 +60,6 @@ const DeclarationPage = React.forwardRef(({ nome, date, professionalId, startTim
 
             img.onload = () => {
                 if (isMounted) {
-                    console.log("Imagem carregada com sucesso.");
                     setCompanyDetails(prevDetails => ({ ...prevDetails }));
                 }
             };

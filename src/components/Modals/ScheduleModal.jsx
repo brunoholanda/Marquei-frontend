@@ -13,7 +13,7 @@ import {
     StyledDateTime,
     StyledFormItemName,
 } from './Styles';
-import { PlusOutlined, UserAddOutlined } from '@ant-design/icons';
+import { UserAddOutlined } from '@ant-design/icons';
 import ProfessionalModal from './registerModal';
 import { Navigate } from 'react-router-dom';
 import PlanCard from 'components/SelerCads';
@@ -41,7 +41,7 @@ const ScheduleModal = ({ isModalAgendaVisible, handleCancel, start }) => {
     const [showAddClientModal, setShowAddClientModal] = useState(false);
     const { authData } = useAuth();
     const companyID = authData.companyID;
-    const userSpecialties = authData.userSpecialties;
+    const userSpecialties = authData.userSpecialties || [];
 
     const handleOpenAddClientsModal = () => {
         setShowAddClientModal(true);
@@ -351,7 +351,6 @@ const ScheduleModal = ({ isModalAgendaVisible, handleCancel, start }) => {
 
     useEffect(() => {
         const fetchProfessionals = async () => {
-
             try {
                 const response = await api.get(`/professionals?company_id=${companyID}`);
 
@@ -363,7 +362,6 @@ const ScheduleModal = ({ isModalAgendaVisible, handleCancel, start }) => {
                 console.error('Error fetching professionals:', error);
             }
         };
-
         fetchProfessionals();
     }, [companyID]);
 
@@ -399,7 +397,7 @@ const ScheduleModal = ({ isModalAgendaVisible, handleCancel, start }) => {
 
     useEffect(() => {
         const fetchMaxProfessionals = async () => {
-   
+
 
             if (companyID && authData.authToken) {
                 setLoading(true);
@@ -561,14 +559,6 @@ const ScheduleModal = ({ isModalAgendaVisible, handleCancel, start }) => {
                         label="Horário Final"
                         rules={[
                             { required: true, message: 'Por favor, selecione o horário final!' },
-                            ({ getFieldValue }) => ({
-                                validator(_, value) {
-                                    if (!value || getFieldValue('horario').isBefore(value)) {
-                                        return Promise.resolve();
-                                    }
-                                    return Promise.reject(new Error('O horário final deve ser após o horário de início!'));
-                                },
-                            }),
                         ]}
                     >
                         <StyledTimePicker
@@ -580,8 +570,8 @@ const ScheduleModal = ({ isModalAgendaVisible, handleCancel, start }) => {
 
                                 const disabledHours = () => {
                                     const hours = [];
-                                    if (startTimeMoment) {
-                                        for (let hour = 0; hour < startTimeMoment.hour(); hour++) {
+                                    for (let hour = 0; hour < 24; hour++) {
+                                        if (startTimeMoment && hour < startTimeMoment.hour()) {
                                             hours.push(hour);
                                         }
                                     }
@@ -605,6 +595,7 @@ const ScheduleModal = ({ isModalAgendaVisible, handleCancel, start }) => {
                             }}
                         />
                     </StyledFormItem>
+
                 </StyledDateTime>
                 <StyledFormItem
                     name="planodental"

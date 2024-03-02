@@ -25,7 +25,7 @@ import MyPlan from "pages/Professional/MyPlan";
 import HelpCenter from "pages/HelpCenter";
 import ResourcesGrid from "pages/Resources";
 import PlansPage from "pages/PlansPage";
-import CompaniesTable from "pages/Admin";
+import CompaniesTable from "pages/Admin/Clients";
 import PageBodyClient from "components/PageBodyClient/PageBody";
 import DeclationInfoPage from "pages/ConfirmDeclaration";
 import { AuthProvider, useAuth } from "context/AuthContext";
