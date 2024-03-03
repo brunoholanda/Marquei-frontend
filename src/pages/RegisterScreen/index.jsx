@@ -395,7 +395,7 @@ const RegisterScreen = () => {
               {passwordValidation.lengthValid ? <CheckOutlined style={{ color: 'green' }} /> : <CloseOutlined style={{ color: 'red' }} />} A senha deve conter pelo menos 8 dígitos.;
             </p>
             <p>
-              {passwordValidation.lowercaseValid ? <CheckOutlined style={{ color: 'green' }} /> : <CloseOutlined style={{ color: 'red' }} />} Deve conter pelo menos uma letra minúscula;
+              {passwordValidation.lowercaseValid ? <CheckOutlined style={{ color: 'green' }} /> : <CloseOutlined style={{ color: 'red' }} />} Deve conter pelo menos uma letra maiúscula;
             </p>
             <p>
               {passwordValidation.specialCharValid ? <CheckOutlined style={{ color: 'green' }} /> : <CloseOutlined style={{ color: 'red' }} />} Deve conter pelo menos um caractere especial.

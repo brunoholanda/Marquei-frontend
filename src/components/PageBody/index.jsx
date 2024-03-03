@@ -35,7 +35,7 @@ function Footer() {
             <div className={styles.footer__topicos}>
                 <img src={logo} alt="logo marquei.com" />
                 <p><CompassOutlined />  Av. Paulista 1106 - Bela Vista, São Paulo - SP - SL01 Andar 16, 01310-914 </p>
-                <p> (83) 99815-0712</p>
+                <p> (11) 5194-6100</p>
                 <a href="mailto:drawaleskacaetano@gmail.com?subject=Contato">holanda_rodrigues@hotmail.com</a>
             </div>
             <div className={styles.footer__topicos}>

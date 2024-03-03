@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Table, message, Modal, Tooltip } from 'antd';
 import api from '../../components/api/api';
-import { CheckCircleOutlined, CloseCircleOutlined, ExclamationCircleOutlined, RetweetOutlined } from '@ant-design/icons';
+import { CheckCircleOutlined, ClockCircleOutlined, ExclamationCircleOutlined, RetweetOutlined } from '@ant-design/icons';
 import { useAuth } from 'context/AuthContext';
 
 const statusText = {
@@ -48,9 +48,9 @@ const TrackingPage = () => {
             render: status => (
                 <Tooltip title={status === null ? "A Iniciar" : status === 1 ? "Em Andamento" : "Concluído"}>
                     <span>
-                        {status === null ? <ExclamationCircleOutlined style={{ color: "orange", marginRight: 8 }} /> :
-                            status === 1 ? <CheckCircleOutlined style={{ color: "green", marginRight: 8 }} /> :
-                                <CloseCircleOutlined style={{ color: "red", marginRight: 8 }} />}
+                        {status === null ? <ExclamationCircleOutlined style={{ color: "red", marginRight: 8 }} /> :
+                            status === 1 ? <ClockCircleOutlined style={{ color: "orange", marginRight: 8 }} /> :
+                                <CheckCircleOutlined style={{ color: "green", marginRight: 8 }} />}
                         {status === null ? "A Iniciar" : status === 1 ? "Em Andamento" : "Concluído"}
                     </span>
                 </Tooltip>

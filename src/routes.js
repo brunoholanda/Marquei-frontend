@@ -29,6 +29,7 @@ import CompaniesTable from "pages/Admin/Clients";
 import PageBodyClient from "components/PageBodyClient/PageBody";
 import DeclationInfoPage from "pages/ConfirmDeclaration";
 import { AuthProvider, useAuth } from "context/AuthContext";
+import AdminMaster from "pages/Admin";
 
 function ScrollToTop() {
     const { pathname } = useLocation();
@@ -95,7 +96,7 @@ function AppRoutes() {
                         <Route path="/estoque" element={<ProtectedRoute element={<StockControlPage />} />} />
                         <Route path="/contabilidade" element={<ProtectedRoute element={<Contabilidade />} />} />
                         <Route path="/planos" element={<ProtectedRoute element={<MyPlan />} />} />
-                        <Route path="/adminpanel" element={<ProtectedRoute element={<CompaniesTable />} allowedCompanyIds={[1]} />} />
+                        <Route path="/adminpanel" element={<ProtectedRoute element={<AdminMaster />} allowedCompanyIds={[1]} />} />
                         <Route path="*" element={<NotFound />} />
                     </Route>
                 </Routes>

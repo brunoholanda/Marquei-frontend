@@ -1,5 +1,10 @@
 import styled from 'styled-components';
 
 export const StyledTableCompanies = styled.div`
-    margin: 5rem 3rem;
 `;
+
+export const StyledAdminTables = styled.div`
+    margin: 4rem 3rem;
+`;
+
+
