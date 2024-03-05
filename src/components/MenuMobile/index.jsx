@@ -1,50 +1,34 @@
 import React, { useState } from 'react';
-import HamburgerMenu from 'hamburger-react';
-import styles from './MenuMobile.module.scss';
-import { Link } from 'react-router-dom';
+
+import { useSwipeable } from 'react-swipeable';
+import { CloseIcon, MenuBar, MenuIcon, MenuText, StyledHeader, StyledLink, StyledNav } from './styles';
 
 export default function MenuMobile() {
-    const [isOpen, setOpen] = useState(false);
+    const [isOpen, setIsOpen] = useState(false);
 
-    const toggleMenu = () => {
-        setOpen(!isOpen);
-    };
-
-    const handleItemClick = (e) => {
-        setOpen(false);
-    }
+    const handlers = useSwipeable({
+        onSwipedLeft: () => setIsOpen(false),
+        preventDefaultTouchmoveEvent: true,
+        trackMouse: true
+    });
 
     return (
-        <>
-            <nav>
-                <HamburgerMenu
-                    toggled={isOpen}
-                    toggle={toggleMenu}
-                    color="#fff"
-                    size={45}
-                />
-            </nav>
-            {isOpen && (
-                <ul className={styles.mobileMenu} onClick={handleItemClick}>
-                    <Link to="./">
-                        <li>Inicio</li>
-                    </Link>
-                    <Link to="./resources">
-                        <li>Recursos</li>
-                    </Link>
-                    <Link to="./planos">
-                        <li>Planos</li>
-                    </Link>
-                    <Link to="./sobre">
-                        <li>Como Funciona</li>
-                    </Link>
-                    <Link to="./cadastro">
-                        <li>Contrate</li>
-                    </Link>
-                </ul>
-            )}
-        </>
+        <StyledHeader>
+            <MenuIcon onClick={() => setIsOpen(!isOpen)}>&#9776;</MenuIcon>
+            <StyledNav {...handlers} isOpen={isOpen}>
+                <MenuBar>
+                    <MenuText>Menu</MenuText>
+                    <CloseIcon onClick={() => setIsOpen(false)}>&times;</CloseIcon>
+                </MenuBar>
+                <StyledLink to="/" onClick={() => setIsOpen(false)}>Home</StyledLink>
+                <StyledLink to="/resources" onClick={() => setIsOpen(false)}>Recursos</StyledLink>
+                <StyledLink to="/planos" onClick={() => setIsOpen(false)}>Planos</StyledLink>
+                <StyledLink to="/sobre" onClick={() => setIsOpen(false)}>Como Funciona?</StyledLink>
+                <StyledLink to="/cadastro" onClick={() => setIsOpen(false)}>Contrate!</StyledLink>
+            </StyledNav>
+        </StyledHeader>
     );
-}
+};
+
 
 

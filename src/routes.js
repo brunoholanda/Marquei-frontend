@@ -41,7 +41,7 @@ function ScrollToTop() {
     return null;
 }
 
-const storedSpecialties = JSON.parse(localStorage.getItem('userSpecialties') || '[]');
+const storedSpecialties = JSON.parse(sessionStorage.getItem('userSpecialties') || '[]');
 
 function AppRoutes() {
 
@@ -76,6 +76,7 @@ function AppRoutes() {
                         <Route path="/ajuda" element={<HelpCenter />} />
                         <Route path="/confirm-certificate/:id" element={<AtestadoInfoPage />} />
                         <Route path="/confirm-declaration/:id" element={<DeclationInfoPage />} />
+                        <Route path="/reset-password/:token" element={<ResetPassword />} />
                         <Route path="*" element={<NotFound />} />
                     </Route>
                     <Route element={<PageBodyClient />}>
@@ -84,7 +85,6 @@ function AppRoutes() {
 
                     <Route element={<PageBodySystem />}>
                         <Route path="/login" element={<Authentication />} />
-                        <Route path="/reset-password" element={<ResetPassword />} />
                         <Route path="/agendamentos" element={<ProtectedRoute element={<Appointments />} />} />
                         <Route path="/allagendamentos" element={<ProtectedRoute element={<AllAppointments />} />} />
                         <Route path="/calendario" element={<ProtectedRoute element={<CalendarPage />} />} />

@@ -77,13 +77,18 @@ const Authentication = () => {
 
 
   const handlePasswordReset = async () => {
+    if (!recaptchaToken) {
+      message.error('Por favor, complete o reCAPTCHA.');
+      return;
+    }
+
     try {
       const response = await fetch(`${BASE_URL}/auth/password-reset`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ email: resetEmail }),
+        body: JSON.stringify({ email: resetEmail, recaptchaToken }),
       });
 
       if (response.ok) {
@@ -192,6 +197,12 @@ const Authentication = () => {
           onChange={(e) => setResetEmail(e.target.value)}
           required
         />
+        <div style={{display: 'flex', justifyContent: 'center', margin: '18px 0'}}>
+          <ReCAPTCHA
+            sitekey="6LdQaYcpAAAAAHaX_ZIhgaOTN0olO9KyoijpMNTH"
+            onChange={(token) => setRecaptchaToken(token)}
+          />
+        </div>
       </Modal>
     </div>
   );

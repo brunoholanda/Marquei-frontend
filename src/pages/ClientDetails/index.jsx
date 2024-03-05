@@ -267,7 +267,7 @@ const ClientDetails = () => {
 
             const response = await api.put(`/clients/${clientId}`, editedDetails);
             if (response.status === 200) {
-                message.success("Detalhes atualizados com sucesso!");
+                notification.success({message: 'Detalhes atualizados com sucesso!'})
                 setAppointmentDetails(prevState => ({ ...prevState, ...editedDetails }));
             } else {
                 throw new Error("Falha ao atualizar detalhes do cliente");
@@ -632,6 +632,7 @@ const ClientDetails = () => {
                     </p>
                     <p><b>E-Mail:</b> <Input value={editedDetails.client_email} onChange={e => handleEmailChange(e.target.value)} /></p>
                     <p><b>Plano:</b> <Input value={editedDetails.planodental} onChange={e => handleInputChange('planodental', e.target.value)} /></p>
+                    <p><b>Numero da Carteira do Plano:</b> <Input value={editedDetails.carteira} onChange={e => handleInputChange('carteira', e.target.value)} /></p>
                     <p><b>CPF:</b>
                         <ReactInputMask
                             mask="999.999.999-99"

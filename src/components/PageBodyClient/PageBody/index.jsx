@@ -31,10 +31,10 @@ function Footer() {
                     <Link to="/servicos/clinico">
                         Sobre nós
                     </Link>
-                    <Link to="/servicos/canal">
+                    <Link to="/resources">
                         Como funciona?
                     </Link>
-                    <Link to="/servicos/estetica">
+                    <Link to="/cadastro">
                         Colabore com a plataforma
                     </Link>
                 </div>

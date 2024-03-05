@@ -325,7 +325,7 @@ const Contabilidade = () => {
               <Card title="Resumo do Mês">
                 <p style={{ color: '#32CD32' }}>Entradas: R$ {currentMonthIncome.toFixed(2)}</p>
                 <p style={{ color: '#FF6347' }}>Saídas: R$ {currentMonthExpense.toFixed(2)}</p>
-                <p style={{ color: '#8884d8' }}>Saldo: R$ {balance.toFixed(2)}</p>
+                <p style={{ color: '#8884d8', fontWeight: 'bold', fontSize: '18px' }}>Saldo: R$ {balance.toFixed(2)}</p>
                 <div className="chartContainer">
                   <ResponsiveContainer width="100%" height={400}>
                     <RadialBarChart

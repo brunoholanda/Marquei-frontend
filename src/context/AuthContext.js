@@ -11,7 +11,7 @@ export const AuthProvider = ({ children }) => {
     });
 
     useEffect(() => {
-        const authToken = localStorage.getItem('authToken');
+        const authToken = sessionStorage.getItem('authToken');
         if (authToken) {
             setAuthData((prev) => ({ ...prev, authToken }));
             fetchCompanyDetails(authToken);
@@ -30,6 +30,7 @@ export const AuthProvider = ({ children }) => {
                 const { company_id, user_specialties } = await response.json();
                 setAuthData({ authToken: token, companyID: company_id, userSpecialties: user_specialties });
             } else {
+                logout();
                 throw new Error('Não foi possível obter os detalhes da empresa.');
             }
         } catch (error) {
@@ -39,12 +40,12 @@ export const AuthProvider = ({ children }) => {
 
     const updateAuthData = (data) => {
         setAuthData(data);
-        localStorage.setItem('authToken', data.authToken);
+        sessionStorage.setItem('authToken', data.authToken);
     };
 
     const logout = () => {
         setAuthData({ authToken: null, companyID: null, userSpecialties: [] });
-        localStorage.removeItem('authToken');
+        sessionStorage.removeItem('authToken');
     };
 
     return (

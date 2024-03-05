@@ -114,7 +114,7 @@ const AuthModal = ({ isVisible, onClose, onLoginSuccess, selectedService }) => {
 
             const data = await response.json();
             if (response.ok) {
-                localStorage.setItem('authToken', data.token);
+                sessionStorage.setItem('authToken', data.token);
                 setIsLoggedIn(true);
                 onLoginSuccess(data);
                 loadServiceDetails(selectedService.serviceId);
@@ -176,7 +176,7 @@ const AuthModal = ({ isVisible, onClose, onLoginSuccess, selectedService }) => {
     };
 
     const onSelectPaymentType = async (type, itemDetails) => {
-        const authToken = localStorage.getItem('authToken'); 
+        const authToken = sessionStorage.getItem('authToken'); 
 
         if (type === 'monthly') {
             if (!preapprovalPlanId) {
@@ -233,7 +233,7 @@ const AuthModal = ({ isVisible, onClose, onLoginSuccess, selectedService }) => {
     };
 
     const onPayClick = async () => {
-        const authToken = localStorage.getItem('authToken');
+        const authToken = sessionStorage.getItem('authToken');
 
         if (!authToken) {
             message.error("Você precisa estar logado para realizar o pagamento.");

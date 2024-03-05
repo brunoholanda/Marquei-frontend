@@ -36,7 +36,7 @@ function Footer() {
                 <img src={logo} alt="logo marquei.com" />
                 <p><CompassOutlined />  Av. Paulista 1106 - Bela Vista, São Paulo - SP - SL01 Andar 16, 01310-914 </p>
                 <p> (11) 5194-6100</p>
-                <a href="mailto:drawaleskacaetano@gmail.com?subject=Contato">holanda_rodrigues@hotmail.com</a>
+                <a href="mailto:contato@marquei.com.br?subject=Contato">contato@marquei.com.br</a>
             </div>
             <div className={styles.footer__topicos}>
                 <h3>Marquei</h3>
@@ -55,7 +55,7 @@ function Footer() {
             <div className={styles.footer__topicos}>
                 <h3>Produto</h3>
                 <div className={styles.link}>
-                    <Link to="/servicos/clinico">
+                    <Link to="/planos">
                         Planos
                     </Link>
                     <Link to="/cadastro">
@@ -77,7 +77,7 @@ function Footer() {
         </div>
 
     )
-} 
+}
 
 
 function FooterDev() {

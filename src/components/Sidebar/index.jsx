@@ -82,7 +82,7 @@ const Sidebar = () => {
     token: { colorBgContainer },
   } = theme.useToken();
 
-  const isAuthenticated = !!localStorage.getItem('authToken');
+  const isAuthenticated = !!sessionStorage.getItem('authToken');
   
   if (!isAuthenticated) {
     return null;
@@ -107,7 +107,7 @@ const Sidebar = () => {
     getItem('DashBoards', '2', <DashboardOutlined style={{ fontSize: iconSize }} />, null, '/painel'),
     !isMobile && getItem('Agendamentos', '3', <ScheduleOutlined style={{ fontSize: iconSize }} />, null, '/agendamentos'),
     !isMobile && getItem('Histórico', '4', <HistoryOutlined style={{ fontSize: iconSize }} />, null, '/allagendamentos'),
-    getItem('Cleintes', '5', <TeamOutlined style={{ fontSize: iconSize }} />, null, '/clientes'),
+    getItem('Clientes', '5', <TeamOutlined style={{ fontSize: iconSize }} />, null, '/clientes'),
     getItem('Configurações', '6', <SettingOutlined style={{ fontSize: iconSize }} />, null, '/configs'),
     !isMobile && getItem('Estoque', '7', <BarChartOutlined style={{ fontSize: iconSize }} />, null, '/estoque'),
     getItem('Contabilidade', '8', <CalculatorOutlined style={{ fontSize: iconSize }} />, null, '/contabilidade'),

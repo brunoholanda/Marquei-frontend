@@ -1,8 +1,10 @@
 import React, { useEffect, useState } from 'react';
-import { Button, Input, Modal, Select, Table, Tooltip } from 'antd';
+import { Button, Image, Input, Modal, Select, Table, Tooltip } from 'antd';
 import api from 'components/api/api';
 import { useAuth } from 'context/AuthContext';
-import { CheckCircleOutlined, ClockCircleOutlined, ExclamationCircleOutlined } from '@ant-design/icons';
+import { CheckCircleOutlined, ClockCircleOutlined, ExclamationCircleOutlined, EyeOutlined } from '@ant-design/icons';
+import { DividerLine } from 'components/Modals/Styles';
+import { BASE_URL } from 'config';
 
 const ChamadosTable = () => {
     const [chamados, setChamados] = useState([]);
@@ -44,8 +46,11 @@ const ChamadosTable = () => {
                 answer: formAnswer,
             });
 
+            if (formStatus === '2' && selectedChamado.image_path) {
+                await api.delete(`/chamados/${selectedChamado.id}/deleteImage`);
+            }
+            
             setIsModalActionsVisible(false);
-            // Atualiza a lista de chamados após a atualização
             const response = await api.get(`/chamados/${companyID}`);
             setChamados(response.data);
         } catch (error) {
@@ -107,6 +112,13 @@ const ChamadosTable = () => {
         },
     ];
 
+    useEffect(() => {
+        if (selectedChamado?.image_path) {
+            console.log(`URL da imagem: ${BASE_URL}${selectedChamado.image_path}`);
+        }
+    }, [selectedChamado]);
+    
+
     return (
         <>
             <Table dataSource={chamados} columns={columns} rowKey="id" />;
@@ -117,7 +129,18 @@ const ChamadosTable = () => {
                 onOk={handleOk}
                 onCancel={() => setIsModalActionsVisible(false)}
             >
+                <DividerLine />
                 <p>{selectedChamado?.description}</p>
+                {selectedChamado?.image_path && (
+                    <div style={{ marginBottom: 20, textAlign: 'center' }}>
+                        <Image
+                            width={200}
+                            src={`${BASE_URL}${selectedChamado.image_path}`}
+                            alt="Imagem do Chamado"
+                            style={{ marginBottom: 20 }}
+                        />
+                    </div>
+                )}
                 <Select value={formStatus} onChange={setFormStatus} style={{ width: 120, marginBottom: 20 }}>
                     <Select.Option value="1">Em andamento</Select.Option>
                     <Select.Option value="2">Concluído</Select.Option>

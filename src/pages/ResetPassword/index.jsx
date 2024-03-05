@@ -1,18 +1,54 @@
 import React, { useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { Input, Button, message } from 'antd';
-import { LockOutlined } from '@ant-design/icons';
+import { Input, Button, message, notification } from 'antd';
+import { CheckOutlined, CloseOutlined, LockOutlined } from '@ant-design/icons';
 import { BASE_URL } from 'config';
 import './ResetPassword.css';
+
+const CheckOrCloseOutlined = ({ isCriteriaMet, text }) => (
+    <p className={isCriteriaMet ? 'criteriaMet' : 'criteriaNotMet'}>
+        {isCriteriaMet ? <CheckOutlined style={{ color: 'green' }} /> : <CloseOutlined style={{ color: 'red' }} />} {text}
+    </p>
+);
+
 const ResetPassword = () => {
     const [newPassword, setNewPassword] = useState('');
     const [confirmNewPassword, setConfirmNewPassword] = useState('');
     const navigate = useNavigate();
     const { token } = useParams();
 
+    const [passwordCriteria, setPasswordCriteria] = useState({
+        minLength: false,
+        upperCase: false,
+        lowerCase: false,
+        specialChar: false,
+        numbers: false,
+    });
+
+    const handlePasswordChange = (e) => {
+        const password = e.target.value;
+        setPasswordCriteria({
+            minLength: password.length >= 8,
+            upperCase: /[A-Z]/.test(password),
+            lowerCase: /[a-z]/.test(password),
+            specialChar: /[^A-Za-z0-9]/.test(password),
+            numbers: /[0-9].*[0-9]/.test(password),
+        });
+        setNewPassword(password);
+    };
+
     const handlePasswordResetSubmit = async () => {
+
+        const allCriteriaMet = Object.values(passwordCriteria).every(criterion => criterion);
+        if (!allCriteriaMet) {
+            notification.success({message: 'A senha não atende aos critérios necessários.'})
+            return;
+        }
+
         if (newPassword !== confirmNewPassword) {
             message.error('As senhas não coincidem.');
+            notification.error({message: 'As senhas não coincidem.'})
+
             return;
         }
 
@@ -36,6 +72,8 @@ const ResetPassword = () => {
         }
     };
 
+
+
     return (
         <div className='resetPassword'>
             <div className='resetPasswordContainer'>
@@ -45,9 +83,16 @@ const ResetPassword = () => {
                     type="password"
                     placeholder="Nova senha"
                     value={newPassword}
-                    onChange={(e) => setNewPassword(e.target.value)}
+                    onChange={handlePasswordChange}
                     required
                 />
+                <div className='passwordCriteria'>
+                    <CheckOrCloseOutlined isCriteriaMet={passwordCriteria.minLength} text="A senha deve conter pelo menos 8 dígitos" />
+                    <CheckOrCloseOutlined isCriteriaMet={passwordCriteria.upperCase} text="Deve conter pelo menos uma letra maiúscula" />
+                    <CheckOrCloseOutlined isCriteriaMet={passwordCriteria.lowerCase} text="Deve conter pelo menos uma letra minúscula" />
+                    <CheckOrCloseOutlined isCriteriaMet={passwordCriteria.specialChar} text="Deve conter pelo menos um caractere especial" />
+                    <CheckOrCloseOutlined isCriteriaMet={passwordCriteria.numbers} text="Deve conter pelo menos dois números" />
+                </div>
                 <Input
                     prefix={<LockOutlined />}
                     type="password"
@@ -59,7 +104,6 @@ const ResetPassword = () => {
                 <Button type="primary" onClick={handlePasswordResetSubmit}>
                     Redefinir Senha
                 </Button>
-
             </div>
         </div>
     );

@@ -1,7 +1,7 @@
 const { Navigate, Route } = require("react-router-dom");
 
 function ProtectedRoute(props) {
-    const token = localStorage.getItem('authToken');
+    const token = sessionStorage.getItem('authToken');
     const isAuthenticated = !!token;
 
     if (!isAuthenticated) {

@@ -120,7 +120,7 @@ const AllAppointments = () => {
         },
 
         {
-            title: 'Convenio',
+            title: 'Convênio',
             dataIndex: 'planodental',
             key: 'planoDental',
         },
@@ -171,7 +171,7 @@ const AllAppointments = () => {
 
     return (
         <div className='tabela'>
-            <h1>Historico de Agendamentos  <HistoryOutlined /></h1>
+            <h1>Histórico  de Agendamentos  <HistoryOutlined /></h1>
             <p>Utilize a lupa para pesquisar por Nome ou CPF <WarningFilled /></p>
             <Table columns={columns} dataSource={filteredAppointments.length > 0 ? filteredAppointments : appointments} rowKey="id" loading={loading} />
         </div>

@@ -4,7 +4,7 @@ import moment from 'moment';
 import 'moment/locale/pt-br';
 import 'react-big-calendar/lib/css/react-big-calendar.css';
 import '../calendar.css';
-import { Button, Tooltip } from 'antd';
+import { Button, Select, Tooltip } from 'antd';
 import { Link } from 'react-router-dom';
 import { PlusOutlined } from '@ant-design/icons';
 import ScheduleModal from 'components/Modals/ScheduleModal';
@@ -56,7 +56,7 @@ const CalendarView = ({ events, onEventClick }) => {
     const showFullWeek = () => setView('week');
     const showToday = () => setView('day');
     const [timeRange, setTimeRange] = useState({ min: 7, max: 22 });
-
+    const [step, setStep] = useState(60);
     const setFullDay = () => {
         setTimeRange({ min: 0, max: 23 });
     };
@@ -185,46 +185,55 @@ const CalendarView = ({ events, onEventClick }) => {
                     end={modalInfo.end}
                 />
             </div>
-            <Calendar
-                localizer={localizer}
-                events={events}
-                onSelectEvent={handleSelectEvent}
-                startAccessor="start"
-                endAccessor="end"
-                eventPropGetter={eventStyleGetter}
-                defaultDate={moment().toDate()}
-                view={view}
-                onSelectSlot={handleSelectSlot}
-                selectable={true}
-                views={isMobile ? ['day'] : ['day', 'work_week', 'week']}
-                components={{
-                    header: CustomHeader,
-                    event: ({ event }) => (
-                        <Event event={event} onEventClick={onEventClick} />
-                    ),
-                    day: { header: CustomHeader },
-                }}
-                min={minTime}
-                max={maxTime}
-                timeslots={1}
-                step={60}
-                timeGutterFormat={{ format: 'HH:mm' }}
-                messages={{
-                    next: "Próximo",
-                    previous: "Anterior",
-                    today: "Hoje",
-                    month: "Mês",
-                    week: "Semana",
-                    work_week: "Semana de Trabalho",
-                    day: "Dia",
-                    agenda: "Agenda",
-                    date: "Data",
-                    time: "Hora",
-                    event: "Evento",
-                }}
-            />
-        </div>
-    );
+                <div className="calendar-controls">
+                    <p>Selecione o tempo de cada Agendamento !</p>
+                    <Select defaultValue={60} style={{ width: 120 }} onChange={value => setStep(value)}>
+                        <Select.Option value={15}>15 Minutos</Select.Option>
+                        <Select.Option value={30}>30 Minutos</Select.Option>
+                        <Select.Option value={60}>1 Hora</Select.Option>
+                        <Select.Option value={120}>2 Horas</Select.Option>
+                    </Select>
+                </div>
+                <Calendar
+                    localizer={localizer}
+                    events={events}
+                    step={step} 
+                    onSelectEvent={handleSelectEvent}
+                    startAccessor="start"
+                    endAccessor="end"
+                    eventPropGetter={eventStyleGetter}
+                    defaultDate={moment().toDate()}
+                    view={view}
+                    onSelectSlot={handleSelectSlot}
+                    selectable={true}
+                    views={isMobile ? ['day'] : ['day', 'work_week', 'week']}
+                    components={{
+                        header: CustomHeader,
+                        event: ({ event }) => (
+                            <Event event={event} onEventClick={onEventClick} />
+                        ),
+                        day: { header: CustomHeader },
+                    }}
+                    min={minTime}
+                    max={maxTime}
+                    timeslots={1}
+                    timeGutterFormat={{ format: 'HH:mm' }}
+                    messages={{
+                        next: "Próximo",
+                        previous: "Anterior",
+                        today: "Hoje",
+                        month: "Mês",
+                        week: "Semana",
+                        work_week: "Semana de Trabalho",
+                        day: "Dia",
+                        agenda: "Agenda",
+                        date: "Data",
+                        time: "Hora",
+                        event: "Evento",
+                    }}
+                />
+            </div>
+            );
 }
 
-export default CalendarView;
+            export default CalendarView;

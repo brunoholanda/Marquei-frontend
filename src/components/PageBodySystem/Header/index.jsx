@@ -13,11 +13,11 @@ export default function Header() {
     const isActive = (path) => currentPath === path;
 
     const handleLogout = () => {
-        localStorage.removeItem('authToken');
+        sessionStorage.removeItem('authToken');
         navigate('/login');
     };
 
-    const isAuthenticated = !!localStorage.getItem('authToken');
+    const isAuthenticated = !!sessionStorage.getItem('authToken');
 
     return (
         <div className={styles.header}>

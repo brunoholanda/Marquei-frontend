@@ -182,7 +182,25 @@ const RegisterScreen = () => {
     }
   };
 
-
+  const sendWelcomeEmail = async (email) => {
+    try {
+      const response = await fetch(`${BASE_URL}/send-welcome-email`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ email }),
+      });
+      
+      if (!response.ok) {
+        throw new Error('Não foi possível enviar o e-mail de boas-vindas.');
+      }
+  
+      message.success('E-mail de boas-vindas enviado com sucesso!');
+    } catch (error) {
+      message.error(error.message);
+    }
+  };
 
   const onFinish = async (values) => {
     const { idNumber, nome, email, phone, address, password, confirmPassword, profession } = values;
@@ -248,7 +266,7 @@ const RegisterScreen = () => {
 
       form.resetFields();
       setModalVisible(true);
-
+      await sendWelcomeEmail(values.email);
     } catch (error) {
       message.error(error.message);
     }
@@ -392,7 +410,7 @@ const RegisterScreen = () => {
           </Form.Item>
           <div className='validade-password'>
             <p>
-              {passwordValidation.lengthValid ? <CheckOutlined style={{ color: 'green' }} /> : <CloseOutlined style={{ color: 'red' }} />} A senha deve conter pelo menos 8 dígitos.;
+              {passwordValidation.lengthValid ? <CheckOutlined style={{ color: 'green' }} /> : <CloseOutlined style={{ color: 'red' }} />} A senha deve conter pelo menos 8 dígitos;
             </p>
             <p>
               {passwordValidation.lowercaseValid ? <CheckOutlined style={{ color: 'green' }} /> : <CloseOutlined style={{ color: 'red' }} />} Deve conter pelo menos uma letra maiúscula;

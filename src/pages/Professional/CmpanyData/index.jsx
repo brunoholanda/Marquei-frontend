@@ -68,8 +68,8 @@ const CompanyData = () => {
             }
         };
 
-            fetchCompanyData();
-}, [companyID, authData.authToken]);
+        fetchCompanyData();
+    }, [companyID, authData.authToken]);
 
     useEffect(() => {
         setEditedData(companyData);
@@ -187,7 +187,8 @@ const CompanyData = () => {
                     <div style={{ marginTop: '20px' }}>
                         <Button onClick={handleSaveChanges} type="primary" style={{ marginRight: '10px' }}>Salvar</Button>
                         <Button>Cancelar</Button>
-                    </div>                </>
+                    </div>
+                </>
             )}
         </div>
     );

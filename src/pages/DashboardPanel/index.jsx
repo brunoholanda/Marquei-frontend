@@ -309,7 +309,7 @@ const DashboardPanel = () => {
                         </Card>
                     </Col>
                     <Col xs={24} md={12}>
-                        <Card title="Particular x Convenio">
+                        <Card title="Particular x Convênio">
                             <div className="chartContainer" style={{ margin: isMobile ? '0 auto' : '0' }}>
                                 <RadialBarChart
                                     width={chartSize.width}

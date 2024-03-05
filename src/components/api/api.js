@@ -1,13 +1,13 @@
 import axios from 'axios';
 
 const api = axios.create({
-  baseURL: 'https://marquei.com.br/api/',
+  baseURL: 'http://127.0.0.1:3333/api/',
 });
 
 // Adiciona um interceptador de requisições
 api.interceptors.request.use(config => {
   // Recupera o token do armazenamento local
-  const token = localStorage.getItem('authToken');
+  const token = sessionStorage.getItem('authToken');
   
   if (token) {
     // Se o token existe, inclui o cabeçalho de Autorização

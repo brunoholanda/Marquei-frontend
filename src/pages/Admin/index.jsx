@@ -3,6 +3,7 @@ import CompaniesTable from './Clients';
 import { StyledAdminTables } from './Style';
 import { Tabs } from 'antd';
 import ChamadosTable from './Called';
+import IndicationsTable from './Indications';
 
 export default function AdminMaster() {
 
@@ -30,7 +31,7 @@ export default function AdminMaster() {
             tab: 'Indicações',
             content: (
                 <>
-                    <ChamadosTable />
+                    <IndicationsTable />
                 </>
             )
         }

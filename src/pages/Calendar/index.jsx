@@ -81,7 +81,7 @@ const CalendarPage = () => {
                 const startDate = moment(appointment.data + ' ' + appointment.horario, 'DD/MM/YYYY HH:mm').toDate();
                 const endDate = appointment.end_time
                 ? moment(appointment.data + ' ' + appointment.end_time, 'DD/MM/YYYY HH:mm').toDate()
-                : moment(startDate).add(1, 'hours').toDate(); // Fallback para 1 hora depois se não houver end_time
+                : moment(startDate).add(1, 'hours').toDate();
                 
                 return {
                     title: `${appointment.nome}`,
@@ -185,7 +185,7 @@ const CalendarPage = () => {
             socket.disconnect();
         };
     
-    }, [selectedProfessional]); // Dependendo de selectedProfessional para recarregar a lista quando muda
+    }, [selectedProfessional]);
     
 
     useEffect(() => {
