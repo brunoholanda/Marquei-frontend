@@ -30,6 +30,7 @@ import PageBodyClient from "components/PageBodyClient/PageBody";
 import DeclationInfoPage from "pages/ConfirmDeclaration";
 import { AuthProvider, useAuth } from "context/AuthContext";
 import AdminMaster from "pages/Admin";
+import TermsOfUse from "pages/TermsOfUse";
 
 function ScrollToTop() {
     const { pathname } = useLocation();
@@ -74,6 +75,7 @@ function AppRoutes() {
                         <Route path="/resources" element={<ResourcesGrid />} />
                         <Route path="/planos" element={<PlansPage />} />
                         <Route path="/ajuda" element={<HelpCenter />} />
+                        <Route path="/terms-of-use" element={<TermsOfUse />} />
                         <Route path="/confirm-certificate/:id" element={<AtestadoInfoPage />} />
                         <Route path="/confirm-declaration/:id" element={<DeclationInfoPage />} />
                         <Route path="/reset-password/:token" element={<ResetPassword />} />

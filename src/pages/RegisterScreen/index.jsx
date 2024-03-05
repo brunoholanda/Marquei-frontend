@@ -441,7 +441,7 @@ const RegisterScreen = () => {
 
           <Form.Item name="agreement" valuePropName="checked">
             <Checkbox checked={isAgreed} onChange={onAgreementChange}>
-              Li e aceito os <a href="/terms-of-service" className={styles.link}>Termos de Uso</a> e
+              Li e aceito os <a href="/terms-of-use" className={styles.link}>Termos de Uso</a> e
               <a href="/privacy-policy" className={styles.link}> Política de Privacidade</a>
             </Checkbox>
           </Form.Item>
