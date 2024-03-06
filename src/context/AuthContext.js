@@ -29,8 +29,9 @@ export const AuthProvider = ({ children }) => {
             if (response.ok) {
                 const { company_id, user_specialties } = await response.json();
                 setAuthData({ authToken: token, companyID: company_id, userSpecialties: user_specialties });
+            } else if (response.status === 401) { 
+                logout(); 
             } else {
-                logout();
                 throw new Error('Não foi possível obter os detalhes da empresa.');
             }
         } catch (error) {

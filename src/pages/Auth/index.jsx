@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useRef, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { Button, Input, Modal, message } from 'antd';
 import { LockOutlined } from '@ant-design/icons';
@@ -18,6 +18,7 @@ const Authentication = () => {
   const [resetEmail, setResetEmail] = useState('');
   const [loginError, setLoginError] = useState('');
   const [recaptchaToken, setRecaptchaToken] = useState('');
+  const recaptchaRef = useRef(null);
 
   const navigate = useNavigate();
   const { updateAuthData } = useAuth();
@@ -71,6 +72,9 @@ const Authentication = () => {
     } catch (error) {
       setLoginError(error.message || 'Erro ao fazer login.');
       message.error(error.message);
+      if (recaptchaRef.current) {
+        recaptchaRef.current.reset(); // Reseta o reCAPTCHA
+      }
     }
   };
 
@@ -139,6 +143,7 @@ const Authentication = () => {
         </div>
         <div className={styles.captcha}>
           <ReCAPTCHA
+            ref={recaptchaRef}
             sitekey="6LdQaYcpAAAAAHaX_ZIhgaOTN0olO9KyoijpMNTH"
             onChange={(token) => setRecaptchaToken(token)}
           />
@@ -197,7 +202,7 @@ const Authentication = () => {
           onChange={(e) => setResetEmail(e.target.value)}
           required
         />
-        <div style={{display: 'flex', justifyContent: 'center', margin: '18px 0'}}>
+        <div style={{ display: 'flex', justifyContent: 'center', margin: '18px 0' }}>
           <ReCAPTCHA
             sitekey="6LdQaYcpAAAAAHaX_ZIhgaOTN0olO9KyoijpMNTH"
             onChange={(token) => setRecaptchaToken(token)}

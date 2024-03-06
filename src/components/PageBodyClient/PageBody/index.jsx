@@ -56,7 +56,7 @@ function Footer() {
                     <Link to="/ajuda">
                         Central de ajuda
                     </Link>
-                    <Link to="/servicos/canal">
+                    <Link to="/contato">
                         Contato
                     </Link>
                 </div>

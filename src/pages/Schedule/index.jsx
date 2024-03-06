@@ -7,6 +7,7 @@
   import { useNavigate, useParams } from 'react-router-dom';
   import Holidays from 'date-holidays';
   import { StyledFormClient } from './Style';
+  import CryptoJS from 'crypto-js';
 
 
   const { Option } = Select;
@@ -288,22 +289,23 @@
 
     useEffect(() => {
       const fetchProfessionals = async () => {
-
+    
         try {
-          const response = await api.get(`/professionals?company_id=${company_id}`);
-
+          const response = await api.get(`/public-professionals?company_id=${company_id}`);
+    
           if (response.status !== 200) {
             throw new Error('Falha ao buscar dados dos profissionais');
           }
+    
+    
           setProfessionals(response.data);
         } catch (error) {
           console.error('Error fetching professionals:', error);
         }
       };
-
+    
       fetchProfessionals();
     }, []);
-
     const fetchPlanosSaude = async (professionalId) => {
       try {
         const response = await api.get(`/professionals/${professionalId}/planos`);

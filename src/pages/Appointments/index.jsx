@@ -9,6 +9,7 @@ import { Link } from 'react-router-dom';
 import AppointmentModal from '../../components/Modals/AppointmentModal';
 import ScheduleModal from '../../components/Modals/ScheduleModal';
 import { useAuth } from 'context/AuthContext';
+import CryptoJS from 'crypto-js';
 
 const Appointments = () => {
     const [appointments, setAppointments] = useState([]);
@@ -55,7 +56,11 @@ const Appointments = () => {
                     if (response.status !== 200) {
                         throw new Error('Falha ao buscar dados dos profissionais');
                     }
-                    setProfessionals(response.data);
+                    const secretKey = process.env.REACT_APP_SECRET_KEY;
+                    const bytes = CryptoJS.AES.decrypt(response.data, secretKey);
+                    const decryptedData = JSON.parse(bytes.toString(CryptoJS.enc.Utf8));
+              
+                    setProfessionals(decryptedData);
                 } catch (error) {
                     console.error('Error fetching professionals:', error);
                 }

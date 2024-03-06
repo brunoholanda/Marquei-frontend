@@ -1,14 +1,15 @@
 import React from 'react';
+import { StyledPrivacyPolicy } from '../styles';
 
 const PrivacyPolicy = () => {
   return (
-    <div>
+    <StyledPrivacyPolicy>
       <h1>Política de Privacidade do Sistema de Agendamentos Online</h1>
 
       <p>Data da última atualização: [Data]</p>
 
       <h2>1. Introdução</h2>
-      <p>[Nome da Empresa] ("nós", "nosso") respeita a privacidade dos usuários ("usuário", "você") de nosso sistema de agendamentos online (o "Sistema") e está comprometido em proteger as informações pessoais que você compartilha conosco ao acessar e usar nosso Sistema.</p>
+      <p>A Holanda Desenvolvimento de Software Criadora e gestora do Marquei, respeita a privacidade dos usuários de nosso sistema de agendamentos online (o "Sistema") está comprometido em proteger as informações pessoais que você compartilha conosco ao acessar e usar nosso Sistema.</p>
 
       <h2>2. Informações Coletadas</h2>
       <p>Explicamos aqui os tipos de informações que coletamos quando você utiliza nosso Sistema e como essas informações são usadas:</p>
@@ -41,7 +42,7 @@ const PrivacyPolicy = () => {
 
       <h2>8. Contato</h2>
       <p>Se tiver dúvidas ou preocupações sobre esta Política de Privacidade ou sobre o tratamento de suas informações, por favor, entre em contato conosco em: [Informações de Contato].</p>
-    </div>
+    </StyledPrivacyPolicy>
   );
 }
 

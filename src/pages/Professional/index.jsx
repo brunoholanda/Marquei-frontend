@@ -13,6 +13,7 @@ import MyPlan from './MyPlan';
 import ReactJoyride from 'react-joyride';
 import TrackingPage from 'pages/TrackingPage';
 import { useAuth } from 'context/AuthContext';
+import CryptoJS from 'crypto-js';
 
 function Configs() {
     const [isMobile, setIsMobile] = useState(window.innerWidth < 768);
@@ -113,7 +114,11 @@ function Configs() {
                         },
                     });
 
-                    setProfessionals(response.data);
+                    const secretKey = process.env.REACT_APP_SECRET_KEY;
+                    const bytes = CryptoJS.AES.decrypt(response.data, secretKey);
+                    const decryptedData = JSON.parse(bytes.toString(CryptoJS.enc.Utf8));
+              
+                    setProfessionals(decryptedData);
                 } catch (error) {
                     if (error.response) {
                         console.error('API response error:', error.response);

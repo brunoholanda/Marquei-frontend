@@ -19,6 +19,8 @@ import { Navigate } from 'react-router-dom';
 import PlanCard from 'components/SelerCads';
 import AddClientsModal from './AddClientsModal';
 import { useAuth } from 'context/AuthContext';
+import CryptoJS from 'crypto-js';
+
 
 const { Option } = Select;
 const { TextArea } = Input;
@@ -339,7 +341,7 @@ const ScheduleModal = ({ isModalAgendaVisible, handleCancel, start }) => {
     };
 
     const resetAndCloseModal = () => {
-        form.resetFields();
+        form.resetFields(['data', 'horario', 'nome', 'cpf', 'celular', 'planodental', 'motivo', 'end_time']);
         setIgnoreDisabledHours(false);
         setDisabledHours([]);
         setBookedHours([]);
@@ -352,18 +354,35 @@ const ScheduleModal = ({ isModalAgendaVisible, handleCancel, start }) => {
     useEffect(() => {
         const fetchProfessionals = async () => {
             try {
+                setLoading(true);
                 const response = await api.get(`/professionals?company_id=${companyID}`);
-
+    
                 if (response.status !== 200) {
                     throw new Error('Falha ao buscar dados dos profissionais');
                 }
-                setProfessionals(response.data);
+                const secretKey = process.env.REACT_APP_SECRET_KEY;
+                const bytes = CryptoJS.AES.decrypt(response.data, secretKey);
+                const decryptedData = JSON.parse(bytes.toString(CryptoJS.enc.Utf8));
+    
+                setProfessionals(decryptedData);
+    
+                if (decryptedData.length === 1) {
+                    const singleProfessionalId = decryptedData[0].id;
+                    setSelectedProfessional(singleProfessionalId);
+                    const planos = await fetchPlanosSaude(singleProfessionalId);
+                    setPlanosSaude(planos);
+                    form.setFieldsValue({ professional: singleProfessionalId, planodental: '' }); 
+                }
             } catch (error) {
                 console.error('Error fetching professionals:', error);
+                message.error('Erro ao buscar dados dos profissionais');
+            } finally {
+                setLoading(false);
             }
         };
         fetchProfessionals();
-    }, [companyID]);
+    }, [companyID]); 
+    
 
     const fetchPlanosSaude = async (professionalId) => {
         try {
@@ -427,12 +446,16 @@ const ScheduleModal = ({ isModalAgendaVisible, handleCancel, start }) => {
         fetchMaxProfessionals();
     }, [companyID, authData.authToken]);
 
+    const onCancelModal = () => {
+        resetAndCloseModal();
+        handleCancel();
+    };
 
     return (
         <StyledModal
             title="Agendar Consulta Para Paciente 👩‍⚕️"
             visible={isModalAgendaVisible}
-            onCancel={handleCancel}
+            onCancel={onCancelModal}
             footer={[
                 <Button key="back" onClick={resetAndCloseModal}>
                     Cancelar

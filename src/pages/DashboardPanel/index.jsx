@@ -7,6 +7,7 @@ import { Select } from 'antd';
 import { Checkbox } from 'antd';
 import { DashboardOutlined } from '@ant-design/icons';
 import { useAuth } from 'context/AuthContext';
+import CryptoJS from 'crypto-js';
 
 const { Option } = Select;
 
@@ -177,8 +178,13 @@ const DashboardPanel = () => {
                             'Authorization': `Bearer ${authData.authToken}`
                         },
                     });
+
+                    const secretKey = process.env.REACT_APP_SECRET_KEY;
+                    const bytes = CryptoJS.AES.decrypt(response.data, secretKey);
+                    const decryptedData = JSON.parse(bytes.toString(CryptoJS.enc.Utf8));
+              
                     if (response.status === 200) {
-                        setProfessionalsList(response.data);
+                        setProfessionalsList(decryptedData);
                     }
                 } catch (error) {
                     console.error('Erro ao buscar profissionais', error);

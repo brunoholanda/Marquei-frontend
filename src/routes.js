@@ -25,12 +25,13 @@ import MyPlan from "pages/Professional/MyPlan";
 import HelpCenter from "pages/HelpCenter";
 import ResourcesGrid from "pages/Resources";
 import PlansPage from "pages/PlansPage";
-import CompaniesTable from "pages/Admin/Clients";
 import PageBodyClient from "components/PageBodyClient/PageBody";
 import DeclationInfoPage from "pages/ConfirmDeclaration";
 import { AuthProvider, useAuth } from "context/AuthContext";
 import AdminMaster from "pages/Admin";
-import TermsOfUse from "pages/TermsOfUse";
+import TermsOfUse from "pages/Docs/TermsOfUse";
+import PrivacyPolicy from "pages/Docs/PryvacyPolicy";
+import ContactPage from "pages/ContactPage";
 
 function ScrollToTop() {
     const { pathname } = useLocation();
@@ -76,6 +77,8 @@ function AppRoutes() {
                         <Route path="/planos" element={<PlansPage />} />
                         <Route path="/ajuda" element={<HelpCenter />} />
                         <Route path="/terms-of-use" element={<TermsOfUse />} />
+                        <Route path="/privacy-policy" element={<PrivacyPolicy />} />
+                        <Route path="/contato" element={<ContactPage />} />
                         <Route path="/confirm-certificate/:id" element={<AtestadoInfoPage />} />
                         <Route path="/confirm-declaration/:id" element={<DeclationInfoPage />} />
                         <Route path="/reset-password/:token" element={<ResetPassword />} />

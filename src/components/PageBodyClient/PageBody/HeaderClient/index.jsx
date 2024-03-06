@@ -39,7 +39,7 @@ export default function HeaderClient() {
             </div>
             <div className={styles.header__access}>
                 <Link to='./login'>
-                    Acessar
+                    Acessara
                 </Link>
                 <Link to='./cadastro'>
                     <Btn>Teste grátis</Btn>

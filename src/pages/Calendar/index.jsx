@@ -8,6 +8,7 @@ import AppointmentModal from '../../components/Modals/AppointmentModal';
 import { Select, message } from 'antd';
 import { io } from 'socket.io-client';
 import { useAuth } from 'context/AuthContext';
+import CryptoJS from 'crypto-js';
 
 const CalendarPage = () => {
     const [isMobile, setIsMobile] = useState(false);
@@ -54,7 +55,17 @@ const CalendarPage = () => {
                     if (response.status !== 200) {
                         throw new Error('Falha ao buscar dados dos profissionais');
                     }
-                    setProfessionals(response.data);
+                    const secretKey = process.env.REACT_APP_SECRET_KEY;
+                    const bytes = CryptoJS.AES.decrypt(response.data, secretKey);
+                    const decryptedData = JSON.parse(bytes.toString(CryptoJS.enc.Utf8));
+              
+                    setProfessionals(decryptedData);
+
+                    if (decryptedData.length === 1) {
+                        const singleProfessionalId = decryptedData[0].id;
+                        setSelectedProfessional(singleProfessionalId);
+                    }
+
                 } catch (error) {
                     console.error('Error fetching professionals:', error);
                 }

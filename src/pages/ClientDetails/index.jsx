@@ -11,6 +11,7 @@ import DeclarationPage from './Declaration';
 import ReceitaPage from './Receita';
 import { Spin } from 'hamburger-react';
 import { useAuth } from 'context/AuthContext';
+import CryptoJS from 'crypto-js';
 
 
 const ClientDetails = () => {
@@ -68,7 +69,6 @@ const ClientDetails = () => {
     const { authData } = useAuth();
     const companyID = authData.companyID;
     const userSpecialties = authData.userSpecialties || [];
-
     const canEmitCertificateOrRecipe = userSpecialties.includes(1) || userSpecialties.includes(2);
 
 
@@ -129,7 +129,11 @@ const ClientDetails = () => {
                     if (response.status !== 200) {
                         throw new Error('Falha ao buscar dados dos profissionais');
                     }
-                    setProfessionals(response.data);
+                    const secretKey = process.env.REACT_APP_SECRET_KEY;
+                    const bytes = CryptoJS.AES.decrypt(response.data, secretKey);
+                    const decryptedData = JSON.parse(bytes.toString(CryptoJS.enc.Utf8));
+              
+                    setProfessionals(decryptedData);
                 } catch (error) {
                     console.error('Error fetching professionals:', error);
                 }

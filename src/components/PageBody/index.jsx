@@ -44,11 +44,8 @@ function Footer() {
                     <Link to="/servicos/clinico">
                         Sobre nós
                     </Link>
-                    <Link to="/servicos/canal">
+                    <Link to="/contato">
                         Como funciona?
-                    </Link>
-                    <Link to="/servicos/estetica">
-                        Colabore com a plataforma
                     </Link>
                 </div>
             </div>
@@ -69,7 +66,7 @@ function Footer() {
                     <Link to="/ajuda">
                         Central de ajuda
                     </Link>
-                    <Link to="/servicos/canal">
+                    <Link to="/contato">
                         Contato
                     </Link>
                 </div>

@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { Form, Input, Select, Button, message, Checkbox, Modal, Tooltip } from 'antd';
 import styles from './RegisterScreen.css';
 import { BASE_URL } from 'config';
-import { useNavigate } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import ReactInputMask from 'react-input-mask';
 import logo from '../../public/logo.png'
 import { CheckOutlined, CloseOutlined } from '@ant-design/icons';
@@ -191,11 +191,11 @@ const RegisterScreen = () => {
         },
         body: JSON.stringify({ email }),
       });
-      
+
       if (!response.ok) {
         throw new Error('Não foi possível enviar o e-mail de boas-vindas.');
       }
-  
+
       message.success('E-mail de boas-vindas enviado com sucesso!');
     } catch (error) {
       message.error(error.message);
@@ -381,7 +381,7 @@ const RegisterScreen = () => {
             name="phone"
             label="Telefone"
             rules={[{ required: true, message: 'Por favor, insira seu telefone!' }]}
-            
+
           >
             <ReactInputMask mask="(99) 9 9999-9999" >
               {(inputProps) => <Input {...inputProps} placeholder="(99) 9 9999-9999" />}
@@ -441,8 +441,14 @@ const RegisterScreen = () => {
 
           <Form.Item name="agreement" valuePropName="checked">
             <Checkbox checked={isAgreed} onChange={onAgreementChange}>
-              Li e aceito os <a href="/terms-of-use" className={styles.link}>Termos de Uso</a> e
-              <a href="/privacy-policy" className={styles.link}> Política de Privacidade</a>
+              Li e aceito os{' '}
+              <Link to="/terms-of-use" className={styles.link} target="_blank">
+                Termos de Uso
+              </Link>{' '}
+              e{' '}
+              <Link to="/privacy-policy" className={styles.link} target="_blank">
+                Política de Privacidade
+              </Link>
             </Checkbox>
           </Form.Item>
 

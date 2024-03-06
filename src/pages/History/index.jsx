@@ -83,6 +83,41 @@ const AllAppointments = () => {
           render: (text) => isMobile ? formatName(text) : text,
         },
         {
+            title: 'CPF',
+            dataIndex: 'cpf',
+            key: 'cpf',
+            filterDropdown: ({ setSelectedKeys, selectedKeys, confirm, clearFilters }) => (
+                <div style={{ padding: 8 }}>
+                    <Input
+                        ref={node => { searchInput = node; }}
+                        placeholder={`Pesquisar CPF`}
+                        value={selectedKeys[0]}
+                        onChange={e => setSelectedKeys(e.target.value ? [e.target.value] : [])}
+                        onPressEnter={() => handleSearch(selectedKeys, confirm, 'cpf')}
+                        style={{ marginBottom: 8, display: 'block' }}
+                    />
+                    <Button
+                        type="primary"
+                        onClick={() => handleSearch(selectedKeys, confirm, 'cpf')}
+                        size="small"
+                        style={{ width: 90, marginRight: 8 }}
+                    >
+                        Pesquisar
+                    </Button>
+                    <Button onClick={() => handleReset(clearFilters)} size="small" style={{ width: 90 }}>
+                        Resetar
+                    </Button>
+                </div>
+            ),
+            filterIcon: filtered => <SearchOutlined style={{ color: filtered ? '#1890ff' : undefined }} />,
+            onFilter: (value, record) => record.cpf.includes(value),
+            onFilterDropdownVisibleChange: visible => {
+                if (visible) {
+                    setTimeout(() => searchInput.select(), 100);
+                }
+            },
+        },
+        {
           title: 'Data',
           dataIndex: 'data',
           key: 'data',
@@ -129,41 +164,7 @@ const AllAppointments = () => {
             dataIndex: 'motivo',
             key: 'motivo',
         },
-        {
-            title: 'CPF',
-            dataIndex: 'cpf',
-            key: 'cpf',
-            filterDropdown: ({ setSelectedKeys, selectedKeys, confirm, clearFilters }) => (
-                <div style={{ padding: 8 }}>
-                    <Input
-                        ref={node => { searchInput = node; }}
-                        placeholder={`Pesquisar CPF`}
-                        value={selectedKeys[0]}
-                        onChange={e => setSelectedKeys(e.target.value ? [e.target.value] : [])}
-                        onPressEnter={() => handleSearch(selectedKeys, confirm, 'cpf')}
-                        style={{ marginBottom: 8, display: 'block' }}
-                    />
-                    <Button
-                        type="primary"
-                        onClick={() => handleSearch(selectedKeys, confirm, 'cpf')}
-                        size="small"
-                        style={{ width: 90, marginRight: 8 }}
-                    >
-                        Pesquisar
-                    </Button>
-                    <Button onClick={() => handleReset(clearFilters)} size="small" style={{ width: 90 }}>
-                        Resetar
-                    </Button>
-                </div>
-            ),
-            filterIcon: filtered => <SearchOutlined style={{ color: filtered ? '#1890ff' : undefined }} />,
-            onFilter: (value, record) => record.cpf.includes(value),
-            onFilterDropdownVisibleChange: visible => {
-                if (visible) {
-                    setTimeout(() => searchInput.select(), 100);
-                }
-            },
-        },
+       
     ];
 
     const columns = isMobile ? commonColumns : [...commonColumns, ...desktopColumns];
