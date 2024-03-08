@@ -7,7 +7,6 @@
   import { useNavigate, useParams } from 'react-router-dom';
   import Holidays from 'date-holidays';
   import { StyledFormClient } from './Style';
-  import CryptoJS from 'crypto-js';
 
 
   const { Option } = Select;

@@ -32,6 +32,8 @@ import AdminMaster from "pages/Admin";
 import TermsOfUse from "pages/Docs/TermsOfUse";
 import PrivacyPolicy from "pages/Docs/PryvacyPolicy";
 import ContactPage from "pages/ContactPage";
+import NpsSystem from "pages/NpsSystem";
+import ClientResearch from "pages/NpsSystem/ClientResearch";
 
 function ScrollToTop() {
     const { pathname } = useLocation();
@@ -86,6 +88,7 @@ function AppRoutes() {
                     </Route>
                     <Route element={<PageBodyClient />}>
                         <Route path="/agendar/:company_id" element={<Schedule />} />
+                        <Route path="/pesquisa-satisfacao/:company_id" element={<ClientResearch />} />
                     </Route>
 
                     <Route element={<PageBodySystem />}>
@@ -101,6 +104,7 @@ function AppRoutes() {
                         <Route path="/estoque" element={<ProtectedRoute element={<StockControlPage />} />} />
                         <Route path="/contabilidade" element={<ProtectedRoute element={<Contabilidade />} />} />
                         <Route path="/planos" element={<ProtectedRoute element={<MyPlan />} />} />
+                        <Route path="/nps-system" element={<ProtectedRoute element={<NpsSystem />} />} />
                         <Route path="/adminpanel" element={<ProtectedRoute element={<AdminMaster />} allowedCompanyIds={[1]} />} />
                         <Route path="*" element={<NotFound />} />
                     </Route>

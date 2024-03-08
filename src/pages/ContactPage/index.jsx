@@ -1,17 +1,23 @@
-import React from 'react';
-import { Form, Input, Button, message, notification } from 'antd';
+import React, { useState } from 'react';
+import { Form, Input, Modal, notification } from 'antd';
 import api from 'components/api/api';
-import { StyledContactPage, StyledContactPageForms, StyledFormContactPage } from './styles';
+import { StyledContactPage, StyledContactPageForms, StyledContactsPage, StyledFormContactPage } from './styles';
 import Btn from 'components/Btn';
+import { useNavigate } from 'react-router-dom';
 
 const ContactPage = () => {
+  const [form] = Form.useForm();
+  const [modalVisible, setModalVisible] = useState(false);
+  const navigate = useNavigate();
+
   const onFinish = async (values) => {
     try {
       await api.post('/send-email', values);
-      notification.success({ message: 'Mensagem enviada com sucesso!' });
+      setModalVisible(true);
+      form.resetFields(); // Limpar os valores do formulário
     } catch (error) {
       console.error('Erro ao enviar mensagem:', error);
-      message.error('Erro ao enviar a mensagem. Por favor, tente novamente.');
+      notification.error({ message: 'Erro ao enviar a mensagem. Por favor, tente novamente.' });
     }
   };
 
@@ -20,14 +26,17 @@ const ContactPage = () => {
     notification.error({ message: 'Por favor, preencha todos os campos obrigatórios.' });
   };
 
-  return (
+  const handleModalClose = () => {
+    setModalVisible(false);
+  };
 
+  return (
     <StyledContactPage>
       <h1>Entre em Contato</h1>
-      <p>Você pode entrar em contato utilizando nosso formulario de contato, ou pelas nossos outros meios</p>
+      <p>Você pode entrar em contato utilizando nosso formulário de contato, ou pelos nossos outros meios.</p>
       <StyledContactPageForms>
-
         <StyledFormContactPage
+          form={form}
           name="contact-form"
           onFinish={onFinish}
           onFinishFailed={onFinishFailed}
@@ -62,19 +71,32 @@ const ContactPage = () => {
           </Form.Item>
 
           <Form.Item>
-            <Btn htmlType="submit">
-              Enviar Mensagem
-            </Btn>
+            <Btn htmlType="submit">Enviar Mensagem</Btn>
           </Form.Item>
         </StyledFormContactPage>
-        <div>
+        <StyledContactsPage>
           <h2>Informações de Contato</h2>
-          <p>Caixa Postal:  Av. Paulista 1106 - Bela Vista, São Paulo - SP <br></br> SL01 Andar 16, 01310-914</p>
-          <p>Telefone: (11) 5194-6100</p>
-          <p>Email: contato@marquei.com.br</p>
-        </div>
+          <p><strong>Caixa Postal:</strong>  Av. Paulista 1106 - Bela Vista, São Paulo - SP <br></br> SL01 Andar 16, 01310-914</p>
+          <p><strong>Telefone:</strong> (11) 5194-6100</p>
+          <p><strong>Email:</strong> contato@marquei.com.br</p>
+        </StyledContactsPage>
       </StyledContactPageForms>
-
+      {modalVisible && (
+        <Modal
+          title="Mensagem Enviada"
+          visible={modalVisible}
+          onOk={() => {
+            setModalVisible(false);
+            navigate('/');
+          }}
+          onCancel={() => setModalVisible(false)}
+          okText="Fechar"
+          cancelButtonProps={{ style: { display: 'none' } }}
+        >          
+          <p>Sua mensagem foi enviada com sucesso! Em breve será respondida.</p>
+        </Modal>
+              
+      )}
     </StyledContactPage>
   );
 };

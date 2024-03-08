@@ -33,6 +33,8 @@ const AuthModal = ({ isVisible, onClose, onLoginSuccess, selectedService }) => {
     const [showTrialModal, setShowTrialModal] = useState(false);  // Novo estado para controlar a visibilidade do modal de teste grátis
     const { authData } = useAuth();
     const companyID = authData.companyID;
+    const [isEmailConfirmed, setIsEmailConfirmed] = useState(false);
+
     const validateEmail = (username) => {
         return emailRegex.test(username);
     }
@@ -63,29 +65,33 @@ const AuthModal = ({ isVisible, onClose, onLoginSuccess, selectedService }) => {
 
 
     const checkEmailExists = async (username) => {
+        setIsLoading(true);
         try {
             const response = await fetch(`${BASE_URL}/auth/check-email`, {
                 method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({ username, company_id: companyID }), 
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ username, company_id: companyID }),
             });
             const data = await response.json();
-            setIsUserExist(data.exists);
+            setIsLoading(false);
 
             if (!data.exists) {
                 message.info("Seu email não existe em nosso cadastro, por favor faça seu cadastro e aproveite 7 dias grátis para testar o Marquei");
                 setShowTrialModal(true);
+            } else {
+                setIsUserExist(true);
+                setIsEmailConfirmed(true); // Email confirmado, pode prosseguir para o pagamento.
             }
         } catch (error) {
+            setIsLoading(false);
             message.error('Error checking email: ' + error.message);
         }
     };
 
+
     const handleFreeTrial = () => {
         navigate('/cadastro');
-        setShowTrialModal(false); 
+        setShowTrialModal(false);
     };
 
     const handleEmailSubmit = async (e) => {
@@ -94,9 +100,7 @@ const AuthModal = ({ isVisible, onClose, onLoginSuccess, selectedService }) => {
             message.error('Please enter a valid email.');
             return;
         }
-        setIsLoading(true);
         await checkEmailExists(username);
-        setIsLoading(false);
     };
 
 
@@ -176,7 +180,7 @@ const AuthModal = ({ isVisible, onClose, onLoginSuccess, selectedService }) => {
     };
 
     const onSelectPaymentType = async (type, itemDetails) => {
-        const authToken = sessionStorage.getItem('authToken'); 
+        const authToken = sessionStorage.getItem('authToken');
 
         if (type === 'monthly') {
             if (!preapprovalPlanId) {
@@ -186,8 +190,8 @@ const AuthModal = ({ isVisible, onClose, onLoginSuccess, selectedService }) => {
 
             const paymentData = {
                 payment_type: 'mensal',
-                payment_email: username, 
-                service_id: selectedService.serviceId, 
+                payment_email: username,
+                service_id: selectedService.serviceId,
                 payment_confirm: false,
             };
 
@@ -245,7 +249,6 @@ const AuthModal = ({ isVisible, onClose, onLoginSuccess, selectedService }) => {
         const paymentData = {
             payment_type: mappedPaymentType,
             payment_email: username,
-            service_id: selectedService.serviceId, // serviceId do serviço selecionado
             payment_confirm: false,
         };
 
@@ -287,7 +290,7 @@ const AuthModal = ({ isVisible, onClose, onLoginSuccess, selectedService }) => {
     }
 
     const renderContent = () => {
-        if (!isLoggedIn) {
+        if (!isEmailConfirmed) {
             return (
                 <div>
                     <form onSubmit={handleEmailSubmit}>
@@ -297,6 +300,7 @@ const AuthModal = ({ isVisible, onClose, onLoginSuccess, selectedService }) => {
                             onChange={handleEmailChange}
                             placeholder="Insira seu E-mail"
                             required
+                            style={{ marginBottom: '1rem' }}
                         />
                         {emailSuggestions.length > 0 && (
                             <div style={{ marginTop: '0.5rem', background: '#f7f7f7', padding: '0.5rem' }}>
@@ -311,30 +315,13 @@ const AuthModal = ({ isVisible, onClose, onLoginSuccess, selectedService }) => {
                                 ))}
                             </div>
                         )}
-                        {isUserExist && (
-                            <>
-                                <Input
-                                    style={{ marginTop: '1rem' }}
-                                    type="password"
-                                    value={password}
-                                    onChange={(e) => setPassword(e.target.value)}
-                                    placeholder="Insira sua senha"
-                                    required
-                                />
-                                <Button style={{ textAlign: 'center', width: '100%', marginTop: '1rem' }} type="primary" onClick={handleLogin} loading={isLoading}>
-                                    Login
-                                </Button>
-                            </>
-                        )}
-                        {!isUserExist && !isLoading && (
-                            <Button style={{ textAlign: 'center', width: '100%', marginTop: '1rem' }} type="primary" htmlType="submit" loading={isLoading}>
-                                Continue
-                            </Button>
-                        )}
+                        <Btn style={{ textAlign: 'center', width: '100%', height: '20px' }} htmlType="submit" loading={isLoading}>
+                            Continue
+                        </Btn>
                     </form>
                 </div>
             );
-        } else if (!paymentType) {
+        } else if (!paymentType && isEmailConfirmed) {
             return (
                 <div style={{ textAlign: 'center' }}>
                     <h2>Escolha o tipo de pagamento</h2>
@@ -351,7 +338,8 @@ const AuthModal = ({ isVisible, onClose, onLoginSuccess, selectedService }) => {
                             <Btn onClick={(e) => {
                                 e.stopPropagation();
                                 onSelectPaymentType('anual');
-                            }}>Contratar  🤝</Btn>
+                            }}>Contratar  🤝
+                            </Btn>
                         </StyledPlanCard>
                         <StyledPlanCard
                             selected={paymentType === 'monthly'}
@@ -383,7 +371,7 @@ const AuthModal = ({ isVisible, onClose, onLoginSuccess, selectedService }) => {
                                 initialization={{
                                     preferenceId: preferenceId
                                 }}
-                                onPaymentSuccess={handlePaymentSuccess} // Exemplo, o nome do prop real depende do SDK
+                                onPaymentSuccess={handlePaymentSuccess}
                             />
                         )
                     )}
@@ -407,7 +395,7 @@ const AuthModal = ({ isVisible, onClose, onLoginSuccess, selectedService }) => {
         <>
 
             <Modal
-                title="Cadastre-se / Entrar"
+                title="Verificar E-mail"
                 visible={isVisible}
                 onCancel={onClose}
                 footer={null}

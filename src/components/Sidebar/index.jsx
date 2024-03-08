@@ -104,15 +104,15 @@ const Sidebar = () => {
   const items = [
     getItem('Agendamentos', '1', <ScheduleOutlined style={{ fontSize: iconSize }} />, null, '/calendario'),
     getItem('DashBoards', '2', <DashboardOutlined style={{ fontSize: iconSize }} />, null, '/painel'),
-    !isMobile && getItem('Histórico', '3', <HistoryOutlined style={{ fontSize: iconSize }} />, null, '/allagendamentos'),
-    getItem('Clientes', '4', <TeamOutlined style={{ fontSize: iconSize }} />, null, '/clientes'),
-    getItem('Configurações', '5', <SettingOutlined style={{ fontSize: iconSize }} />, null, '/configs'),
-    !isMobile && getItem('Estoque', '6', <BarChartOutlined style={{ fontSize: iconSize }} />, null, '/estoque'),
-    getItem('Contabilidade', '7', <CalculatorOutlined style={{ fontSize: iconSize }} />, null, '/contabilidade'),
-    userSpecialties?.includes(5) && getItem('Plano Alimentar', '8', <AppleOutlined style={{ fontSize: iconSize }} />, null, '/plano_alimentar'),
+    getItem('NpsSystem', '3', <DashboardOutlined style={{ fontSize: iconSize }} />, null, '/nps-system'),
+    !isMobile && getItem('Histórico', '4', <HistoryOutlined style={{ fontSize: iconSize }} />, null, '/allagendamentos'),
+    getItem('Clientes', '5', <TeamOutlined style={{ fontSize: iconSize }} />, null, '/clientes'),
+    getItem('Configurações', '6', <SettingOutlined style={{ fontSize: iconSize }} />, null, '/configs'),
+    !isMobile && getItem('Estoque', '7', <BarChartOutlined style={{ fontSize: iconSize }} />, null, '/estoque'),
+    getItem('Contabilidade', '8', <CalculatorOutlined style={{ fontSize: iconSize }} />, null, '/contabilidade'),
+    userSpecialties?.includes(5) && getItem('Plano Alimentar', '9', <AppleOutlined style={{ fontSize: iconSize }} />, null, '/plano_alimentar'),
     isAuthenticated && getItem('Sair do Sistema', 'logout', <LogoutOutlined style={{ fontSize: iconSize }} />, null, null), // Conditional item
-    authData.companyID === 1 && getItem('Administrador', '9', <SettingOutlined style={{ fontSize: iconSize }} />, null, '/adminpanel'),
-
+    authData.companyID === 1 && getItem('Administrador', '11', <SettingOutlined style={{ fontSize: iconSize }} />, null, '/adminpanel'),
   ].filter(Boolean);
 
   if (!isAuthenticated) {

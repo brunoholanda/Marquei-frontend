@@ -125,6 +125,10 @@ const PlansPage = ({ maxProfessionals }) => {
                 </div>
                 <div className={styles.duration}>
                   <CheckCircleFilled style={{ fontSize: '20px', color: '#3f51b5', marginRight: '10px' }} />
+                  Pesquisa NPS automática;
+                </div>
+                <div className={styles.duration}>
+                  <CheckCircleFilled style={{ fontSize: '20px', color: '#3f51b5', marginRight: '10px' }} />
                   Funções especificas da área de atuação
                 </div>
                 <div className={styles.duration}>

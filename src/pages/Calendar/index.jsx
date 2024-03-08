@@ -18,7 +18,7 @@ const CalendarPage = () => {
     const [professionals, setProfessionals] = useState([]);
     const [selectedProfessional, setSelectedProfessional] = useState(null);
     const [loading, setLoading] = useState(false);
-    const { authData } = useAuth();
+    const { authData, logout } = useAuth(); // Agora também acessa a função logout
     const companyID = authData.companyID;
     const handleAppointmentClick = (appointment) => {
         setCurrentAppointment(appointment);
@@ -68,13 +68,16 @@ const CalendarPage = () => {
 
                 } catch (error) {
                     console.error('Error fetching professionals:', error);
+                    if (error.response && error.response.status === 401) {
+                        logout(); // Chama a função de logout em caso de token inválido
+                    }
                 }
             } else {
                 console.error('Company ID or auth token not found in local storage');
             }
         };
         fetchProfessionals();
-    }, [companyID, authData.authToken]); 
+    }, [companyID, authData.authToken, logout]);
 
 
     const fetchAppointments = async (professionalId) => {
