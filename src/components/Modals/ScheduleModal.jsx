@@ -12,6 +12,7 @@ import {
     StyledTimePicker,
     StyledDateTime,
     StyledFormItemName,
+    StyledTimeContainer,
 } from './Styles';
 import { UserAddOutlined } from '@ant-design/icons';
 import ProfessionalModal from './registerModal';
@@ -25,7 +26,7 @@ import CryptoJS from 'crypto-js';
 const { Option } = Select;
 const { TextArea } = Input;
 
-const ScheduleModal = ({ isModalAgendaVisible, handleCancel, start }) => {
+const ScheduleModal = ({ isModalAgendaVisible, handleCancel, start, end }) => {
     const [form] = Form.useForm();
     const [loading, setLoading] = useState(false);
     const [diasSemana, setDiasSemana] = useState([]);
@@ -45,9 +46,6 @@ const ScheduleModal = ({ isModalAgendaVisible, handleCancel, start }) => {
     const companyID = authData.companyID;
     const userSpecialties = authData.userSpecialties || [];
 
-    const handleOpenAddClientsModal = () => {
-        setShowAddClientModal(true);
-    };
 
     const onSearchPatientName = async (searchText) => {
         if (searchText.length < 4) {
@@ -121,7 +119,13 @@ const ScheduleModal = ({ isModalAgendaVisible, handleCancel, start }) => {
                 horario: moment(start)
             });
         }
-    }, [start, form]);
+        if (end) {
+            form.setFieldsValue({
+                end_time: moment(end)
+            });
+        }
+    }, [start, end, form]);
+
 
 
     useEffect(() => {
@@ -356,22 +360,22 @@ const ScheduleModal = ({ isModalAgendaVisible, handleCancel, start }) => {
             try {
                 setLoading(true);
                 const response = await api.get(`/professionals?company_id=${companyID}`);
-    
+
                 if (response.status !== 200) {
                     throw new Error('Falha ao buscar dados dos profissionais');
                 }
                 const secretKey = process.env.REACT_APP_SECRET_KEY;
                 const bytes = CryptoJS.AES.decrypt(response.data, secretKey);
                 const decryptedData = JSON.parse(bytes.toString(CryptoJS.enc.Utf8));
-    
+
                 setProfessionals(decryptedData);
-    
+
                 if (decryptedData.length === 1) {
                     const singleProfessionalId = decryptedData[0].id;
                     setSelectedProfessional(singleProfessionalId);
                     const planos = await fetchPlanosSaude(singleProfessionalId);
                     setPlanosSaude(planos);
-                    form.setFieldsValue({ professional: singleProfessionalId, planodental: '' }); 
+                    form.setFieldsValue({ professional: singleProfessionalId, planodental: '' });
                 }
             } catch (error) {
                 console.error('Error fetching professionals:', error);
@@ -381,8 +385,8 @@ const ScheduleModal = ({ isModalAgendaVisible, handleCancel, start }) => {
             }
         };
         fetchProfessionals();
-    }, [companyID]); 
-    
+    }, [companyID]);
+
 
     const fetchPlanosSaude = async (professionalId) => {
         try {
@@ -401,7 +405,6 @@ const ScheduleModal = ({ isModalAgendaVisible, handleCancel, start }) => {
 
     const openModalProfessional = () => {
         if (professionals.length >= maxProfessionals) {
-            // Abre o modal de upgrade em vez de exibir uma mensagem de aviso
             setUpgradeModalVisible(true);
             return;
         }
@@ -556,13 +559,14 @@ const ScheduleModal = ({ isModalAgendaVisible, handleCancel, start }) => {
                         rules={[{ required: true, message: 'Por favor, selecione uma data!' }]}
                     >
                         <StyledDatePicker
-                            key={ignoreDisabledHours ? 'ignore' : 'normal'} // Isso força a rerenderização
+                            key={ignoreDisabledHours ? 'ignore' : 'normal'}
                             format="DD/MM/YYYY"
                             disabledDate={disabledDate}
                             onChange={handleDateChange}
                         />
                     </StyledFormItem>
-
+                </StyledDateTime>
+                <StyledTimeContainer>
                     <StyledFormItem
                         name="horario"
                         label="Horário de Início"
@@ -618,8 +622,7 @@ const ScheduleModal = ({ isModalAgendaVisible, handleCancel, start }) => {
                             }}
                         />
                     </StyledFormItem>
-
-                </StyledDateTime>
+                </StyledTimeContainer>
                 <StyledFormItem
                     name="planodental"
                     rules={[{ required: true, message: 'Por favor, selecione uma forma de pagamento!' }]}

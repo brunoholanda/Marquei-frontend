@@ -166,8 +166,8 @@
 @media screen and (max-width: 768px) {
 
     .header {
-        justify-content: space-between; // Espaço entre o logo e o ícone do menu mobile
-        padding: 1rem; // Padding menor para dispositivos móveis
+        justify-content: space-between; 
+        padding: 1rem; 
     
 
         img {
@@ -199,6 +199,7 @@
     
             button {
                 width: 7rem;
+                white-space: nowrap;
             }
     
         }   

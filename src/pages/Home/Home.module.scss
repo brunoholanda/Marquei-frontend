@@ -1,10 +1,5 @@
 .home {
 
-  h2 {
-    font-size: 2.8rem;
-    color: #30455c;
-  }
-
   p {
     font-size: 1.2rem;
     color: #5f748b;
@@ -38,6 +33,11 @@
 
   &__texto {
     margin: 2rem 10rem;
+
+    h2 {
+      font-size: 2.8rem;
+      color: #30455c;
+    }
   }
 
   &__img {
@@ -52,6 +52,11 @@
 
   &__texto {
     margin: 2rem 10rem;
+
+    h2 {
+      font-size: 2.8rem;
+      color: #30455c;
+    }
   }
 
   &__img {
@@ -105,10 +110,6 @@
   .home {
     text-align: center;
 
-    h2 {
-      font-size: 1.8rem;
-    }
-
     p {
       font-size: 1rem;
     }
@@ -128,6 +129,13 @@
     &__img {
       display: none;
     }
+
+    &__texto {
+      
+    h2 {
+      font-size: 1.8rem;
+    }
+    }
   }
 
   .controle {
@@ -137,6 +145,11 @@
 
     &__texto {
       margin: 2rem 10rem;
+      
+    h2 {
+      font-size: 1.8rem;
+    }
+    
     }
 
     &__img {

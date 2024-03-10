@@ -295,8 +295,6 @@
           if (response.status !== 200) {
             throw new Error('Falha ao buscar dados dos profissionais');
           }
-    
-    
           setProfessionals(response.data);
         } catch (error) {
           console.error('Error fetching professionals:', error);
@@ -304,7 +302,7 @@
       };
     
       fetchProfessionals();
-    }, []);
+    }, [company_id]);
     const fetchPlanosSaude = async (professionalId) => {
       try {
         const response = await api.get(`/professionals/${professionalId}/planos`);

@@ -4,7 +4,7 @@ import styles from './RegisterScreen.css';
 import { BASE_URL } from 'config';
 import { Link, useNavigate } from 'react-router-dom';
 import ReactInputMask from 'react-input-mask';
-import logo from '../../public/logo.png'
+import logo from '../../public/logo.webp'
 import { CheckOutlined, CloseOutlined } from '@ant-design/icons';
 import computerPhone from '../../public/computerPhone.png';
 const { Option } = Select;
@@ -489,7 +489,7 @@ const RegisterScreen = () => {
         </Modal>
       </div>
       <div className='marketing'>
-        <img src={logo} alt="" />
+        <img src={logo} alt="logo da pagina" />
         <h1>O Marquei.com é o software gestor de agendamentos para profissionais da saúde.</h1>
         <p>
           Convidamos você a experimentar tudo o que podemos oferecer para melhorar seus atendimentos e a gestão do seu dia a dia de trabalho.

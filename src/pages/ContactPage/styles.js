@@ -56,7 +56,7 @@ export const StyledFormContactPage =  styled(Form)`
     @media (max-width: 768px) { 
         justify-content: center;
         width: 350px;
-        margin-right: 6rem;
+        margin-right: 0rem;
         padding: 1rem 3rem;
 
     }

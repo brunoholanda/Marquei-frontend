@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { Button, Card, Row, Col } from 'antd';
 import { RadialBarChart, RadialBar, Legend } from 'recharts';
 import api from 'components/api/api';
@@ -33,20 +33,20 @@ const DashboardPanel = () => {
         toConfirm: 0,
     });
 
-    const years = [];
-    for (let i = new Date().getFullYear(); i >= new Date().getFullYear() - 2; i--) {
-        years.push(i);
-    }
-
-    const handleTimeFilterChange = (filter) => {
+    const years = useMemo(() => {
+        const currentYear = new Date().getFullYear();
+        return Array.from({ length: 3 }, (_, i) => currentYear - i);
+    }, []);
+    
+    const handleTimeFilterChange = useCallback((filter) => {
         setTimeFilter(filter);
         setViewOtherMonths(false);
-    };
+    }, []);
 
-    const handleMonthSelection = (value) => {
+    const handleMonthSelection = useCallback((value) => {
         setSelectedMonth(value);
         setTimeFilter('Todos');
-    };
+    }, []);
 
     const parseDate = (dateStr) => {
         const parts = dateStr.split('/');
@@ -72,7 +72,7 @@ const DashboardPanel = () => {
         }
     };
 
-    const months = [
+    const months = useMemo(() => [
         { value: 1, label: 'Janeiro' },
         { value: 2, label: 'Fevereiro' },
         { value: 3, label: 'Março' },
@@ -85,7 +85,7 @@ const DashboardPanel = () => {
         { value: 10, label: 'Outubro' },
         { value: 11, label: 'Novembro' },
         { value: 12, label: 'Dezembro' }
-    ];
+    ], []);
 
     useEffect(() => {
         const fetchData = async () => {

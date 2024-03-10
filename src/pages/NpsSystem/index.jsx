@@ -70,7 +70,7 @@ function NpsSystem() {
                 <LinkOutlined /> Gerar Link da Pesquisa.
             </Button>
 
-            <img src={npsImage} alt="" ref={imgRef} style={{ width: '80%', height: 'auto', margin: '0 auto' }} />
+            <img src={npsImage} alt="escala nps com carinhas" ref={imgRef} style={{ width: '80%', height: 'auto', margin: '0 auto' }} />
 
             <div style={{ width: '80%', height: '110px', margin: '1rem auto' }}>
                 <ResponsiveContainer>

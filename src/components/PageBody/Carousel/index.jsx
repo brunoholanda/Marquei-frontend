@@ -1,9 +1,9 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback, memo } from 'react';
 import './Carousel.css'; // Make sure to create an appropriate CSS file to style the components
-import imagea from '../../../public/carrossel/1.png';
-import imageb from '../../../public/home/mens.png';
-import imagec from '../../../public/carrossel/3.png';
-import imaged from '../../../public/carrossel/2.png';
+import imagea from '../../../public/carrossel/1.webp';
+import imageb from '../../../public/home/mens.webp';
+import imagec from '../../../public/carrossel/3.webp';
+import imaged from '../../../public/carrossel/2.webp';
 import { ClockCircleOutlined, ControlOutlined, FormOutlined, HeartOutlined } from '@ant-design/icons';
 import Btn from 'components/Btn';
 import { useNavigate } from 'react-router-dom';
@@ -35,42 +35,45 @@ const carouselData = [
     }
 ];
 
+const CarouselItem = memo(({ slide, isActive, onClick }) => (
+    <div className={`slide ${isActive ? 'active' : ''}`}>
+        <div className="slide-content">
+            <h2>{slide.title}</h2>
+            <p>{slide.description}</p>
+            <Btn onClick={onClick}>CONTRATE AGORA !</Btn>
+        </div>
+        <img src={slide.imageUrl} loading="lazy" alt={slide.title} />
+    </div>
+));
+
 const Carousel = () => {
     const [activeIndex, setActiveIndex] = useState(0);
+    const navigate = useNavigate();
 
     useEffect(() => {
         const interval = setInterval(() => {
-            setActiveIndex(current => (current === carouselData.length - 1 ? 0 : current + 1));
-        }, 10000)
-
+            setActiveIndex((current) => (current === carouselData.length - 1 ? 0 : current + 1));
+        }, 10000);
         return () => clearInterval(interval);
     }, []);
 
-    const goToSlide = (index) => {
-        setActiveIndex(index);
-    };
-
-    const navigate = useNavigate();
-    const goToSignUp = () => navigate('/cadastro');
+    const goToSignUp = useCallback(() => navigate('/cadastro'), [navigate]);
 
     return (
         <div className="carousel-container">
             <div className="carousel-slides">
                 {carouselData.map((slide, index) => (
-                    <div key={index} className={`slide ${index === activeIndex ? 'active' : ''}`}>
-                        <div className="slide-content">
-                            <h2>{slide.title}</h2>
-                            <p>{slide.description}</p>                           
-                            <Btn onClick={goToSignUp}>CONTRATE AGORA !</Btn>
-                        </div>
-                        <img src={slide.imageUrl} alt={slide.title} />
-                    </div>
+                    <CarouselItem
+                        key={index}
+                        slide={slide}
+                        isActive={index === activeIndex}
+                        onClick={goToSignUp}
+                    />
                 ))}
             </div>
         </div>
     );
 };
-
 
 export default Carousel;
 

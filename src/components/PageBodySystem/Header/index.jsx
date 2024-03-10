@@ -1,6 +1,6 @@
 import React from 'react';
 import styles from './Header.module.scss';
-import logo from '../../../public/logo.png';
+import logo from '../../../public/logo.webp';
 import { Link, useNavigate, useLocation } from "react-router-dom";
 import { LogoutOutlined, SettingOutlined } from '@ant-design/icons';
 import { Button } from 'antd';

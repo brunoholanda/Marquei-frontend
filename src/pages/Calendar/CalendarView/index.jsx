@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import { Calendar, momentLocalizer } from 'react-big-calendar';
 import moment from 'moment';
 import 'moment/locale/pt-br';
@@ -23,27 +23,24 @@ moment.updateLocale('pt-br', {
 
 const localizer = momentLocalizer(moment)
 
-const Event = ({ event, onEventClick }) => (
+const Event = React.memo(({ event, onEventClick }) => (
     <Tooltip
         title={<CustomTooltip appointment={event} onConfirm={() => onEventClick(event)} />}
         placement="top"
     >
         <span>{event.title}</span>
     </Tooltip>
-);
+));
 
-const CustomTooltip = ({ appointment, onConfirm }) => {
-    return (
-        <div className="custom-tooltip">
-            <p>{appointment.nome}</p>
-            <Button type='primary' onClick={() => onConfirm()}>Confirmar/Reagendar</Button>
-            <Link to={`/client-details/${appointment.id}`}>
-                <Button type='primary'>Sobre o Paciente</Button>
-            </Link>
-        </div>
-    );
-};
-
+const CustomTooltip = React.memo(({ appointment, onConfirm }) => (
+    <div className="custom-tooltip">
+        <p>{appointment.nome}</p>
+        <Button type='primary' onClick={() => onConfirm()}>Confirmar/Reagendar</Button>
+        <Link to={`/client-details/${appointment.id}`}>
+            <Button type='primary'>Sobre o Paciente</Button>
+        </Link>
+    </div>
+));
 
 const CalendarView = ({ events, onEventClick }) => {
     const [isMobile, setIsMobile] = useState(window.innerWidth < 768);
@@ -52,19 +49,16 @@ const CalendarView = ({ events, onEventClick }) => {
     const [view, setView] = useState(isMobile ? 'day' : 'work_week');
     const [isModalAgendarVisible, setModalAgendarVisible] = useState(false);
 
-    const showWorkWeek = () => setView('work_week');
-    const showFullWeek = () => setView('week');
-    const showToday = () => setView('day');
+    const showWorkWeek = useCallback(() => setView('work_week'), []);
+    const showFullWeek = useCallback(() => setView('week'), []);
+    const showToday = useCallback(() => setView('day'), []);
     const [timeRange, setTimeRange] = useState({ min: 7, max: 22 });
     const [step, setStep] = useState(60);
-    const setFullDay = () => {
-        setTimeRange({ min: 0, max: 23 });
-    };
-    const setDefaultTime = () => setTimeRange({ min: 7, max: 22 });
+    const setFullDay = useCallback(() => setTimeRange({ min: 0, max: 23 }), []);
 
-    const handleSelectEvent = (event) => {
-        onEventClick(event);
-    };
+    const setDefaultTime = useCallback(() => setTimeRange({ min: 7, max: 22 }), []);
+    const handleSelectEvent = useCallback((event) => { onEventClick(event); }, [onEventClick]);
+
 
     const minTime = new Date();
     minTime.setHours(timeRange.min, 0, 0);
@@ -110,23 +104,22 @@ const CalendarView = ({ events, onEventClick }) => {
 
 
 
-    const handleSelectSlot = ({ start, end }) => {
-        setModalInfo({ isVisible: true, start, end });
-        setModalAgendarVisible(start, end);
-    };
+    const handleSelectSlot = useCallback(({ start, end }) => { setModalInfo({ isVisible: true, start, end }); setModalAgendarVisible(start, end); }, []);
+
 
     useEffect(() => {
-        function handleResize() {
+        const handleResize = () => {
             const mobile = window.innerWidth < 768;
             setIsMobile(mobile);
             if (mobile) {
                 setView('day');
             }
-        }
-
+        };
+    
         window.addEventListener('resize', handleResize);
         return () => window.removeEventListener('resize', handleResize);
     }, []);
+    
     return (
         <div style={{ height: 1300 }}>
             <div className="calendar-controls">

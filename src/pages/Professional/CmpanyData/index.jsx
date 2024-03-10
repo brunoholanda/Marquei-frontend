@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Button, Input, Modal, Spin, Tooltip, Upload, message } from 'antd';
+import { Button, Input, Spin, Tooltip, Upload, message } from 'antd';
 import { BankOutlined, UploadOutlined } from '@ant-design/icons';
 import { BASE_URL } from 'config';
 

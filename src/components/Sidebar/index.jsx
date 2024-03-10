@@ -9,6 +9,7 @@ import {
   BarChartOutlined,
   AppleOutlined,
   SettingOutlined,
+  PieChartOutlined,
 } from '@ant-design/icons';
 import { Link, useNavigate } from 'react-router-dom';
 import { Layout, Menu, theme } from 'antd';
@@ -29,7 +30,7 @@ function getItem(label, key, icon, children, url) {
 
 const Sidebar = () => {
   const [isMobile, setIsMobile] = useState(window.innerWidth < 768);
-  const { authData, logout, companyID } = useAuth();
+  const { authData, logout } = useAuth();
   const userSpecialties = authData.userSpecialties || [];
   const [runTutorial, setRunTutorial] = useState(false);
   const [steps, setSteps] = useState([
@@ -66,15 +67,6 @@ const Sidebar = () => {
     }
   };
 
-
-  const handleJoyrideCallback = (data) => {
-    const { status } = data;
-    if (status === 'finished' || status === 'skipped') {
-      setRunTutorial(false);
-    }
-  };
-
-
   const [collapsed, setCollapsed] = useState(isMobile);
   const navigate = useNavigate();
   const {
@@ -104,7 +96,7 @@ const Sidebar = () => {
   const items = [
     getItem('Agendamentos', '1', <ScheduleOutlined style={{ fontSize: iconSize }} />, null, '/calendario'),
     getItem('DashBoards', '2', <DashboardOutlined style={{ fontSize: iconSize }} />, null, '/painel'),
-    getItem('NpsSystem', '3', <DashboardOutlined style={{ fontSize: iconSize }} />, null, '/nps-system'),
+    getItem('NpsSystem', '3', <PieChartOutlined style={{ fontSize: iconSize }} />, null, '/nps-system'),
     !isMobile && getItem('Histórico', '4', <HistoryOutlined style={{ fontSize: iconSize }} />, null, '/allagendamentos'),
     getItem('Clientes', '5', <TeamOutlined style={{ fontSize: iconSize }} />, null, '/clientes'),
     getItem('Configurações', '6', <SettingOutlined style={{ fontSize: iconSize }} />, null, '/configs'),

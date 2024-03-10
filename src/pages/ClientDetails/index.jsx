@@ -259,7 +259,7 @@ const ClientDetails = () => {
             }
         };
         fetchAppointmentHistory();
-    }, [clientId]);
+    }, [clientId, companyID]);
 
 
 

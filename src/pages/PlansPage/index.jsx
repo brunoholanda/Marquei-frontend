@@ -10,7 +10,6 @@ import Faq from 'components/Faq';
 
 const PlansPage = ({ maxProfessionals }) => {
   const navigate = useNavigate();
-  const [cardData, setCardData] = useState({ holder: '', number: '', expMonth: '', expYear: '', securityCode: '' });
   const [plans, setPlans] = useState([]);
   const [showAuthModal, setShowAuthModal] = useState(false);
   const [selectedService, setSelectedService] = useState({ servicePlan: '', servicePrice: 0, serviceId: '' });
@@ -21,7 +20,6 @@ const PlansPage = ({ maxProfessionals }) => {
   };
 
   const handleServiceSelect = (service) => {
-    // Set the selected service details when a service is selected
     setSelectedService({
       servicePlan: service.plan,
       servicePrice: service.price,
@@ -30,19 +28,15 @@ const PlansPage = ({ maxProfessionals }) => {
 
     });
 
-    // Show the authentication modal
     setShowAuthModal(true);
   };
 
   const sortAndFilterPlans = (plans) => {
-    // Filtra os planos para excluir o plano "Teste" e depois com base em maxProfessionals
     let filteredPlans = plans.filter(plan => plan.plan !== 'Plano Teste');
 
     if (maxProfessionals === 1) {
-      // Se maxProfessionals for 1, inclua apenas Pro e Premium (excluindo Teste)
       filteredPlans = filteredPlans.filter(plan => ['Pro', 'Premium'].includes(plan.plan));
     } else if (maxProfessionals === 5) {
-      // Se maxProfessionals for 5, inclua apenas Premium (excluindo Teste)
       filteredPlans = filteredPlans.filter(plan => plan.plan === 'Premium');
     } // Não é necessário um else para outros valores, pois já filtramos o plano "Teste"
 
