@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { Button, Input, Table, message, notification } from 'antd';
 import api from 'components/api/api';
-import { EyeOutlined, PlusCircleOutlined, PlusOutlined, TeamOutlined, WarningFilled, WhatsAppOutlined } from '@ant-design/icons';
+import { EyeOutlined, PlusOutlined, TeamOutlined, WarningFilled, WhatsAppOutlined } from '@ant-design/icons';
 import debounce from 'lodash/debounce';
 
 import '../ClientDetails/ClientDetails.css';
@@ -221,7 +221,7 @@ const Pacientes = () => {
                     setInitialLoad(false);
                 });
         }
-    }, [initialLoad]);
+    }, [initialLoad, companyID]);
 
     useEffect(() => {
         const fetchAppointmentHistory = async () => {
@@ -257,7 +257,7 @@ const Pacientes = () => {
         };
 
         fetchAppointmentHistory();
-    }, [selectedClient]);
+    }, [selectedClient, companyID, setAppointmentHistory]);
 
     const onClientAdded = (newClient) => {
         setClientes(prevClientes => [...prevClientes, newClient]);

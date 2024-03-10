@@ -1,6 +1,6 @@
 import { Link } from "react-router-dom";
 import styles from './HeaderClient.module.scss';
-import logob from '../../../../public/logo-branca-2.png';
+import logob from '../../../../public/logo-branca-2.webp';
 import MenuMobile from "components/MenuMobile";
 import Btn from "components/Btn";
 
@@ -39,7 +39,7 @@ export default function HeaderClient() {
             </div>
             <div className={styles.header__access}>
                 <Link to='./login'>
-                    Acessara
+                    Acessar
                 </Link>
                 <Link to='./cadastro'>
                     <Btn>Teste grátis</Btn>

@@ -263,6 +263,14 @@ export const StyledContainerReagendar = styled.div`
   
 `;
 
+export const StyledTimeContainer = styled.div`
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+
+
+`;
+
 
 
 

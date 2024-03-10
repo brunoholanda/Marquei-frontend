@@ -4,14 +4,10 @@ import { useNavigate, useParams } from 'react-router-dom';
 import { Form, Input, Modal, Rate, notification } from 'antd';
 import { RateContainer, RateLabel, RateWrapper, StyledResearchPage } from '../styles';
 import Btn from 'components/Btn';
-import { useAuth } from 'context/AuthContext';
 import ReactInputMask from 'react-input-mask';
 
 function CustomRate({ count, onChange, value }) {
     const [rateValue, setRateValue] = useState(value || 0);
-
-
-
 
     const handleChange = (value) => {
         let adjustedValue = value - 1;
@@ -47,19 +43,18 @@ function CustomRate({ count, onChange, value }) {
 function ClientResearch() {
     const { company_id } = useParams();
     const [form] = Form.useForm();
-    const [companyName, setCompanyName] = useState(''); // Novo estado para armazenar o nome da empresa
-    const [isModalVisible, setIsModalVisible] = useState(false); // Estado para controlar a visibilidade do modal
+    const [companyName, setCompanyName] = useState(''); 
+    const [isModalVisible, setIsModalVisible] = useState(false); 
     const navigate = useNavigate()
 
-    const removePhoneMask = (phone) => phone.replace(/[^\d]/g, '');
+    const removePhoneMask = (phone) => phone ? phone.replace(/[^\d]/g, '') : '';
 
 
     useEffect(() => {
-        // Função para buscar os detalhes da empresa
         const fetchCompanyDetails = async () => {
             try {
-                const response = await api.get(`/companies-by-id/${company_id}`); // Substitua '/companies/' pelo endpoint correto se necessário
-                setCompanyName(response.data.nome); // Assumindo que a resposta tem um campo 'nome'
+                const response = await api.get(`/companies-by-id/${company_id}`);
+                setCompanyName(response.data.nome); 
             } catch (error) {
                 console.error('Erro ao buscar detalhes da empresa:', error);
                 notification.error({
@@ -97,8 +92,8 @@ function ClientResearch() {
     };
 
     const handleOk = () => {
-        setIsModalVisible(false); // Fecha o modal
-        navigate('/'); // Redireciona para a página inicial
+        setIsModalVisible(false);
+        navigate('/'); 
     };
 
     return (
@@ -136,8 +131,19 @@ function ClientResearch() {
                     </Btn>
                 </Form.Item>
             </Form>
-            <Modal title="Feedback Recebido" visible={isModalVisible} onOk={handleOk} cancelButtonProps={{ style: { display: 'none' } }}>
+            <Modal
+                title="Feedback Recebido!"
+                visible={isModalVisible}
+                onOk={handleOk}
+                cancelButtonProps={{ style: { display: 'none' } }}
+                footer={null}
+            >
                 <p>Seu feedback foi enviado com sucesso. Agradecemos pela sua contribuição!</p>
+                <Btn
+                    style={{ textAlign: 'center', width: '100%', marginTop: '1rem' }}
+                    type="primary" onClick={handleOk}>
+                    Conheça o Marquei 😃
+                </Btn>
             </Modal>
         </StyledResearchPage>
     );

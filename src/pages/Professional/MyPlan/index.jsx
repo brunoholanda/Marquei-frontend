@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Card, Spin, message, Button } from 'antd';
+import { Card, Spin, message } from 'antd';
 import api from '../../../components/api/api';
 import {
     cardStyle,
@@ -9,7 +9,7 @@ import {
     priceStyle,
     indicatorStyle,
     cardColumStyle
-} from './Styles'; // Adjust the path as needed
+} from './Styles'; 
 
 
 import { CheckOutlined } from '@ant-design/icons';

@@ -1,10 +1,9 @@
 import React, { useEffect, useState } from 'react';
-import { Button, Image, Input, Modal, Select, Table, Tooltip, notification } from 'antd';
+import { Button, Input, Modal, Select, Table, Tooltip, notification } from 'antd';
 import api from 'components/api/api';
 import { useAuth } from 'context/AuthContext';
-import { CheckCircleOutlined, ClockCircleOutlined, DislikeOutlined, ExclamationCircleOutlined, EyeOutlined, LikeOutlined, WhatsAppOutlined } from '@ant-design/icons';
+import { DislikeOutlined, ExclamationCircleOutlined, LikeOutlined, WhatsAppOutlined } from '@ant-design/icons';
 import { DividerLine } from 'components/Modals/Styles';
-import { BASE_URL } from 'config';
 
 const IndicationsTable = () => {
     const [chamados, setRecommendation] = useState([]);

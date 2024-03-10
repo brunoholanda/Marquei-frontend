@@ -4,12 +4,6 @@ import api from '../../components/api/api';
 import { CheckCircleOutlined, ClockCircleOutlined, ExclamationCircleOutlined, RetweetOutlined } from '@ant-design/icons';
 import { useAuth } from 'context/AuthContext';
 
-const statusText = {
-    null: 'A Iniciar',
-    1: 'Em Andamento',
-    2: 'Concluído'
-};
-
 const TrackingPage = () => {
     const [chamados, setChamados] = useState([]);
     const [selectedChamado, setSelectedChamado] = useState(null);

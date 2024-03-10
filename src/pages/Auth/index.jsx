@@ -7,7 +7,7 @@ import { BASE_URL } from 'config';
 import Btn from 'components/Btn';
 import PlanCard from 'components/SelerCads';
 import { useAuth } from 'context/AuthContext';
-import ReCAPTCHA from 'react-google-recaptcha';
+import ReCAPTCHAUtil from 'utils/ReCAPTCHAUtil';
 
 const Authentication = () => {
   const [username, setUsername] = useState('');
@@ -142,9 +142,8 @@ const Authentication = () => {
 
         </div>
         <div className={styles.captcha}>
-          <ReCAPTCHA
+          <ReCAPTCHAUtil
             ref={recaptchaRef}
-            sitekey="6LdQaYcpAAAAAHaX_ZIhgaOTN0olO9KyoijpMNTH"
             onChange={(token) => setRecaptchaToken(token)}
           />
         </div>
@@ -203,8 +202,8 @@ const Authentication = () => {
           required
         />
         <div style={{ display: 'flex', justifyContent: 'center', margin: '18px 0' }}>
-          <ReCAPTCHA
-            sitekey="6LdQaYcpAAAAAHaX_ZIhgaOTN0olO9KyoijpMNTH"
+          <ReCAPTCHAUtil
+            ref={recaptchaRef}
             onChange={(token) => setRecaptchaToken(token)}
           />
         </div>

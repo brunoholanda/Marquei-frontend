@@ -26,9 +26,6 @@ const ContactPage = () => {
     notification.error({ message: 'Por favor, preencha todos os campos obrigatórios.' });
   };
 
-  const handleModalClose = () => {
-    setModalVisible(false);
-  };
 
   return (
     <StyledContactPage>

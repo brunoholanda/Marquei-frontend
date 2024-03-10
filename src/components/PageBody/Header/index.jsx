@@ -1,10 +1,22 @@
 import { Link } from "react-router-dom";
 import styles from './Header.module.scss';
-import logo from '../../../public/logo.png';
-import logob from '../../../public/logo-branca-2.png';
+import logob from '../../../public/logo-branca-2.webp';
 
 import Btn from "components/Btn";
-import MenuMobile from "components/MenuMobile";
+import { Suspense, lazy, useEffect, useState } from "react";
+const MenuMobileLazy = lazy(() => import("components/MenuMobile"));
+
+function useIsMobile() {
+    const [isMobile, setIsMobile] = useState(window.innerWidth < 768);
+  
+    useEffect(() => {
+      const handleResize = () => setIsMobile(window.innerWidth < 768);
+      window.addEventListener('resize', handleResize);
+      return () => window.removeEventListener('resize', handleResize);
+    }, []);
+  
+    return isMobile;
+  }
 
 function MenuLinks() {
 
@@ -28,16 +40,24 @@ function MenuLinks() {
 
 
 export default function Header() {
+    const isMobile = useIsMobile();
+
     return (
         <div className={styles.header}>
             <Link to="./">
-                <img src={logob} alt="logo da pagina" />
+                <img src={logob} loading="lazy" alt="logo da página" />
             </Link>
             <div className={styles.header__mobile}>
-                <MenuMobile />
+                {isMobile && (
+                  <Suspense fallback={<div>Carregando...</div>}>
+                    <MenuMobileLazy />
+                  </Suspense>
+                )}
             </div>
             <div className={styles.header__links}>
-                <MenuLinks />
+                <Suspense fallback={null}>
+                    <MenuLinks />
+                </Suspense>
             </div>
             <div className={styles.header__access}>
                 <Link to='./login'>
@@ -48,5 +68,5 @@ export default function Header() {
                 </Link>
             </div>
         </div>
-    )
+    );
 }

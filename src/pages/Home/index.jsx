@@ -1,23 +1,27 @@
-import React from 'react';
+import React, { Suspense, lazy, useCallback } from 'react';
 import styles from './Home.module.scss';
-import Carousel from 'components/PageBody/Carousel';
-import horas from '../../public/home/woman.png'
-import controle from '../../public/home/woman-2.png'
-import digital from '../../public/home/digital.png'
+import horas from '../../public/home/woman.webp';
+import controle from '../../public/home/woman-2.webp';
+import digital from '../../public/home/digital.webp';
 import Btn from 'components/Btn';
-import PlanCard from 'components/SelerCads';
 import { Link, useNavigate } from 'react-router-dom';
-import Faq from 'components/Faq';
 import computerPhone from '../../public/computerPhone.png';
+import Loading from 'components/Loading';
+
+const Carousel = lazy(() => import('components/PageBody/Carousel'));
+const PlanCard = lazy(() => import('components/SelerCads'));
+const Faq = lazy(() => import('components/Faq'));
 
 function Home() {
   const navigate = useNavigate();
-  const goToSignUp = () => navigate('/cadastro');
+  const goToSignUp = useCallback(() => navigate('/cadastro'), [navigate]);
 
   return (
     <div>
       <div className={styles.carouselHome}>
-        <Carousel />
+        <Suspense  fallback={<Loading />}>
+          <Carousel />
+        </Suspense >
       </div>
       <div className={styles.home}>
         <section className={styles.analogica}>
@@ -32,12 +36,12 @@ function Home() {
             <Btn onClick={goToSignUp} >CONFIRA OS PLANOS</Btn>
           </div>
           <div className={styles.analogica__img}>
-            <img src={digital} alt="medica com olhar analitico digital" />
+            <img src={digital} loading="lazy" alt="medica com olhar analitico digital" />
           </div>
         </section>
         <section className={styles.controle}>
           <div className={styles.controle__img}>
-            <img src={controle} alt="" />
+            <img src={controle} loading="lazy" alt="" />
           </div>
           <div className={styles.controle__texto}>
             <h2>Controle da clínica de ponta a ponta !</h2>
@@ -57,17 +61,19 @@ function Home() {
             <Btn onClick={goToSignUp}>DEIXAR DE SER ANALOGICA</Btn>
           </div>
           <div className={styles.analogica__img}>
-            <img src={horas} alt="medica com olhar analitico digital" />
+            <img src={horas} loading="lazy" alt="medica com olhar analitico digital" />
           </div>
         </section>
         <section className={styles.solucao}>
-          <img src={computerPhone} alt="imagem de computador e telefone" />
+          <img src={computerPhone} loading="lazy" alt="imagem de computador e telefone" />
           <h3>Solução ultraconfiável para profissionais de qualquer lugar do país !</h3>
         </section>
         <section className={styles.planos}>
           <h2>Temos o plano certo para você !</h2>
           <div className={styles.cards}>
-            <PlanCard />
+            <Suspense  fallback={<Loading />}>
+              <PlanCard />
+            </Suspense >
           </div>
           <Link to="/cadastro">
             <Btn>Experimente grátis</Btn>
@@ -76,7 +82,9 @@ function Home() {
       </div>
       <section className={styles.faq}>
         <h2>Confira nossas perguntas frequentes ...</h2>
-        <Faq />
+        <Suspense  fallback={<Loading />}>
+          <Faq />
+        </Suspense >
       </section>
     </div>
   );

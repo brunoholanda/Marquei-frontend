@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { Button, Image, Input, Modal, Select, Table, Tooltip } from 'antd';
 import api from 'components/api/api';
 import { useAuth } from 'context/AuthContext';
-import { CheckCircleOutlined, ClockCircleOutlined, ExclamationCircleOutlined, EyeOutlined } from '@ant-design/icons';
+import { CheckCircleOutlined, ClockCircleOutlined, ExclamationCircleOutlined } from '@ant-design/icons';
 import { DividerLine } from 'components/Modals/Styles';
 import { BASE_URL } from 'config';
 

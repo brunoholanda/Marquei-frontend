@@ -47,6 +47,7 @@ export const AuthProvider = ({ children }) => {
     const logout = () => {
         setAuthData({ authToken: null, companyID: null, userSpecialties: [] });
         sessionStorage.removeItem('authToken');
+        window.location = '/#login'; // Redireciona para a página de login
     };
 
     return (

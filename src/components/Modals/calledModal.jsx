@@ -14,11 +14,9 @@ const CalledModal = ({ isVisible, onClose }) => {
   const companyID = authData.companyID;
   const [logoUrl, setLogoUrl] = useState(null);
   const [logoFile, setLogoFile] = useState(null);
-  const [editedData, setEditedData] = useState({});
 
   useEffect(() => {
     if (isVisible) {
-      // Resetar os estados quando o modal é aberto
       setSelectedOption(null);
       setInputText('');
       setLogoUrl(null);
