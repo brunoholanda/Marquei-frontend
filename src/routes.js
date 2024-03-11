@@ -97,9 +97,8 @@ function AppRoutes() {
                             <Route path="/agendar/:company_id" element={<Schedule />} />
                             <Route path="/pesquisa-satisfacao/:company_id" element={<ClientResearch />} />
                         </Route>
-
+                        <Route path="/login" element={<Authentication />} />
                         <Route element={<PageBodySystem />}>
-                            <Route path="/login" element={<Authentication />} />
                             <Route path="/agendamentos" element={<ProtectedRoute element={<Appointments />} />} />
                             <Route path="/allagendamentos" element={<ProtectedRoute element={<AllAppointments />} />} />
                             <Route path="/calendario" element={<ProtectedRoute element={<CalendarPage />} />} />
@@ -117,10 +116,8 @@ function AppRoutes() {
                         </Route>
                     </Routes>
                 </Suspense>
-
             </HashRouter>
         </AuthProvider>
-
     )
 }
 

@@ -1,0 +1,75 @@
+import React, { useRef } from 'react';
+import styles from '../Home.module.scss';
+import horas from '../../../public/home/woman.webp';
+import controle from '../../../public/home/woman-2.webp';
+import digital from '../../../public/home/digital.webp';
+import Btn from 'components/Btn';
+import { useNavigate } from 'react-router-dom';
+import computerPhone from '../../../public/computerPhone.png';
+import useOnScreen from 'hooks/useOnScreen';
+function ContentHome() {
+    const navigate = useNavigate();
+    const goToSignUp = () => navigate('/cadastro');
+
+    const digitalImgRef = useRef();
+    const controleImgRef = useRef();
+    const horasImgRef = useRef();
+    const computerPhoneImgRef = useRef();
+
+    const isDigitalImgVisible = useOnScreen(digitalImgRef);
+    const isControleImgVisible = useOnScreen(controleImgRef);
+    const isHorasImgVisible = useOnScreen(horasImgRef);
+    const isComputerPhoneImgVisible = useOnScreen(computerPhoneImgRef);
+
+
+    return (
+        <div className={styles.home}>
+            <section className={styles.analogica}>
+                <div className={styles.analogica__texto}>
+                    <h2>Agendamento 24 horas por dia!</h2>
+                    <p>Simplifique o agendamento para seus pacientes e automatize os processos repetitivos da sua clínica.</p>
+                    <ul>
+                        <li>Agendamento 100% digital e em poucos cliques</li>
+                        <li>Conexão com o prontuário eletrônico</li>
+                        <li>Agenda disponível para acesso a qualquer hora e lugar</li>
+                    </ul>
+                    <Btn onClick={goToSignUp} >CONFIRA OS PLANOS</Btn>
+                </div>
+                <div className={styles.analogica__img} ref={digitalImgRef}>
+                    {isDigitalImgVisible && <img src={digital} alt="medica com olhar analitico digital" />}
+                </div>
+            </section>
+            <section className={styles.controle}>
+            <div className={styles.controle__img} ref={controleImgRef}>
+                    {isControleImgVisible && <img src={controle} alt="homem de branco serio olhando para voce" />}
+                </div>
+                <div className={styles.controle__texto}>
+                    <h2>Controle da clínica de ponta a ponta !</h2>
+                    <p>Reduza até 38% das ausências de pacientes nos atendimentos.</p>
+                    <ul>
+                        <li>Agenda inteligente com confirmação automática de consulta</li>
+                        <li>Gestão de estoque com controle de entradas e saídas</li>
+                        <li>Emissão automatizada de termos e documentos</li>
+                    </ul>
+                    <Btn onClick={goToSignUp}>CONTROLE SUA CLINICA</Btn>
+                </div>
+            </section>
+            <section className={styles.analogica}>
+                <div className={styles.analogica__texto}>
+                    <h2>Sua Clínica precisa deixar de ser analógica !</h2>
+                    <p>Se você está exausto de lidar com planilhas complexas ou se perder em montanhas de papéis, e busca uma maneira eficiente de prevenir sobreposições nos agendamentos dos seus pacientes, o "Marquei" é a solução perfeita para a sua clínica, independentemente do seu tamanho. Com o nosso software de gestão de agendas, simplifique seu dia a dia e concentre-se no que realmente importa: cuidar da saúde dos seus pacientes!</p>
+                    <Btn onClick={goToSignUp}>DEIXAR DE SER ANALOGICA</Btn>
+                </div>
+                <div className={styles.analogica__img} ref={horasImgRef}>
+                    {isHorasImgVisible && <img src={horas} alt="medica com olhar analitico digital" />}
+                </div>
+            </section>
+            <section className={styles.solucao} ref={computerPhoneImgRef}>
+                {isComputerPhoneImgVisible && <img src={computerPhone} alt="imagem de computador e telefone" />}
+                <h3>Solução ultraconfiável para profissionais de qualquer lugar do país !</h3>
+            </section>
+        </div>
+    );
+}
+
+export default ContentHome;

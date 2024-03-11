@@ -8,6 +8,8 @@ import Btn from 'components/Btn';
 import PlanCard from 'components/SelerCads';
 import { useAuth } from 'context/AuthContext';
 import ReCAPTCHAUtil from 'utils/ReCAPTCHAUtil';
+import { LoadingOverlay } from 'pages/ContactPage/styles';
+import Loading from 'components/Loading';
 
 const Authentication = () => {
   const [username, setUsername] = useState('');
@@ -19,6 +21,7 @@ const Authentication = () => {
   const [loginError, setLoginError] = useState('');
   const [recaptchaToken, setRecaptchaToken] = useState('');
   const recaptchaRef = useRef(null);
+  const [isLoading, setIsLoading] = useState(false);
 
   const navigate = useNavigate();
   const { updateAuthData } = useAuth();
@@ -32,8 +35,7 @@ const Authentication = () => {
       setLoginError('Por favor, confirme que você não é um robô.');
       return;
     }
-
-
+    setIsLoading(true);
     try {
       const response = await fetch(`${BASE_URL}/auth/login`, {
         method: 'POST',
@@ -45,6 +47,7 @@ const Authentication = () => {
 
       if (!response.ok) {
         const error = await response.json();
+        setIsLoading(false);
         if (error.message === "Token inválido ou expirado") {
           setExpiredTokenModalVisible(true);
           setExpiredTokenMessage('Seu período de teste chegou ao fim, mas não fique triste, fique à vontade para contratar um dos nossos planos clicando aqui!');
@@ -55,6 +58,7 @@ const Authentication = () => {
         const { token, company_id, user_specialties } = await response.json();
 
         if (typeof company_id === 'undefined') {
+          setIsLoading(false);
           throw new Error('Informações do usuário ou da empresa não estão disponíveis.');
         }
 
@@ -70,12 +74,14 @@ const Authentication = () => {
         navigate('/calendario');
       }
     } catch (error) {
+      setIsLoading(false);
       setLoginError(error.message || 'Erro ao fazer login.');
       message.error(error.message);
       if (recaptchaRef.current) {
         recaptchaRef.current.reset(); // Reseta o reCAPTCHA
       }
     }
+
   };
 
 
@@ -113,54 +119,58 @@ const Authentication = () => {
 
   return (
     <div className={styles.autenticar}>
-      <form className={styles.formulario} onSubmit={handleLogin}>
-        <h1>Acesso ao Marquei <LockOutlined /></h1>
-        <div className={styles.inputContainer}>
-          <label htmlFor="username">E-mail</label>
-          <input
-            type="text"
-            id="username"
-            className={styles.inputField}
-            placeholder='E-mail'
-            value={username}
-            onChange={(e) => setUsername(e.target.value)}
-            required
-          />
-        </div>
-        <div className={styles.inputContainer}>
-          <label htmlFor="password">Senha</label>
-          <input
-            type="password"
-            id="password"
-            className={styles.inputField}
-            placeholder='Senha'
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            required
-          />
-          {loginError && <div className={styles.error}>{loginError}</div>}
+      {isLoading ? <LoadingOverlay><Loading /> </LoadingOverlay> : (
 
-        </div>
-        <div className={styles.captcha}>
-          <ReCAPTCHAUtil
-            ref={recaptchaRef}
-            onChange={(token) => setRecaptchaToken(token)}
-          />
-        </div>
-        <Btn type="submit" className={styles.loginButton}>Entrar</Btn>
+        <form className={styles.formulario} onSubmit={handleLogin}>
 
-        <div className={styles.forgotPassword}>
-          <Button type="link" onClick={showPasswordResetModal}>
-            Esqueci minha senha
-          </Button>
-        </div>
-        <div className={styles.registerPrompt}>
-          <p>Você ainda não tem uma conta Marquei?</p>
-          <Link to='/cadastro'>
-            Teste o Marquei gratuitamente
-          </Link>
-        </div>
-      </form>
+          <h1>Acesso ao Marquei <LockOutlined /></h1>
+          <div className={styles.inputContainer}>
+            <label htmlFor="username">E-mail</label>
+            <input
+              type="text"
+              id="username"
+              className={styles.inputField}
+              placeholder='E-mail'
+              value={username}
+              onChange={(e) => setUsername(e.target.value)}
+              required
+            />
+          </div>
+          <div className={styles.inputContainer}>
+            <label htmlFor="password">Senha</label>
+            <input
+              type="password"
+              id="password"
+              className={styles.inputField}
+              placeholder='Senha'
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              required
+            />
+            {loginError && <div className={styles.error}>{loginError}</div>}
+
+          </div>
+          <div className={styles.captcha}>
+            <ReCAPTCHAUtil
+              ref={recaptchaRef}
+              onChange={(token) => setRecaptchaToken(token)}
+            />
+          </div>
+          <Btn type="submit" className={styles.loginButton}>Entrar</Btn>
+
+          <div className={styles.forgotPassword}>
+            <Button type="link" onClick={showPasswordResetModal}>
+              Esqueci minha senha
+            </Button>
+          </div>
+          <div className={styles.registerPrompt}>
+            <p>Você ainda não tem uma conta Marquei?</p>
+            <Link to='/cadastro'>
+              Teste o Marquei gratuitamente
+            </Link>
+          </div>
+        </form>
+      )}
       <Modal
         title="Período de teste chegou ao Fim :("
         visible={expiredTokenModalVisible}

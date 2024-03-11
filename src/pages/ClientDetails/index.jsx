@@ -648,7 +648,7 @@ const ClientDetails = () => {
                         </ReactInputMask>
                     </p>
                     {!isEmailValid && <p style={{ color: 'red' }}>{emailErrorMessage}</p>}
-                    <Button onClick={handleSaveChanges} disabled={!isEmailValid}>Salvar</Button>                </div>
+                    <Button onClick={handleSaveChanges} type='primary' disabled={!isEmailValid}>Salvar</Button>                </div>
             ),
         },
         !isMobile && {
@@ -668,11 +668,11 @@ const ClientDetails = () => {
                     <div className='atestados-botoes'>
                         {canEmitCertificateOrRecipe && (
                             <>
-                                <Button onClick={handleEmitirAtestado}>Emitir Atestado</Button>
-                                <Button onClick={handleEmitirReceita}>Emitir Receita</Button>
+                                <Button onClick={handleEmitirAtestado} type='primary'>Emitir Atestado</Button>
+                                <Button onClick={handleEmitirReceita} type='primary'>Emitir Receita</Button>
                             </>
                         )}
-                        <Button onClick={handleEmitirDeclaracao}>Emitir Declaração</Button>
+                        <Button onClick={handleEmitirDeclaracao} type='primary'>Emitir Declaração</Button>
                     </div>
                     <Modal
                         title="Emitir Atestado"
@@ -824,7 +824,7 @@ const ClientDetails = () => {
     return (
         <div className='clienteDetails'>
             <h1>Detalhes do Cliente</h1>
-            <Button onClick={handleGoBack}>Voltar</Button>
+            <Button onClick={handleGoBack} type='primary'>Voltar</Button>
             <div style={{ display: 'none' }}>
                 <CertificatePage
                     qrCodeUrl={qrCodeUrl}

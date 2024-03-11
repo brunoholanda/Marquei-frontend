@@ -42,6 +42,11 @@
 
   &__img {
     margin: 2rem 10rem 2rem 0;
+    img {
+      width: 24rem;
+      height: 27rem;
+    }
+   
   }
 }
 
@@ -61,6 +66,10 @@
 
   &__img {
     margin: 2rem 0rem 2rem 10rem;
+    img {
+      width: 24rem;
+      height: 27rem;
+    }
   }
 }
 
@@ -74,6 +83,7 @@
 
   img {
     width: 14rem;
+    height: 13rem;
   }
 
   h3 {
@@ -87,6 +97,17 @@
   text-align: center;
   align-items: center;
   justify-content: center;
+
+  h2 {
+    font-size: 2.8rem;
+    color: #30455c;
+  }
+
+  button {
+    width: 18rem;
+    margin: 1rem 0;
+  }
+  
 }
 
 .cards {
@@ -180,6 +201,10 @@
     text-align: center;
     align-items: center;
     justify-content: center;
+
+    h2 {
+      font-size: 1.8rem;
+    }
   }
 
   .cards {

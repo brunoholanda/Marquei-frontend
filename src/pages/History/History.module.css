@@ -1,3 +1,7 @@
+.tabela {
+    margin: 2rem 4rem;
+}
+
 @media (max-width: 768px) {
     .tabela {
         margin: 0;
