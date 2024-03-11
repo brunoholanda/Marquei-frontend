@@ -62,6 +62,7 @@ const RegisterScreen = () => {
     'psicologo': 3,
     'fisioterapeuta': 4,
     'nutricionista': 5,
+    'fonoaudiologo': 6,
   };
 
 
@@ -249,7 +250,6 @@ const RegisterScreen = () => {
 
       message.success('Registro bem-sucedido!');
 
-      // Requisição para gerar token temporário
       const tokenResponse = await fetch(`${BASE_URL}/auth/generate-temp-token`, {
         method: 'POST',
         headers: {
@@ -303,7 +303,7 @@ const RegisterScreen = () => {
               mode="multiple"
               placeholder="Selecione a especialidade"
               onChange={handleSpecialtyChange}
-              maxTagCount={5}
+              maxTagCount={6}
               className="dynamic-width-select"
               style={{ minHeight: 'auto' }}
             >
@@ -312,6 +312,8 @@ const RegisterScreen = () => {
               <Option value="psicologo">Psicólogo</Option>
               <Option value="fisioterapeuta">Fisioterapeuta</Option>
               <Option value="nutricionista">Nutricionista</Option>
+              <Option value="fonoaudiologo">Fonoaudiólogo</Option>
+
             </Select>
           </Form.Item>
 

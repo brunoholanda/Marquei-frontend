@@ -32,6 +32,10 @@
   margin-right: 10px;
 }
 
+.ant-menu-dark .ant-menu-item-selected {
+  background-color: var(--azul) !important;
+}
+
 @media (max-width: 768px) {
   .sidebar {
     width: 40px; /* Reduz a largura da sidebar para dispositivos móveis */

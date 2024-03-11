@@ -117,7 +117,7 @@ function Configs() {
                     const secretKey = process.env.REACT_APP_SECRET_KEY;
                     const bytes = CryptoJS.AES.decrypt(response.data, secretKey);
                     const decryptedData = JSON.parse(bytes.toString(CryptoJS.enc.Utf8));
-              
+
                     setProfessionals(decryptedData);
                 } catch (error) {
                     if (error.response) {
@@ -346,7 +346,7 @@ function Configs() {
 
     return (
         <div className='tabela'>
-            <Tabs defaultActiveKey="1">
+            <Tabs defaultActiveKey="1" className="custom-tab-class">
                 {tabList.map(tab => (
                     <Tabs.TabPane tab={tab.tab} key={tab.key}>
                         {tab.content}

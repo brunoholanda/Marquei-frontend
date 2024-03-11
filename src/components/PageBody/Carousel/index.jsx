@@ -42,7 +42,7 @@ const CarouselItem = memo(({ slide, isActive, onClick }) => (
             <p>{slide.description}</p>
             <Btn onClick={onClick}>CONTRATE AGORA !</Btn>
         </div>
-        <img src={slide.imageUrl} loading="lazy" alt={slide.title} />
+        <img src={slide.imageUrl} alt={slide.title} />
     </div>
 ));
 

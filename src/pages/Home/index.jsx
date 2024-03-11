@@ -1,77 +1,32 @@
-import React, { Suspense, lazy, useCallback } from 'react';
+import React, { Suspense, lazy } from 'react';
 import styles from './Home.module.scss';
-import horas from '../../public/home/woman.webp';
-import controle from '../../public/home/woman-2.webp';
-import digital from '../../public/home/digital.webp';
+
 import Btn from 'components/Btn';
-import { Link, useNavigate } from 'react-router-dom';
-import computerPhone from '../../public/computerPhone.png';
+import { Link } from 'react-router-dom';
 import Loading from 'components/Loading';
+import ContentHome from './Content';
 
 const Carousel = lazy(() => import('components/PageBody/Carousel'));
 const PlanCard = lazy(() => import('components/SelerCads'));
 const Faq = lazy(() => import('components/Faq'));
 
 function Home() {
-  const navigate = useNavigate();
-  const goToSignUp = useCallback(() => navigate('/cadastro'), [navigate]);
 
   return (
-    <div>
-      <div className={styles.carouselHome}>
-        <Suspense  fallback={<Loading />}>
-          <Carousel />
+    <>
+      <div>
+        <div className={styles.carouselHome}>
+          <Suspense fallback={<Loading />}>
+            <Carousel />
+          </Suspense >
+        </div>
+        <Suspense fallback={<Loading />}>
+          <ContentHome />
         </Suspense >
-      </div>
-      <div className={styles.home}>
-        <section className={styles.analogica}>
-          <div className={styles.analogica__texto}>
-            <h2>Agendamento 24 horas por dia!</h2>
-            <p>Simplifique o agendamento para seus pacientes e automatize os processos repetitivos da sua clínica.</p>
-            <ul>
-              <li>Agendamento 100% digital e em poucos cliques</li>
-              <li>Conexão com o prontuário eletrônico</li>
-              <li>Agenda disponível para acesso a qualquer hora e lugar</li>
-            </ul>
-            <Btn onClick={goToSignUp} >CONFIRA OS PLANOS</Btn>
-          </div>
-          <div className={styles.analogica__img}>
-            <img src={digital} loading="lazy" alt="medica com olhar analitico digital" />
-          </div>
-        </section>
-        <section className={styles.controle}>
-          <div className={styles.controle__img}>
-            <img src={controle} loading="lazy" alt="" />
-          </div>
-          <div className={styles.controle__texto}>
-            <h2>Controle da clínica de ponta a ponta !</h2>
-            <p>Reduza até 38% das ausências de pacientes nos atendimentos.</p>
-            <ul>
-              <li>Agenda inteligente com confirmação automática de consulta</li>
-              <li>Gestão de estoque com controle de entradas e saídas</li>
-              <li>Emissão automatizada de termos e documentos</li>
-            </ul>
-            <Btn onClick={goToSignUp}>CONTROLE SUA CLINICA</Btn>
-          </div>
-        </section>
-        <section className={styles.analogica}>
-          <div className={styles.analogica__texto}>
-            <h2>Sua Clínica precisa deixar de ser analógica !</h2>
-            <p>Se você está exausto de lidar com planilhas complexas ou se perder em montanhas de papéis, e busca uma maneira eficiente de prevenir sobreposições nos agendamentos dos seus pacientes, o "Marquei" é a solução perfeita para a sua clínica, independentemente do seu tamanho. Com o nosso software de gestão de agendas, simplifique seu dia a dia e concentre-se no que realmente importa: cuidar da saúde dos seus pacientes!</p>
-            <Btn onClick={goToSignUp}>DEIXAR DE SER ANALOGICA</Btn>
-          </div>
-          <div className={styles.analogica__img}>
-            <img src={horas} loading="lazy" alt="medica com olhar analitico digital" />
-          </div>
-        </section>
-        <section className={styles.solucao}>
-          <img src={computerPhone} loading="lazy" alt="imagem de computador e telefone" />
-          <h3>Solução ultraconfiável para profissionais de qualquer lugar do país !</h3>
-        </section>
         <section className={styles.planos}>
           <h2>Temos o plano certo para você !</h2>
           <div className={styles.cards}>
-            <Suspense  fallback={<Loading />}>
+            <Suspense fallback={<Loading />}>
               <PlanCard />
             </Suspense >
           </div>
@@ -79,14 +34,14 @@ function Home() {
             <Btn>Experimente grátis</Btn>
           </Link>
         </section>
-      </div>
+      </div >
       <section className={styles.faq}>
         <h2>Confira nossas perguntas frequentes ...</h2>
-        <Suspense  fallback={<Loading />}>
+        <Suspense fallback={<Loading />}>
           <Faq />
         </Suspense >
       </section>
-    </div>
+    </>
   );
 }
 

@@ -476,7 +476,7 @@ function ProfessionalModal({ isVisible, onClose, initialData }) {
                         </Button>
                     )}
                     {currentStep < 3 ? (
-                        <Button type="default" onClick={validateFieldsAndNextStep}>
+                        <Button type="primary" onClick={validateFieldsAndNextStep}>
                             Próxima
                         </Button>
                     ) : (
