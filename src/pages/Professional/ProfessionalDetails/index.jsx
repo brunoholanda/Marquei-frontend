@@ -1,12 +1,14 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { message, Button, Tabs, Input, Select } from 'antd';
+import { message, Button, Tabs, Input, Select, Modal, Upload, Tooltip, notification } from 'antd';
 import api from 'components/api/api';
 import { useParams, useNavigate } from 'react-router-dom';
 import ReactSignatureCanvas from 'react-signature-canvas';
 import '../../Appointments/Appointments.css';
-import { UserOutlined } from '@ant-design/icons';
+import { ShareAltOutlined, UploadOutlined, UserOutlined } from '@ant-design/icons';
 import { useForm } from 'antd/es/form/Form';
 import { Spin } from 'hamburger-react';
+import { StyledPublicModalContato, StyledPublicPicture, StyledSubContainerPublic } from './Styles';
+import { BASE_URL } from 'config';
 
 const { TabPane } = Tabs;
 
@@ -26,7 +28,19 @@ const DoctorDetails = () => {
     const [numero, setNumero] = useState("");
     const [referencia, setReferencia] = useState("");
     const [cidade, setCidade] = useState("");
+    const [bairro, setBairro] = useState("");
     const [estadoSelecionado, setEstadoSelecionado] = useState(null);
+    const [isAuthModalVisible, setIsAuthModalVisible] = useState(false);
+    const [professionalCredentials, setProfessionalCredentials] = useState({ matricula: '', senha: '' });
+    const [professionalId, setProfessionalId] = useState(null);
+    const [professionals] = useState([]);
+    const [isPublicProfileModalVisible, setIsPublicProfileModalVisible] = useState(false);
+    const [publicProfileDetails, setPublicProfileDetails] = useState({});
+    const [perfilPictureUrl, setPerfilPictureUrl] = useState(null);
+    const [perfilPictureFile, setPerfilPictureFile] = useState(null);
+    const [isProfilePublished, setIsProfilePublished] = useState(false);
+    const [publicProfileId, setPublicProfileId] = useState(null);
+
     const [form] = useForm();
 
 
@@ -45,6 +59,24 @@ const DoctorDetails = () => {
         };
 
         fetchDetails();
+    }, [id]);
+
+    useEffect(() => {
+        const checkIfProfilePublished = async () => {
+            try {
+                const response = await api.get(`/publicProfessionals/professional/${id}`);
+                if (response.data) {
+                    setIsProfilePublished(true);
+                    setPublicProfileDetails(response.data);
+                }
+            } catch (error) {
+                console.error("Erro ao verificar perfil público", error);
+            }
+        };
+
+        if (id) {
+            checkIfProfilePublished();
+        }
     }, [id]);
 
 
@@ -85,6 +117,8 @@ const DoctorDetails = () => {
         return () => window.removeEventListener('resize', handleResize);
     }, []);
 
+
+
     const handleCEPChange = async (e) => {
         const value = e.target.value.replace(/\D/g, '');
         setCep(value);
@@ -100,13 +134,16 @@ const DoctorDetails = () => {
                 if (!data.erro) {
                     setEndereco(data.logradouro || '');
                     setNumero(data.numero || '');
+                    setBairro(data.bairro || '');
                     setReferencia(data.complemento || '');
                     setCidade(data.localidade || '');
+
                     setEstadoSelecionado(data.uf || '');
 
                     // Atualiza editedDetails com os novos valores
                     handleInputChange('endereco', data.logradouro || '');
                     handleInputChange('numero', data.numero || '');
+                    handleInputChange('bairro', data.bairro || '');
                     handleInputChange('referencia', data.complemento || '');
                     handleInputChange('cidade', data.localidade || '');
                     handleInputChange('estado', data.uf || '');
@@ -114,6 +151,7 @@ const DoctorDetails = () => {
                     form.setFieldsValue({
                         endereco: data.logradouro || '',
                         numero: data.numero || '',
+                        bairro: data.bairro || '',
                         referencia: data.complemento || '',
                         cidade: data.localidade || '',
                         estado: data.uf || ''
@@ -149,7 +187,6 @@ const DoctorDetails = () => {
         }
     };
 
-
     const handleInputChange = (key, value) => {
         setEditedDetails(prevDetails => ({
             ...prevDetails,
@@ -164,11 +201,11 @@ const DoctorDetails = () => {
 
     if (!professionalDetails) {
         return (
-          <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh' }}>
-            <Spin size="large" /> 
-          </div>
+            <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh' }}>
+                <Spin size="large" />
+            </div>
         );
-      }
+    }
 
     const handleUpdateSignature = async (newSignatureBase64) => {
         try {
@@ -220,8 +257,9 @@ const DoctorDetails = () => {
                     <p><b>Nome:</b> <Input value={editedDetails.nome || professionalDetails.nome} onChange={(e) => handleInputChange('nome', e.target.value)} /></p>
                     <p><b>Telefone:</b> <Input value={editedDetails.celular || professionalDetails.celular} onChange={(e) => handleInputChange('celular', e.target.value)} /></p>
                     <p><b>Nascimento:</b> <Input value={editedDetails.data_de_nascimento || professionalDetails.data_de_nascimento} onChange={e => handleInputChange('data_de_nascimento', e.target.value)} /></p>
+                    <p><b>Email:</b> <Input value={editedDetails.email || professionalDetails.email} onChange={(e) => handleInputChange('email', e.target.value)} /></p>
                     <p><b>CPF:</b> <Input value={editedDetails.cpf || professionalDetails.cpf} onChange={e => handleInputChange('cpf', e.target.value)} /></p>
-                    <Button onClick={handleSaveChanges}>Salvar</Button>                </>
+                    <Button onClick={handleSaveChanges} type='primary'>Salvar</Button>                </>
             ),
         },
         {
@@ -246,12 +284,12 @@ const DoctorDetails = () => {
                             </Select>
                         )}
                     </p>
-                    <Button onClick={handleSaveChanges}>Salvar</Button>                </>
+                    <Button onClick={handleSaveChanges} type='primary'>Salvar</Button>                </>
             ),
         },
         {
             key: '3',
-            tab: isMobile ? 'End.' : 'Endereço', // Nome da tab ajustado para mobile
+            tab: isMobile ? 'End. Prof' : 'Endereço Profissional', // Nome da tab ajustado para mobile
             content: (
                 <>
                     <p>
@@ -296,7 +334,14 @@ const DoctorDetails = () => {
                             onChange={(e) => handleInputChange('cidade', e.target.value)}
                         />
                     </p>
-                    <Button onClick={handleSaveChanges}>Salvar</Button>                </>
+                    <p>
+                        <b>Bairro:</b>
+                        <Input
+                            value={editedDetails.bairro || bairro}
+                            onChange={(e) => handleInputChange('bairro', e.target.value)}
+                        />
+                    </p>
+                    <Button onClick={handleSaveChanges} type='primary'>Salvar</Button>                </>
             ),
         },
         {
@@ -333,18 +378,225 @@ const DoctorDetails = () => {
                         />
                     </div>
                     <Button onClick={clearSignature}>Limpar</Button>
-                    <Button onClick={saveSignature} style={{ marginLeft: '10px' }}>Salvar Assinatura</Button>
+                    <Button onClick={saveSignature} style={{ marginLeft: '10px' }} type='primary'>Salvar Assinatura</Button>
                 </>
             ),
         },
     ].filter(Boolean);
 
+    const handleAuthModalClose = () => {
+        setIsAuthModalVisible(false);
+    };
 
+    const handleCredentialChange = (e) => {
+        const { name, value } = e.target;
+        setProfessionalCredentials(prevCreds => ({
+            ...prevCreds,
+            [name]: value
+        }));
+    };
+
+    const handleAuthModalOpen = () => {
+        setIsAuthModalVisible(true);
+    };
+    const fetchPublicProfileAndPlans = async (professionalId) => {
+        try {
+            const profilePromise = api.get(`/publicProfessionals/professional/${professionalId}`);
+            const plansPromise = api.get('/planos_medicos');
+
+            const [profileResponse, plansResponse] = await Promise.all([profilePromise, plansPromise]);
+
+            return { profileData: profileResponse.data, plansData: plansResponse.data };
+        } catch (error) {
+            console.error("Error fetching data", error);
+            throw new Error("Failed to fetch data");
+        }
+    };
+
+
+    const loadPublicProfileDetails = async (professionalId) => {
+
+        try {
+            const responsePublicProfile = await api.get(`/publicProfessionals/professional/${professionalId}`);
+            if (responsePublicProfile.data) {
+                setIsProfilePublished(true);
+                setPublicProfileDetails(responsePublicProfile.data);
+                setPublicProfileId(responsePublicProfile.data.id);
+
+                if (responsePublicProfile.data.foto) {
+                    const imageUrl = `${BASE_URL}/uploads/ProfileDoctor/${responsePublicProfile.data.foto.split('/').pop()}`;
+                    setPerfilPictureUrl(imageUrl);
+                }
+
+            } else {
+                setPublicProfileDetails({
+                    nome: professionalDetails.nome,
+                    telefone: professionalDetails.celular, // Ajuste para 'telefone' se esse for o nome correto do campo
+                    email: professionalDetails.email,
+                    registro_profissional: professionalDetails.registro_profissional,
+                    titulo: professionalDetails.titulo,
+                    planos_que_atende: planosSelecionados.join(", "), // Assumindo que 'planosSelecionados' é um array de IDs ou nomes
+                    endereco: professionalDetails.endereco,
+                    numero: professionalDetails.numero,
+                    bairro: professionalDetails.bairro,
+                    cidade: professionalDetails.cidade,
+                    uf: professionalDetails.estado,
+                    cep: professionalDetails.cep,
+                });
+            }
+
+            setIsPublicProfileModalVisible(true);
+        } catch (error) {
+            console.error("Erro ao carregar perfil público", error);
+            setPublicProfileDetails({
+                nome: professionalDetails.nome,
+                telefone: professionalDetails.celular,
+                email: professionalDetails.email,
+                registro_profissional: professionalDetails.registro_profissional,
+                titulo: professionalDetails.titulo,
+                planos_que_atende: planosSelecionados.join(", "),
+                endereco: professionalDetails.endereco,
+                numero: professionalDetails.numero,
+                bairro: professionalDetails.bairro,
+                cidade: professionalDetails.cidade,
+                uf: professionalDetails.estado,
+                cep: professionalDetails.cep,
+            });
+
+            setPerfilPictureUrl(null);
+            setIsPublicProfileModalVisible(true);
+        }
+    };
+
+
+    const handleAuthSubmit = async () => {
+        try {
+            const response = await api.post('/professionals/authenticate', {
+                login: professionalCredentials.matricula,
+                senha: professionalCredentials.senha,
+            });
+
+            if (response.data.autenticado && String(response.data.professional_id) === String(id)) {
+                setProfessionalId(response.data.professional_id);
+                setIsAuthModalVisible(false);
+                loadPublicProfileDetails(response.data.professional_id);
+            } else {
+                notification.error({ message: "Você inseriu as credenciais de outro profssional, por favor insira as credenciais do profissional selecionado" });
+            }
+        } catch (error) {
+            console.error("Erro de autenticação", error);
+            message.error("Erro na autenticação");
+        }
+    };
+
+    const handleSaveOrUpdatePublicProfile = async () => {
+        const formData = new FormData();
+
+        Object.keys(publicProfileDetails).forEach(key => {
+            formData.append(key, publicProfileDetails[key]);
+        });
+
+        formData.append('professional_id', professionalId);
+
+        if (perfilPictureFile) {
+            formData.append('foto', perfilPictureFile, perfilPictureFile.name);
+        }
+        try {
+            let response;
+            if (isProfilePublished && publicProfileId) {
+                response = await api.put(`/publicProfessionals/${publicProfileId}`, formData, {
+                    headers: {
+                        'Content-Type': 'multipart/form-data',
+                    },
+                });
+            } else {
+                response = await api.post('/publicProfessionals', formData, {
+                    headers: {
+                        'Content-Type': 'multipart/form-data',
+                    },
+                });
+            }
+
+            if (response.status === 200 || response.status === 201) {
+                notification.success({
+                    message: isProfilePublished ? "Perfil atualizado com sucesso!" : "Perfil publicado com sucesso!"
+                });
+                setIsPublicProfileModalVisible(false);
+            } else {
+                notification.error({ message: "Erro ao salvar perfil público" });
+            }
+        } catch (error) {
+            console.error("Erro ao salvar perfil público", error);
+            message.error("Erro ao salvar perfil público: " + error.message);
+        }
+    };
+
+    function resizeImage(file, maxWidth, maxHeight, quality, callback) {
+        const reader = new FileReader();
+        reader.onload = event => {
+            const img = new Image();
+            img.onload = () => {
+                const canvas = document.createElement('canvas');
+                let width = img.width;
+                let height = img.height;
+
+                if (width > height) {
+                    if (width > maxWidth) {
+                        height *= maxWidth / width;
+                        width = maxWidth;
+                    }
+                } else {
+                    if (height > maxHeight) {
+                        width *= maxHeight / height;
+                        height = maxHeight;
+                    }
+                }
+
+                canvas.width = width;
+                canvas.height = height;
+                const ctx = canvas.getContext('2d');
+                ctx.drawImage(img, 0, 0, width, height);
+
+                canvas.toBlob(blob => {
+                    const resizedFile = new File([blob], file.name, {
+                        type: file.type,
+                        lastModified: Date.now(),
+                    });
+                    callback(resizedFile);
+                }, file.type, quality);
+            };
+            img.src = event.target.result;
+        };
+        reader.readAsDataURL(file);
+    }
+
+
+    const handleFileChange = info => {
+        if (info.fileList.length === 0) {
+            setPerfilPictureFile(null);
+            return;
+        }
+
+        const file = info.fileList[0].originFileObj;
+        if (!['image/png', 'image/jpeg', 'image/jpg'].includes(file.type)) {
+            message.error("Por favor, selecione um arquivo PNG, JPG ou JPEG.");
+            return;
+        }
+
+        resizeImage(file, 1000, 1000, 1, resizedFile => {
+            const previewUrl = URL.createObjectURL(resizedFile);
+            setPerfilPictureUrl(previewUrl);
+            setPerfilPictureFile(resizedFile);
+        });
+    };
 
     return (
         <div className='tabela'>
             <h1>Detalhes do Proffisional <UserOutlined /></h1>
-            <Button onClick={handleGoBack}>Voltar</Button>
+            <Button onClick={handleGoBack} type='primary' style={{ marginRight: '1rem' }}>Voltar</Button>
+            <Button onClick={handleAuthModalOpen} type='primary'>
+                {isProfilePublished ? 'Atualizar Perfil Público' : 'Tornar Público'}<ShareAltOutlined />
+            </Button>
             <Tabs defaultActiveKey="1">
                 {tabList.map(tab => (
                     <Tabs.TabPane tab={tab.tab} key={tab.key}>
@@ -352,6 +604,156 @@ const DoctorDetails = () => {
                     </Tabs.TabPane>
                 ))}
             </Tabs>
+            <Modal
+                title="Autenticação do Profissional"
+                visible={isAuthModalVisible}
+                onCancel={handleAuthModalClose}
+                onOk={handleAuthSubmit}
+                okText="Autenticar"
+                cancelText="Cancelar"
+            >
+                <p>Compartilhe suas informações e aumente seu alcance, com isso as pessoas vão poder te achar em nossa plataforma</p>
+                <p>Somente o próprio profissional pode compartilhar suas informações</p>
+                <p>Essa senha só pode ser alterada pela equipe de suporte.</p>
+                <Input
+                    placeholder="Matrícula"
+                    name="matricula"
+                    value={professionalCredentials.matricula}
+                    onChange={handleCredentialChange}
+                />
+                <Input.Password
+                    placeholder="Senha"
+                    name="senha"
+                    value={professionalCredentials.senha}
+                    onChange={handleCredentialChange}
+                />
+            </Modal>
+            <Modal
+                title="Informações do seu Perfil Publico 🔄"
+                visible={isPublicProfileModalVisible}
+                onCancel={() => setIsPublicProfileModalVisible(false)}
+                onOk={handleSaveOrUpdatePublicProfile}
+                okText={isProfilePublished ? "Atualizar" : "Publicar"}
+                cancelText="Cancelar"
+                width={900}
+            >
+                <p>As informações a seguir serão publicadas em nossa plataforma de agendamentos, possibilitando que pessoas do mundo inteiro te encontrem</p>
+                <StyledPublicModalContato>
+                    <StyledPublicPicture>
+                        {perfilPictureUrl && (
+                            <img src={perfilPictureUrl} alt="Perfil" style={{ maxWidth: '100%', height: 'auto' }} />
+                        )}
+                        <Tooltip title="Alterar foto de perfil">
+                            <div className='upload-btn'>
+                                <Upload
+                                    beforeUpload={() => false}
+                                    onChange={handleFileChange}
+                                    showUploadList={false}
+                                    accept="image/png, image/jpeg, image/jpg"
+                                >
+                                    <UploadOutlined />
+                                </Upload>
+                            </div>
+                        </Tooltip>
+                    </StyledPublicPicture>
+                    <StyledSubContainerPublic>
+                        <Input
+                            placeholder="Nome"
+                            value={publicProfileDetails.nome}
+                            onChange={(e) => setPublicProfileDetails({ ...publicProfileDetails, nome: e.target.value })}
+                        />
+                        <Input
+                            placeholder="Telefone"
+                            value={publicProfileDetails.telefone}
+                            onChange={(e) => setPublicProfileDetails({ ...publicProfileDetails, telefone: e.target.value })}
+                        />
+                    </StyledSubContainerPublic>
+                    <StyledSubContainerPublic>
+                        <Input
+                            placeholder="Email"
+                            value={publicProfileDetails.email}
+                            onChange={(e) => setPublicProfileDetails({ ...publicProfileDetails, email: e.target.value })}
+                        />
+                        <Input
+                            placeholder="Instagram"
+                            value={publicProfileDetails.instagram}
+                            onChange={(e) => setPublicProfileDetails({ ...publicProfileDetails, instagram: e.target.value })}
+                        />
+                    </StyledSubContainerPublic>
+                </StyledPublicModalContato>
+                <StyledPublicModalContato>
+                    <Input
+                        placeholder="Especialidade"
+                        value={publicProfileDetails.especialidade}
+                        onChange={(e) => setPublicProfileDetails({ ...publicProfileDetails, especialidade: e.target.value })}
+                    />
+                    <Input
+                        placeholder="Registro Profissional"
+                        value={publicProfileDetails.registro_profissional}
+                        onChange={(e) => setPublicProfileDetails({ ...publicProfileDetails, registro_profissional: e.target.value })}
+                    />
+                    <Input
+                        placeholder="Título"
+                        value={publicProfileDetails.titulo}
+                        onChange={(e) => setPublicProfileDetails({ ...publicProfileDetails, titulo: e.target.value })}
+                    />
+                </StyledPublicModalContato>
+
+                <StyledPublicModalContato>
+                    <Input
+                        placeholder="Planos que Atende"
+                        value={publicProfileDetails.planos_que_atende}
+                        onChange={(e) => setPublicProfileDetails({ ...publicProfileDetails, planos_que_atende: e.target.value })}
+                    />
+                    <StyledPublicModalContato>
+                        <Select
+                            placeholder="Tipo de Atendimento"
+                            style={{ width: '100%' }}
+                            onChange={(value) => setPublicProfileDetails({ ...publicProfileDetails, atendimento: value })}
+                        >
+                            <Select.Option value="1">Apenas Presencial</Select.Option>
+                            <Select.Option value="2">Apenas Teleconsulta</Select.Option>
+                            <Select.Option value="3">Ambos</Select.Option>
+                        </Select>
+                    </StyledPublicModalContato>
+                </StyledPublicModalContato>
+                <StyledPublicModalContato>
+                    <Input
+                        placeholder="Endereço"
+                        value={publicProfileDetails.endereco}
+                        onChange={(e) => setPublicProfileDetails({ ...publicProfileDetails, endereco: e.target.value })}
+                    />
+                    <Input
+                        placeholder="Número"
+                        value={publicProfileDetails.numero}
+                        onChange={(e) => setPublicProfileDetails({ ...publicProfileDetails, numero: e.target.value })}
+                    />
+                    <Input
+                        placeholder="Bairro"
+                        value={publicProfileDetails.bairro}
+                        onChange={(e) => setPublicProfileDetails({ ...publicProfileDetails, bairro: e.target.value })}
+                    />
+                </StyledPublicModalContato>
+
+                <StyledPublicModalContato>
+                    <Input
+                        placeholder="Cidade"
+                        value={publicProfileDetails.cidade}
+                        onChange={(e) => setPublicProfileDetails({ ...publicProfileDetails, cidade: e.target.value })}
+                    />
+                    <Input
+                        placeholder="UF"
+                        maxLength={2}
+                        value={publicProfileDetails.uf}
+                        onChange={(e) => setPublicProfileDetails({ ...publicProfileDetails, uf: e.target.value.toUpperCase() })}
+                    />
+                    <Input
+                        placeholder="CEP"
+                        value={publicProfileDetails.cep}
+                        onChange={(e) => setPublicProfileDetails({ ...publicProfileDetails, cep: e.target.value })}
+                    />
+                </StyledPublicModalContato>
+            </Modal>
         </div>
     );
 }

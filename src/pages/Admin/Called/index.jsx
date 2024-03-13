@@ -49,7 +49,7 @@ const ChamadosTable = () => {
             if (formStatus === '2' && selectedChamado.image_path) {
                 await api.delete(`/chamados/${selectedChamado.id}/deleteImage`);
             }
-            
+
             setIsModalActionsVisible(false);
             const response = await api.get(`/chamados/${companyID}`);
             setChamados(response.data);
@@ -117,7 +117,7 @@ const ChamadosTable = () => {
             console.log(`URL da imagem: ${BASE_URL}${selectedChamado.image_path}`);
         }
     }, [selectedChamado]);
-    
+
 
     return (
         <>
@@ -141,7 +141,11 @@ const ChamadosTable = () => {
                         />
                     </div>
                 )}
-                <Select value={formStatus} onChange={setFormStatus} style={{ width: 120, marginBottom: 20 }}>
+                <Select
+                    value={formStatus}
+                    onChange={setFormStatus}
+                    style={{ width: 120, marginBottom: 20 }}
+                >
                     <Select.Option value="1">Em andamento</Select.Option>
                     <Select.Option value="2">Concluído</Select.Option>
                 </Select>

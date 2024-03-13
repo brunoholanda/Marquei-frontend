@@ -3,6 +3,12 @@
 
 }
 
+.clienteDetails button {
+    margin: 1rem 0;
+
+}
+
+
 .clienteDetails h1 {
     color: var(--cinza-texto);
 }

@@ -38,7 +38,7 @@ const PrivacyPolicy = lazy(() => import('pages/Docs/PryvacyPolicy'));
 const ContactPage = lazy(() => import('pages/ContactPage'));
 const NpsSystem = lazy(() => import('pages/NpsSystem'));
 const ClientResearch = lazy(() => import('pages/NpsSystem/ClientResearch'));
-
+const SearchProfessionals = lazy(() => import('pages/EncontreProfissionais'));
 
 function ScrollToTop() {
     const { pathname } = useLocation();
@@ -91,6 +91,7 @@ function AppRoutes() {
                             <Route path="/confirm-certificate/:id" element={<AtestadoInfoPage />} />
                             <Route path="/confirm-declaration/:id" element={<DeclationInfoPage />} />
                             <Route path="/reset-password/:token" element={<ResetPassword />} />
+                            <Route path="/search-professionals" element={<SearchProfessionals />} />                            
                             <Route path="*" element={<NotFound />} />
                         </Route>
                         <Route element={<PageBodyClient />}>
