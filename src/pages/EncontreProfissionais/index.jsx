@@ -1,17 +1,19 @@
 import React, { useState } from 'react';
 import { Input, Button, notification } from 'antd';
-import { StyledEncontreContainer, StyledInputsEncontre, StyledResultBeforeSearch, StyledResultsBeforeSearch } from './styles';
+import { StyledDoctorsContainer, StyledEncontreContainer, StyledInputsEncontre } from './styles';
 import api from 'components/api/api';
 import { BASE_URL } from 'config';
+import Loading from 'components/Loading';
+import { LoadingOverlay } from 'pages/ContactPage/styles';
+import { Link } from 'react-router-dom';
+import { CompassOutlined } from '@ant-design/icons';
 
 
 const SearchProfessionals = () => {
-    const [searchTerm, setSearchTerm] = useState('');
-    const [location, setLocation] = useState('');
     const [professionals, setProfessionals] = useState([]);
-    const [searchResults, setSearchResults] = useState([]);
     const [specialtySearchTerm, setSpecialtySearchTerm] = useState('');
     const [citySearchTerm, setCitySearchTerm] = useState('');
+    const [isLoading, setIsLoading] = useState(false);
 
     const handleSearch = async () => {
         if (!specialtySearchTerm && !citySearchTerm) {
@@ -20,6 +22,7 @@ const SearchProfessionals = () => {
             });
             return;
         }
+        setIsLoading(true);
 
         try {
             const response = await api.get('/publicProfessionals/search', {
@@ -29,11 +32,15 @@ const SearchProfessionals = () => {
                 },
             });
             setProfessionals(response.data);
+
         } catch (error) {
             console.error('Erro ao buscar profissionais', error);
             notification.error({
                 message: 'Erro ao buscar profissionais',
             });
+        }
+        finally {
+            setIsLoading(false);
         }
     };
 
@@ -68,27 +75,29 @@ const SearchProfessionals = () => {
                     </Button>
                 </div>
             </StyledInputsEncontre>
-            <div className="search-results">
-                {professionals.length > 0 ? professionals.map((prof) => (
-                    <div key={prof.id} style={{ padding: '20px', border: '1px solid #ccc', margin: '10px 0', display: 'flex', alignItems: 'center' }}>
-                        {prof.foto && (
-                            <img src={`${BASE_URL}/${prof.foto}`} alt="Perfil" style={{ width: '100px', height: '100px', borderRadius: '50%', marginRight: '20px' }} />
-                        )}
-                        <div>
-                            <h3>{prof.nome}</h3>
-                            <p><strong>Especialidade:</strong> {prof.especialidade || 'Não informada'}</p>
-                            <p><strong>Registro Profissional:</strong> {prof.registro_profissional || 'Não informado'}</p>
-                            <p><strong>Atendimento:</strong> {prof.atendimento === '1' ? 'Apenas Presencial' : prof.atendimento === '2' ? 'Apenas Teleconsulta' : 'Ambos'}</p>
-                            <p><strong>Endereço:</strong> {`${prof.endereco}, ${prof.numero}, ${prof.bairro || ''}, ${prof.cidade} - ${prof.uf}`}</p>
-                            <p><strong>CEP:</strong> {prof.cep}</p>
-                            <p><strong>Telefone:</strong> {prof.telefone || 'Não informado'}</p>
-                            <p><strong>Email:</strong> {prof.email || 'Não informado'}</p>
-                            <p><strong>Instagram:</strong> {prof.instagram ? `@${prof.instagram}` : 'Não informado'}</p>
+            {isLoading ? <LoadingOverlay><Loading /> </LoadingOverlay> : (
+                <StyledDoctorsContainer>
+                    {professionals.length > 0 ? professionals.map((prof) => (
+                        <div className='doctors-card' key={prof.id}>
+                            {prof.foto && (
+                                <img src={`${BASE_URL}/${prof.foto}`} alt="Perfil" />
+                            )}
+                            <div className='doctors-infos'>
+                                <h3>{prof.nome}</h3>
+                                <p> <strong> {prof.especialidade || 'Não informada'}</strong></p>
+                                <p><CompassOutlined /> {`${prof.endereco}, ${prof.numero}, ${prof.bairro || ''}, ${prof.cidade} - ${prof.uf}`}</p>
+                            </div>
+                            <div className='doctors-mais'>
+                                <Link to={`/publicProfessionals/${prof.id}`}>
+                                    <Button type='primary'>
+                                        Ver mais
+                                    </Button>
+                                </Link>
+                            </div>
                         </div>
-                    </div>
-                )) : <p>Nenhum profissional encontrado.</p>}
-            </div>
-
+                    )) : <p>Nenhum profissional encontrado.</p>}
+                </StyledDoctorsContainer>
+            )}
         </StyledEncontreContainer>);
 };
 

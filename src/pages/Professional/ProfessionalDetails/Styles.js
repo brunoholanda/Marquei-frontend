@@ -11,7 +11,6 @@ export const StyledPublicModalContato = styled.div`
 
     select {
         width: 250px;
-
     }
 `;
 

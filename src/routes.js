@@ -39,6 +39,7 @@ const ContactPage = lazy(() => import('pages/ContactPage'));
 const NpsSystem = lazy(() => import('pages/NpsSystem'));
 const ClientResearch = lazy(() => import('pages/NpsSystem/ClientResearch'));
 const SearchProfessionals = lazy(() => import('pages/EncontreProfissionais'));
+const ProfessionalDetailPage = lazy(() => import('pages/EncontreProfissionais/PublicProfessionalDetails'));
 
 function ScrollToTop() {
     const { pathname } = useLocation();
@@ -92,6 +93,8 @@ function AppRoutes() {
                             <Route path="/confirm-declaration/:id" element={<DeclationInfoPage />} />
                             <Route path="/reset-password/:token" element={<ResetPassword />} />
                             <Route path="/search-professionals" element={<SearchProfessionals />} />                            
+                            <Route path="/publicProfessionals/:id" element={<ProfessionalDetailPage />} />
+
                             <Route path="*" element={<NotFound />} />
                         </Route>
                         <Route element={<PageBodyClient />}>
