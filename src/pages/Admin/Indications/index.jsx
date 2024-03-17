@@ -155,7 +155,7 @@ const IndicationsTable = () => {
             <Table dataSource={chamados} columns={columns} rowKey="id" />;
             <Modal
                 title="Tratar Indicação"
-                visible={isModalActionsVisible}
+                open={isModalActionsVisible}
                 okText='Salvar'
                 onOk={handleOk}
                 onCancel={() => setIsModalActionsVisible(false)}

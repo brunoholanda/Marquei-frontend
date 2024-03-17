@@ -137,7 +137,7 @@ const AppointmentModal = ({
         <>
             <Modal
                 title="O que você gostaria de fazer com este agendamento?"
-                visible={isModalVisible}
+                open={isModalVisible}
                 onCancel={handleClose}
                 footer={[
                     <StyledFooterAgendamento>
@@ -195,7 +195,7 @@ const AppointmentModal = ({
             </Modal>
             <Modal
                 title="Tem certeza de que deseja excluir este agendamento? 😱"
-                visible={isDeleteConfirmModalVisible}
+                open={isDeleteConfirmModalVisible}
                 onOk={handleDeleteAppointment}
                 onCancel={closeDeleteConfirmModal}
                 okText="Sim"
@@ -226,7 +226,7 @@ const AppointmentModal = ({
             </Modal>
             <Modal
                 title="Reagendar Agendamento ⚠️"
-                visible={isRescheduleModalVisible}
+                open={isRescheduleModalVisible}
                 onCancel={() => setIsRescheduleModalVisible(false)}
                 footer={[
                     <StyledFooterAgendamento>

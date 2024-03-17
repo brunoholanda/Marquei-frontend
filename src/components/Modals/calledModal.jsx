@@ -119,7 +119,7 @@ const CalledModal = ({ isVisible, onClose }) => {
     <>
       <Modal
         title="Criar Chamado 😅"
-        visible={isVisible}
+        open={isVisible}
         onCancel={() => {
           setSelectedOption(null);
           setInputText('');
@@ -175,7 +175,7 @@ const CalledModal = ({ isVisible, onClose }) => {
       {ticketNumber && (
         <Modal
           title="Chamado Criado"
-          visible={!!ticketNumber}
+          open={!!ticketNumber}
           footer={null}
           onCancel={() => setTicketNumber(null)}
         >

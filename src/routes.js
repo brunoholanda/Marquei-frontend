@@ -4,6 +4,7 @@ import { useLocation } from "react-router-dom";
 
 import Loading from "components/Loading";
 import { AuthProvider, useAuth } from "context/AuthContext";
+import ResetDoctorPassword from "pages/ResetPassword/ResetDoctorPassword";
 
 const NotFound = lazy(() => import('pages/NotFound'));
 const PageBody = lazy(() => import('components/PageBody'));
@@ -40,6 +41,7 @@ const NpsSystem = lazy(() => import('pages/NpsSystem'));
 const ClientResearch = lazy(() => import('pages/NpsSystem/ClientResearch'));
 const SearchProfessionals = lazy(() => import('pages/EncontreProfissionais'));
 const ProfessionalDetailPage = lazy(() => import('pages/EncontreProfissionais/PublicProfessionalDetails'));
+const ConfirmAppointmentPage = lazy(() => import('pages/ConfirmConsulta'));
 
 function ScrollToTop() {
     const { pathname } = useLocation();
@@ -92,14 +94,15 @@ function AppRoutes() {
                             <Route path="/confirm-certificate/:id" element={<AtestadoInfoPage />} />
                             <Route path="/confirm-declaration/:id" element={<DeclationInfoPage />} />
                             <Route path="/reset-password/:token" element={<ResetPassword />} />
+                            <Route path="/reset-password-doctor/:token" element={<ResetDoctorPassword />} />
                             <Route path="/search-professionals" element={<SearchProfessionals />} />                            
                             <Route path="/publicProfessionals/:id" element={<ProfessionalDetailPage />} />
-
                             <Route path="*" element={<NotFound />} />
                         </Route>
                         <Route element={<PageBodyClient />}>
                             <Route path="/agendar/:company_id" element={<Schedule />} />
                             <Route path="/pesquisa-satisfacao/:company_id" element={<ClientResearch />} />
+                            <Route path="/confirmar-consulta/:id" element={<ConfirmAppointmentPage />} />
                         </Route>
                         <Route path="/login" element={<Authentication />} />
                         <Route element={<PageBodySystem />}>

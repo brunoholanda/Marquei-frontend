@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import api from 'components/api/api';
 import { Button, Table } from 'antd';
 import { Bar, BarChart, Tooltip, XAxis, YAxis, ResponsiveContainer } from 'recharts';
-import { LinkOutlined } from '@ant-design/icons';
+import { CheckOutlined, LineChartOutlined, LinkOutlined } from '@ant-design/icons';
 import ClientResearchModal from 'components/Modals/ClientResearchModal';
 import { useAuth } from 'context/AuthContext';
 import npsImage from '../../public/nps.png';
@@ -66,12 +66,14 @@ function NpsSystem() {
 
     return (
         <StyledNpsPage>
+            <h2>NPS: A métrica que sua clínica precisa para reter clientes <LineChartOutlined /></h2>
+            <p><CheckOutlined /> No botão abaixo você pode compartilhar o link da pesquisa com seus clientes.</p>
+            <p><CheckOutlined /> Se você é um cliente Premiuim a pesquisa será enviada automaticamente</p>
             <Button style={{ marginBottom: '50px' }} type="primary" onClick={() => setIsResearchModalVisible(true)}>
                 <LinkOutlined /> Gerar Link da Pesquisa.
             </Button>
-
-            <img src={npsImage} alt="escala nps com carinhas" ref={imgRef} style={{ width: '80%', height: 'auto', margin: '0 auto' }} />
-
+            <h3>Aqui está sua nota na escala NPS:</h3>
+            <img src={npsImage} alt="escala nps com carinhas" ref={imgRef} style={{ width: '80%', height: 'auto', margin: '1rem auto' }} />
             <div style={{ width: '80%', height: '110px', margin: '1rem auto' }}>
                 <ResponsiveContainer>
                     <BarChart data={data} layout="vertical">
@@ -82,6 +84,7 @@ function NpsSystem() {
                     </BarChart>
                 </ResponsiveContainer>
             </div>
+            <h3>Aqui está os clientes que avaliaram:</h3>
 
             <CustomerRatingsTable customers={customers} />
             {isResearchModalVisible && (

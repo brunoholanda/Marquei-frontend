@@ -6,6 +6,12 @@ export const StyledEncontreContainer = styled.div`
     max-width: 1200px;
     width: 100%;
     padding: 0 2rem; 
+
+    @media (max-width: 768px) { 
+      padding: 0; 
+      margin: 8rem auto;
+
+    }
 `;
 
 export const StyledInputsEncontre = styled.div`
@@ -34,6 +40,31 @@ export const StyledInputsEncontre = styled.div`
         width: 200px;
         font-size: 20px;
     }
+
+    @media (max-width: 768px) { 
+      flex-wrap: wrap;
+      margin: 2rem 1rem 1rem 1rem;
+      align-items: center;
+
+        
+    .input-group {
+        text-align: start;
+    }
+
+    input {
+        width: 300px;
+        height: 40px;
+
+    }
+
+    button {
+        height: 40px;
+        margin-top: 1rem;
+        font-size: 18px;
+        width: 65vw;
+    }
+
+      }
 `;
 
 export const StyledDoctorsContainer = styled.div`
@@ -78,6 +109,24 @@ export const StyledDoctorsContainer = styled.div`
             margin-bottom: .5rem;
         }
     }
+
+    @media (max-width: 768px) { 
+      .doctors-card {
+        padding: 20px 4px;
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        justify-content: center;
+
+        
+        button {
+          width: 85vw;
+          height: 50px;
+          font-size: 16px;
+          margin-top: 1rem;
+        }
+      }
+    }
 `;
 
 export const StyledPublicDetailPage = styled.div`
@@ -90,6 +139,7 @@ export const StyledPublicDetailPage = styled.div`
     .botaovoltar {
       display: flex;
       margin: 0 2rem;
+      
       button {
         width: 200px;
         height: 40px;
@@ -98,6 +148,8 @@ export const StyledPublicDetailPage = styled.div`
 
     @media (max-width: 768px) { 
       padding: 0; 
+      margin: 8rem auto;  
+
     }
 `;
 
@@ -122,11 +174,12 @@ export const StyledPublicDetaillCard = styled.div`
     }
 
     .doctors-infos-card {
-      text-align: start;
+      text-align: start !important;
       margin: 0 1rem;
 
       p {
         margin: 10px 0 0 0;
+        
       }
 
       button {
@@ -153,19 +206,21 @@ export const StyledPublicDetaillCard = styled.div`
         button {
           margin: 10px;
         }
-      }
 
-      .doctors-infos-card {
-      text-align: center;
-      margin: 0;
+        .doctors-infos-card {
+      margin: 1rem;
       
     }
 
       .doctors-infos-agendar {
-        text-align: center;
+        align-items: center;
         button {
+          width: 65vw;
           height: 50px;
         }
       }
+      }
+
+      
       
 `;

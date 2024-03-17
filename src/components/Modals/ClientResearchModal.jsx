@@ -25,7 +25,7 @@ const ClientResearchModal = ({ isResearchModalVisible, onResearchModalClose }) =
   return (
     <Modal
       title="Link da pesquisa para seus clientes !"
-      visible={isResearchModalVisible}
+      open={isResearchModalVisible}
       onOk={handleCopyLink}
       onCancel={onResearchModalClose}
       footer={[

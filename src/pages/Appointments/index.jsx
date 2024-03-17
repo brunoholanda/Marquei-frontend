@@ -274,7 +274,7 @@ const Appointments = () => {
             />
             <Modal
                 title="Informações Adicionais"
-                visible={isNoteModalVisible}
+                open={isNoteModalVisible}
                 onCancel={closeNoteModal}
                 onOk={handleSaveAdditionalInfo}
                 okText="Salvar"

@@ -3,7 +3,7 @@ import { Table, Button, Spin, message, Modal, Tabs } from 'antd';
 import api from '../../components/api/api';
 import ProfessionalModal from '../../components/Modals/registerModal';
 import { Link, Navigate } from 'react-router-dom';
-import { DeleteOutlined, IdcardOutlined, UserAddOutlined, UserSwitchOutlined } from '@ant-design/icons';
+import { DeleteOutlined, IdcardOutlined, SwapOutlined, UserAddOutlined, UserSwitchOutlined } from '@ant-design/icons';
 import '../Appointments/Appointments.css';
 import CompanyDataModal from '../../components/Modals/companyModal';
 import CompanyData from './CmpanyData';
@@ -31,7 +31,14 @@ function Configs() {
     const userSpecialties = authData.userSpecialties;
 
 
+    const customLocale = {
+        next: 'Proceed',
+        last: 'Blz 😊',
+        skip: 'Not Now',
+        close: 'Close',
+    };
 
+    
     const [steps, setSteps] = useState([
         {
             target: '.add-professional-button', // Classe CSS única para o botão Adicionar Profissional
@@ -54,6 +61,19 @@ function Configs() {
         }
     };
 
+    const handleProfessionalSaved = (newProfessional) => {
+        if (selectedProfessional) {
+          // Atualiza o profissional existente
+          setProfessionals(professionals.map(professional => 
+            professional.id === newProfessional.id ? newProfessional : professional
+          ));
+        } else {
+          // Adiciona um novo profissional
+          setProfessionals([...professionals, newProfessional]);
+        }
+        closeModal(); // Fecha o modal
+      };
+      
 
     useEffect(() => {
         const fetchMaxProfessionals = async () => {
@@ -143,9 +163,7 @@ function Configs() {
 
 
     const openModal = () => {
-        // Antes de abrir o modal para adicionar um profissional, verifica se o limite foi alcançado
         if (professionals.length >= maxProfessionals) {
-            // Abre o modal de upgrade em vez de exibir uma mensagem de aviso
             setUpgradeModalVisible(true);
             return;
         }
@@ -155,10 +173,8 @@ function Configs() {
 
 
     const handleUpgrade = () => {
-        // A lógica para redirecionar o usuário para a página de upgrade
-        // Pode ser uma navegação ou abrir um novo componente/modal
         Navigate('/upgrade');
-        setUpgradeModalVisible(false); // Fecha o modal após o redirecionamento
+        setUpgradeModalVisible(false);
     };
 
     const closeUpgradeModal = () => {
@@ -291,6 +307,7 @@ function Configs() {
                         onClose={closeModal}
                         initialData={selectedProfessional}
                         userSpecialties={userSpecialties}
+                        onProfessionalSaved={handleProfessionalSaved}
                     />
                     <CompanyDataModal
                         isVisible={isCompanyModalVisible}
@@ -346,7 +363,8 @@ function Configs() {
 
     return (
         <div className='tabela'>
-            <Tabs defaultActiveKey="1" className="custom-tab-class">
+            <h3>Navegue entre as opções abaixo <SwapOutlined /></h3>
+            <Tabs defaultActiveKey="1" className="custom-tab-class" type='card' style={{margin: '2rem 0 0 0'}}>
                 {tabList.map(tab => (
                     <Tabs.TabPane tab={tab.tab} key={tab.key}>
                         {tab.content}
@@ -359,6 +377,7 @@ function Configs() {
                 callback={handleJoyrideCallback}
                 continuous={true}
                 showSkipButton={true}
+                locale={customLocale}
                 styles={{
                     options: {
                         zIndex: 10000,

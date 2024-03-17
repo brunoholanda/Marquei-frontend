@@ -9,8 +9,8 @@ import { useForm } from 'antd/es/form/Form';
 import { Spin } from 'hamburger-react';
 import { StyledPublicModalContato, StyledPublicPicture, StyledSubContainerPublic } from './Styles';
 import { BASE_URL } from 'config';
-
-const { TabPane } = Tabs;
+import { useAuth } from 'context/AuthContext';
+import ResetDoctorPasswordModal from 'components/Modals/resetDoctorPassword';
 
 const DoctorDetails = () => {
     const [isMobile, setIsMobile] = useState(window.innerWidth < 768);
@@ -33,13 +33,17 @@ const DoctorDetails = () => {
     const [isAuthModalVisible, setIsAuthModalVisible] = useState(false);
     const [professionalCredentials, setProfessionalCredentials] = useState({ matricula: '', senha: '' });
     const [professionalId, setProfessionalId] = useState(null);
-    const [professionals] = useState([]);
     const [isPublicProfileModalVisible, setIsPublicProfileModalVisible] = useState(false);
     const [publicProfileDetails, setPublicProfileDetails] = useState({});
     const [perfilPictureUrl, setPerfilPictureUrl] = useState(null);
     const [perfilPictureFile, setPerfilPictureFile] = useState(null);
     const [isProfilePublished, setIsProfilePublished] = useState(false);
     const [publicProfileId, setPublicProfileId] = useState(null);
+    const [isResetDoctorModalVisible, setIsResetDoctorModalVisible] = useState(false);
+    const [emailSaved, setEmailSaved] = useState(false);
+
+    const { authData } = useAuth();
+    const companyID = authData.companyID;
 
     const [form] = useForm();
 
@@ -50,7 +54,11 @@ const DoctorDetails = () => {
                 const response = await api.get(`/professionals/${id}`);
                 setProfessionalDetails(response.data);
                 setEditedDetails(response.data);
-                setCep(response.data.cep || ""); // Adiciona esta linha para definir o CEP inicial
+                setCep(response.data.cep || "");
+                
+                if (response.data.email) {
+                    setEmailSaved(true);
+                }
 
             } catch (error) {
                 console.error("Erro ao buscar detalhes", error);
@@ -177,6 +185,9 @@ const DoctorDetails = () => {
             if (response.status === 200) {
                 message.success("Detalhes atualizados com sucesso!");
                 setProfessionalDetails({ ...professionalDetails, ...payload });
+                if (editedDetails.email) {
+                    setEmailSaved(true);
+                }
             } else {
                 console.error('Resposta de erro da API:', response);
                 message.error("Erro ao atualizar detalhes: " + response.statusText);
@@ -187,11 +198,15 @@ const DoctorDetails = () => {
         }
     };
 
-    const handleInputChange = (key, value) => {
+    const handleInputChange = (key, value, field) => {
         setEditedDetails(prevDetails => ({
             ...prevDetails,
             [key]: value
         }));
+
+        if (field === 'email' && professionalDetails.email && !editedDetails.email) {
+            setEmailSaved(true);
+        }
     };
 
 
@@ -251,20 +266,21 @@ const DoctorDetails = () => {
     const tabList = [
         {
             key: '1',
-            tab: isMobile ? 'Detalhes' : 'Dados Pessoais',  // Nome da tab ajustado para mobile
+            tab: isMobile ? 'Detalhes' : 'Dados Pessoais',
             content: (
                 <>
                     <p><b>Nome:</b> <Input value={editedDetails.nome || professionalDetails.nome} onChange={(e) => handleInputChange('nome', e.target.value)} /></p>
                     <p><b>Telefone:</b> <Input value={editedDetails.celular || professionalDetails.celular} onChange={(e) => handleInputChange('celular', e.target.value)} /></p>
                     <p><b>Nascimento:</b> <Input value={editedDetails.data_de_nascimento || professionalDetails.data_de_nascimento} onChange={e => handleInputChange('data_de_nascimento', e.target.value)} /></p>
-                    <p><b>Email:</b> <Input value={editedDetails.email || professionalDetails.email} onChange={(e) => handleInputChange('email', e.target.value)} /></p>
+                    <p><b>Email:</b> <Input value={editedDetails.email || professionalDetails.email} onChange={(e) => handleInputChange('email', e.target.value)} disabled={emailSaved} /></p>
                     <p><b>CPF:</b> <Input value={editedDetails.cpf || professionalDetails.cpf} onChange={e => handleInputChange('cpf', e.target.value)} /></p>
-                    <Button onClick={handleSaveChanges} type='primary'>Salvar</Button>                </>
+                    <Button onClick={handleSaveChanges} type='primary'>Salvar</Button>
+                </>
             ),
         },
         {
             key: '2',
-            tab: isMobile ? 'Profissional' : 'Informacoes Proffisionais',  // Nome da tab ajustado para mobile
+            tab: isMobile ? 'Profissional' : 'Informacoes Proffisionais',
             content: (
                 <>
                     <p><b>Registro Profissional:</b> <Input value={editedDetails.registro_profissional || professionalDetails.registro_profissional} onChange={(e) => handleInputChange('registro_profissional', e.target.value)} /></p>
@@ -399,20 +415,6 @@ const DoctorDetails = () => {
     const handleAuthModalOpen = () => {
         setIsAuthModalVisible(true);
     };
-    const fetchPublicProfileAndPlans = async (professionalId) => {
-        try {
-            const profilePromise = api.get(`/publicProfessionals/professional/${professionalId}`);
-            const plansPromise = api.get('/planos_medicos');
-
-            const [profileResponse, plansResponse] = await Promise.all([profilePromise, plansPromise]);
-
-            return { profileData: profileResponse.data, plansData: plansResponse.data };
-        } catch (error) {
-            console.error("Error fetching data", error);
-            throw new Error("Failed to fetch data");
-        }
-    };
-
 
     const loadPublicProfileDetails = async (professionalId) => {
 
@@ -490,17 +492,39 @@ const DoctorDetails = () => {
     };
 
     const handleSaveOrUpdatePublicProfile = async () => {
+        Modal.confirm({
+            title: 'Consentimento para Divulgação das Informações',
+            content: 'Ao prosseguir, você permite que as informações listadas (nome, contato, especialidade médica, endereço, redes sociais, e detalhes profissionais) sejam publicadas em nossa plataforma, tornando-as visíveis ao público. Esta ação visa facilitar seu encontro por potenciais pacientes.',
+            onOk() {
+                publishProfile();
+            },
+        });
+    };
+    const publishProfile = async () => {
         const formData = new FormData();
 
-        Object.keys(publicProfileDetails).forEach(key => {
-            formData.append(key, publicProfileDetails[key]);
+        const planosNomes = planosSelecionados.map(idSelecionado => {
+            const plano = todosPlanos.find(plano => plano.id === idSelecionado);
+            return plano ? plano.nome : null;
+        }).filter(nome => nome !== null).join(", ");
+
+        const cleanProfileDetails = { ...publicProfileDetails };
+        delete cleanProfileDetails.company_id;
+        delete cleanProfileDetails.professional_id;
+        delete cleanProfileDetails.planos_que_atende;
+
+        Object.keys(cleanProfileDetails).forEach(key => {
+            formData.append(key, cleanProfileDetails[key]);
         });
 
+        formData.append('planos_que_atende', planosNomes);
+        formData.append('company_id', companyID);
         formData.append('professional_id', professionalId);
 
         if (perfilPictureFile) {
             formData.append('foto', perfilPictureFile, perfilPictureFile.name);
         }
+
         try {
             let response;
             if (isProfilePublished && publicProfileId) {
@@ -583,12 +607,35 @@ const DoctorDetails = () => {
             return;
         }
 
-        resizeImage(file, 1000, 1000, 1, resizedFile => {
+        resizeImage(file, 500, 500, 1, resizedFile => {
             const previewUrl = URL.createObjectURL(resizedFile);
             setPerfilPictureUrl(previewUrl);
             setPerfilPictureFile(resizedFile);
         });
     };
+
+    const isFormValid = () => {
+        return (
+            publicProfileDetails.nome &&
+            publicProfileDetails.especialidade &&
+            publicProfileDetails.telefone &&
+            publicProfileDetails.atendimento &&
+            perfilPictureUrl
+        );
+    };
+
+    const submitButton = (
+        <Tooltip title={!isFormValid() ? "Preencha todos os campos obrigatórios para continuar" : ""}>
+            <Button
+                type="primary"
+                onClick={handleSaveOrUpdatePublicProfile}
+                disabled={!isFormValid()}
+            >
+                {isProfilePublished ? "Atualizar" : "Publicar"}
+            </Button>
+        </Tooltip>
+    );
+
 
     return (
         <div className='tabela'>
@@ -597,7 +644,7 @@ const DoctorDetails = () => {
             <Button onClick={handleAuthModalOpen} type='primary'>
                 {isProfilePublished ? 'Atualizar Perfil Público' : 'Tornar Público'}<ShareAltOutlined />
             </Button>
-            <Tabs defaultActiveKey="1">
+            <Tabs defaultActiveKey="1" type='card' style={{ margin: '2rem 0 0 0' }}>
                 {tabList.map(tab => (
                     <Tabs.TabPane tab={tab.tab} key={tab.key}>
                         {tab.content}
@@ -606,7 +653,7 @@ const DoctorDetails = () => {
             </Tabs>
             <Modal
                 title="Autenticação do Profissional"
-                visible={isAuthModalVisible}
+                open={isAuthModalVisible}
                 onCancel={handleAuthModalClose}
                 onOk={handleAuthSubmit}
                 okText="Autenticar"
@@ -614,12 +661,12 @@ const DoctorDetails = () => {
             >
                 <p>Compartilhe suas informações e aumente seu alcance, com isso as pessoas vão poder te achar em nossa plataforma</p>
                 <p>Somente o próprio profissional pode compartilhar suas informações</p>
-                <p>Essa senha só pode ser alterada pela equipe de suporte.</p>
                 <Input
                     placeholder="Matrícula"
                     name="matricula"
                     value={professionalCredentials.matricula}
                     onChange={handleCredentialChange}
+                    style={{ marginBottom: '.6rem' }}
                 />
                 <Input.Password
                     placeholder="Senha"
@@ -627,15 +674,27 @@ const DoctorDetails = () => {
                     value={professionalCredentials.senha}
                     onChange={handleCredentialChange}
                 />
+                <Button
+                    type='link'
+                    onClick={() => setIsResetDoctorModalVisible(true)}
+                    style={{ marginTop: '1rem' }}
+                >
+                    Esqueci a senha 😥
+                </Button>
             </Modal>
             <Modal
                 title="Informações do seu Perfil Publico 🔄"
-                visible={isPublicProfileModalVisible}
+                open={isPublicProfileModalVisible}
                 onCancel={() => setIsPublicProfileModalVisible(false)}
-                onOk={handleSaveOrUpdatePublicProfile}
                 okText={isProfilePublished ? "Atualizar" : "Publicar"}
                 cancelText="Cancelar"
                 width={900}
+                footer={[
+                    <Button key="back" onClick={() => setIsPublicProfileModalVisible(false)}>
+                        Cancelar
+                    </Button>,
+                    submitButton
+                ]}
             >
                 <p>As informações a seguir serão publicadas em nossa plataforma de agendamentos, possibilitando que pessoas do mundo inteiro te encontrem</p>
                 <StyledPublicModalContato>
@@ -698,13 +757,22 @@ const DoctorDetails = () => {
                         onChange={(e) => setPublicProfileDetails({ ...publicProfileDetails, titulo: e.target.value })}
                     />
                 </StyledPublicModalContato>
-
                 <StyledPublicModalContato>
-                    <Input
-                        placeholder="Planos que Atende"
-                        value={publicProfileDetails.planos_que_atende}
-                        onChange={(e) => setPublicProfileDetails({ ...publicProfileDetails, planos_que_atende: e.target.value })}
-                    />
+                    <StyledPublicModalContato>
+                        {todosPlanos && (
+                            <Select
+                                mode="multiple"
+                                style={{ width: '100%' }}
+                                placeholder="Selecione os planos de saúde"
+                                defaultValue={planosSelecionados}
+                                onChange={(selected) => setPlanosSelecionados(selected)}
+                            >
+                                {todosPlanos.map(plano => (
+                                    <Select.Option key={plano.id} value={plano.id}>{plano.nome}</Select.Option>
+                                ))}
+                            </Select>
+                        )}
+                    </StyledPublicModalContato>
                     <StyledPublicModalContato>
                         <Select
                             placeholder="Tipo de Atendimento"
@@ -754,6 +822,12 @@ const DoctorDetails = () => {
                     />
                 </StyledPublicModalContato>
             </Modal>
+            {isResetDoctorModalVisible && (
+                <ResetDoctorPasswordModal
+                    isResetDoctorModalVisible={isResetDoctorModalVisible}
+                    onResetDoctorModalClose={() => setIsResetDoctorModalVisible(false)}
+                />
+            )}
         </div>
     );
 }

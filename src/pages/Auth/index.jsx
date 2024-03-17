@@ -78,13 +78,11 @@ const Authentication = () => {
       setLoginError(error.message || 'Erro ao fazer login.');
       message.error(error.message);
       if (recaptchaRef.current) {
-        recaptchaRef.current.reset(); // Reseta o reCAPTCHA
+        recaptchaRef.current.reset(); 
       }
     }
 
   };
-
-
 
   const handlePasswordReset = async () => {
     if (!recaptchaToken) {
@@ -173,7 +171,7 @@ const Authentication = () => {
       )}
       <Modal
         title="Período de teste chegou ao Fim :("
-        visible={expiredTokenModalVisible}
+        open={expiredTokenModalVisible}
         onOk={() => {
           navigate('/contratar-plano');
           setExpiredTokenModalVisible(false);
@@ -195,7 +193,7 @@ const Authentication = () => {
 
       <Modal
         title="Redefinir senha"
-        visible={isPasswordResetModalVisible}
+        open={isPasswordResetModalVisible}
         onOk={handlePasswordReset}
         onCancel={() => setPasswordResetModalVisible(false)}
         okText="Resetar"

@@ -69,7 +69,7 @@ const TrackingPage = () => {
 
             <Modal
                 title={`Chamado ${selectedChamado?.ticket_number}`}
-                visible={!!selectedChamado}
+                open={!!selectedChamado}
                 onCancel={() => setSelectedChamado(null)}
                 footer={null}
             >

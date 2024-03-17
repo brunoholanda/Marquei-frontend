@@ -1,17 +1,20 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { message, Button, Tabs, Input, InputNumber, DatePicker, Modal, Table, TimePicker, Select, notification } from 'antd';
+import { message, Button, Tabs, Input, InputNumber, DatePicker, Modal, Table, TimePicker, Select, notification, Tooltip, Upload, Dropdown, Menu } from 'antd';
 import api from 'components/api/api';
 import { useParams, useNavigate, useLocation } from 'react-router-dom';
 import './ClientDetails.css';
 import CertificatePage from './Atestado';
 import ReactToPrint from 'react-to-print';
 import ReactInputMask from 'react-input-mask';
-import { ExpandAltOutlined, PlusOutlined, SearchOutlined } from '@ant-design/icons';
+import { CheckOutlined, ExpandAltOutlined, PlusOutlined, SearchOutlined, UploadOutlined } from '@ant-design/icons';
 import DeclarationPage from './Declaration';
 import ReceitaPage from './Receita';
 import { Spin } from 'hamburger-react';
 import { useAuth } from 'context/AuthContext';
 import CryptoJS from 'crypto-js';
+import { BASE_URL } from 'config';
+import CameraCaptureModal from 'components/Modals/CameraCaptureModal';
+import ResetDoctorPasswordModal from 'components/Modals/resetDoctorPassword';
 
 
 const ClientDetails = () => {
@@ -70,6 +73,40 @@ const ClientDetails = () => {
     const companyID = authData.companyID;
     const userSpecialties = authData.userSpecialties || [];
     const canEmitCertificateOrRecipe = userSpecialties.includes(1) || userSpecialties.includes(2);
+    const [perfilPictureUrl, setPerfilPictureUrl] = useState(null);
+    const [perfilPictureFile, setPerfilPictureFile] = useState(null);
+    const [isCameraModalOpen, setIsCameraModalOpen] = useState(false);
+    const [isResetDoctorModalVisible, setIsResetDoctorModalVisible] = useState(false);
+
+    const openCameraModal = () => {
+        setIsCameraModalOpen(true);
+    };
+
+    const handleCapture = (imageUrl) => {
+        fetch(imageUrl)
+            .then(res => res.blob())
+            .then(blob => {
+                // Converte o Blob em um File
+                const initialFile = new File([blob], "captured-image.jpg", { type: "image/jpeg" });
+
+                // Chama a função resizeImage para redimensionar a imagem
+                resizeImage(initialFile, 300, 300, 0.7, resizedFile => {
+                    // Obtém a URL da imagem redimensionada
+                    const previewUrl = URL.createObjectURL(resizedFile);
+
+                    // Define a URL da imagem redimensionada para visualização e o arquivo para upload
+                    setPerfilPictureUrl(previewUrl);
+                    setPerfilPictureFile(resizedFile);
+
+                    // Fecha o modal da câmera
+                    setIsCameraModalOpen(false);
+                });
+            })
+            .catch(error => {
+                console.error("Error converting captured image to file:", error);
+                message.error("Erro ao converter a imagem capturada.");
+            });
+    };
 
 
     const handleOpenModal = () => {
@@ -132,7 +169,7 @@ const ClientDetails = () => {
                     const secretKey = process.env.REACT_APP_SECRET_KEY;
                     const bytes = CryptoJS.AES.decrypt(response.data, secretKey);
                     const decryptedData = JSON.parse(bytes.toString(CryptoJS.enc.Utf8));
-              
+
                     setProfessionals(decryptedData);
                 } catch (error) {
                     console.error('Error fetching professionals:', error);
@@ -198,12 +235,17 @@ const ClientDetails = () => {
 
                 const clientResponse = await api.get(`/clients/${clientId}`);
                 const clientData = clientResponse.data;
+
+                if (clientData.client_foto) {
+                    const imageUrl = `${BASE_URL}${clientData.client_foto}`;
+                    setPerfilPictureUrl(imageUrl);
+                } else {
+                    setPerfilPictureUrl(null);
+                }
+
                 setClientId(clientId);
                 setEditedDetails(clientData);
 
-                const clientNotesResponse = await api.get(`/clients/${clientId}/notes`);
-                const clientNotesData = clientNotesResponse.data;
-                setClientNotes(clientNotesData.notes || '');
             } catch (error) {
                 console.error("Error fetching details:", error);
                 message.error("Error fetching details");
@@ -269,9 +311,22 @@ const ClientDetails = () => {
                 throw new Error("ID do cliente não encontrado");
             }
 
-            const response = await api.put(`/clients/${clientId}`, editedDetails);
+            // Criando um objeto FormData
+            const formData = new FormData();
+
+            Object.keys(editedDetails).forEach(key => {
+                formData.append(key, editedDetails[key]);
+            });
+
+            console.log(perfilPictureFile);
+            if (perfilPictureFile) {
+                formData.append("client_foto", perfilPictureFile);
+            }
+
+            const response = await api.put(`/clients/${clientId}`, formData);
+
             if (response.status === 200) {
-                notification.success({message: 'Detalhes atualizados com sucesso!'})
+                notification.success({ message: 'Detalhes atualizados com sucesso!' })
                 setAppointmentDetails(prevState => ({ ...prevState, ...editedDetails }));
             } else {
                 throw new Error("Falha ao atualizar detalhes do cliente");
@@ -281,6 +336,7 @@ const ClientDetails = () => {
             message.error(`Erro ao atualizar detalhes: ${error.message || error}`);
         }
     }
+
 
 
     const handleInputChange = (key, value) => {
@@ -408,7 +464,6 @@ const ClientDetails = () => {
                 if (professionalInfo) {
                     setProfessionalDetails(professionalInfo); // Assumindo que setProfessionalDetails é uma função de atualização de estado
                 } else {
-                    // Caso não encontre no cache, busca na API (assumindo que há uma rota para isso)
                     const professionalDetailsResponse = await api.get(`/professionals/${response.data.professional_id}`);
                     setProfessionalDetails(professionalDetailsResponse.data);
                 }
@@ -430,9 +485,6 @@ const ClientDetails = () => {
             message.error("Erro na autenticação");
         }
     };
-
-
-
 
     const handleSaveNotes = async () => {
         const noteData = {
@@ -500,8 +552,6 @@ const ClientDetails = () => {
             throw error;
         }
     };
-
-
 
     const printCertificate = async () => {
         const patientName = editedDetails.nome;
@@ -609,46 +659,155 @@ const ClientDetails = () => {
         return true; // A hora de fim é válida
     };
 
+    function resizeImage(file, maxWidth, maxHeight, quality, callback) {
+        const reader = new FileReader();
+        reader.onload = event => {
+            const img = new Image();
+            img.onload = () => {
+                const canvas = document.createElement('canvas');
+                let width = img.width;
+                let height = img.height;
+
+                if (width > height) {
+                    if (width > maxWidth) {
+                        height *= maxWidth / width;
+                        width = maxWidth;
+                    }
+                } else {
+                    if (height > maxHeight) {
+                        width *= maxHeight / height;
+                        height = maxHeight;
+                    }
+                }
+
+                canvas.width = width;
+                canvas.height = height;
+                const ctx = canvas.getContext('2d');
+                ctx.drawImage(img, 0, 0, width, height);
+
+                canvas.toBlob(blob => {
+                    const resizedFile = new File([blob], file.name, {
+                        type: file.type,
+                        lastModified: Date.now(),
+                    });
+                    callback(resizedFile);
+                }, file.type, quality);
+            };
+            img.src = event.target.result;
+        };
+        reader.readAsDataURL(file);
+    }
+
+
+    const handleFileOrCameraImage = (blobOrFile) => {
+        const isBlob = blobOrFile instanceof Blob;
+
+        const file = isBlob
+            ? new File([blobOrFile], "captured-image.jpg", { type: "image/jpeg", lastModified: new Date() })
+            : blobOrFile;
+
+        if (!['image/png', 'image/jpeg', 'image/jpg'].includes(file.type)) {
+            message.error("Por favor, selecione um arquivo PNG, JPG ou JPEG.");
+            return;
+        }
+
+        resizeImage(file, 300, 300, 0.7, resizedFile => {
+            const previewUrl = URL.createObjectURL(resizedFile);
+            setPerfilPictureUrl(previewUrl);
+            setPerfilPictureFile(resizedFile);
+        });
+    };
+
+    const uploadMenu = (
+        <Menu>
+            <Menu.Item key="upload">
+                <label htmlFor="upload-photo">Escolher arquivo</label>
+                <input
+                    type="file"
+                    id="upload-photo"
+                    style={{ display: 'none' }}
+                    accept="image/png, image/jpeg"
+                    onChange={(e) => {
+                        const file = e.target.files[0];
+                        if (file) {
+                            handleFileOrCameraImage(file);
+                        }
+                    }}
+                />
+            </Menu.Item>
+            <Menu.Item key="capture" onClick={openCameraModal}>
+                Tirar foto
+            </Menu.Item>
+        </Menu>
+    );
+
+
     const tabList = [
         {
             key: '1',
             tab: isMobile ? 'Detalhes' : 'Dados Pessoais',
             content: (
                 <div className='dadosPessoaisTab'>
-                    <p><b>Nome:</b> <Input value={editedDetails.nome || appointmentDetails.nome} onChange={(e) => handleInputChange('nome', e.target.value)} /></p>
-                    <p><b>Data de Nascimento:</b>
-                        <ReactInputMask
-                            mask="99/99/9999"
-                            value={formatDate(editedDetails.data_nascimento)}
-                            onChange={(e) => handleDateChange(e.target.value)}
-                        >
-                            {(inputProps) => <Input {...inputProps} />}
-                        </ReactInputMask>
-                    </p>
-                    <p><b>Telefone:</b>
-                        <ReactInputMask
-                            mask="(99) 9 9999-9999"
-                            value={editedDetails.celular || appointmentDetails.celular}
-                            onChange={(e) => handleInputChange('celular', e.target.value)}
-                        >
-                            {(inputProps) => <Input {...inputProps} />}
-                        </ReactInputMask>
-                    </p>
-                    <p><b>E-Mail:</b> <Input value={editedDetails.client_email} onChange={e => handleEmailChange(e.target.value)} /></p>
-                    <p><b>Plano:</b> <Input value={editedDetails.planodental} onChange={e => handleInputChange('planodental', e.target.value)} /></p>
-                    <p><b>Numero da Carteira do Plano:</b> <Input value={editedDetails.carteira} onChange={e => handleInputChange('carteira', e.target.value)} /></p>
-                    <p><b>CPF:</b>
-                        <ReactInputMask
-                            mask="999.999.999-99"
-                            value={editedDetails.cpf || appointmentDetails.cpf}
-                            onChange={(e) => handleInputChange('cpf', e.target.value)}
-                            disabled={true}
-                        >
-                            {(inputProps) => <Input {...inputProps} disabled={true} />}
-                        </ReactInputMask>
-                    </p>
-                    {!isEmailValid && <p style={{ color: 'red' }}>{emailErrorMessage}</p>}
-                    <Button onClick={handleSaveChanges} type='primary' disabled={!isEmailValid}>Salvar</Button>                </div>
+                    <div className='foto-client'>
+                        {perfilPictureUrl && (
+                            <img src={perfilPictureUrl} alt="foto do cliente" style={{ maxWidth: '100%', height: 'auto' }} />
+                        )}
+                        <Tooltip title="Alterar foto do cliente">
+                            <div className='upload-btn'>
+                                <Dropdown overlay={uploadMenu} trigger={['click']}>
+                                    <Button icon={<UploadOutlined />} />
+                                </Dropdown>
+                                <input
+                                    type="file"
+                                    id="upload-photo"
+                                    style={{ display: 'none' }}
+                                    accept="image/png, image/jpeg"
+                                    onChange={(e) => {
+                                        const file = e.target.files[0];
+                                        if (file) {
+                                            handleFileOrCameraImage(file);
+                                        }
+                                    }}
+                                />
+                            </div>
+                        </Tooltip>
+                    </div>
+                    <div>
+                        <p><b>Nome:</b> <Input value={editedDetails.nome || appointmentDetails.nome} onChange={(e) => handleInputChange('nome', e.target.value)} /></p>
+                        <p><b>Data de Nascimento:</b>
+                            <ReactInputMask
+                                mask="99/99/9999"
+                                value={formatDate(editedDetails.data_nascimento)}
+                                onChange={(e) => handleDateChange(e.target.value)}
+                            >
+                                {(inputProps) => <Input {...inputProps} />}
+                            </ReactInputMask>
+                        </p>
+                        <p><b>Telefone:</b>
+                            <ReactInputMask
+                                mask="(99) 9 9999-9999"
+                                value={editedDetails.celular || appointmentDetails.celular}
+                                onChange={(e) => handleInputChange('celular', e.target.value)}
+                            >
+                                {(inputProps) => <Input {...inputProps} />}
+                            </ReactInputMask>
+                        </p>
+                        <p><b>E-Mail:</b> <Input value={editedDetails.client_email} onChange={e => handleEmailChange(e.target.value)} /></p>
+                        <p><b>Plano:</b> <Input value={editedDetails.planodental} onChange={e => handleInputChange('planodental', e.target.value)} /></p>
+                        <p><b>Numero da Carteira do Plano:</b> <Input value={editedDetails.carteira} onChange={e => handleInputChange('carteira', e.target.value)} /></p>
+                        <p><b>CPF:</b>
+                            <ReactInputMask
+                                mask="999.999.999-99"
+                                value={editedDetails.cpf || appointmentDetails.cpf}
+                                onChange={(e) => handleInputChange('cpf', e.target.value)}
+                            >
+                                {(inputProps) => <Input {...inputProps} />}
+                            </ReactInputMask>
+                        </p>
+                        {!isEmailValid && <p style={{ color: 'red' }}>{emailErrorMessage}</p>}
+                        <Button onClick={handleSaveChanges} type='primary' disabled={!isEmailValid}>Salvar</Button>
+                    </div>
+                </div>
             ),
         },
         !isMobile && {
@@ -755,7 +914,7 @@ const ClientDetails = () => {
                                     format="HH:mm"
                                     onChange={(time, timeString) => {
                                         if (declarationData.startTime && !compareTime(declarationData.startTime, timeString)) {
-                                            notification.error( {message:'A hora de fim não pode ser menor que a hora de início.'});
+                                            notification.error({ message: 'A hora de fim não pode ser menor que a hora de início.' });
                                         } else {
                                             setDeclarationData({ ...declarationData, endTime: timeString });
                                         }
@@ -823,7 +982,7 @@ const ClientDetails = () => {
 
     return (
         <div className='clienteDetails'>
-            <h1>Detalhes do Cliente</h1>
+            <h1>Detalhes do Cliente <CheckOutlined /></h1>
             <Button onClick={handleGoBack} type='primary'>Voltar</Button>
             <div style={{ display: 'none' }}>
                 <CertificatePage
@@ -855,7 +1014,7 @@ const ClientDetails = () => {
                     ref={receitaPageRef}
                 />
             </div>
-            <Tabs defaultActiveKey="1" >
+            <Tabs defaultActiveKey="1" type='card' style={{ margin: '.5rem 0 0 0' }}>
                 {tabList.map(tab => (
                     <Tabs.TabPane tab={tab.tab} key={tab.key}>
                         {tab.content}
@@ -871,12 +1030,12 @@ const ClientDetails = () => {
                 cancelText="Cancelar"
             >
                 <p>Atestados só podem ser emitidos por meio da senha definida pelo profissional em seu cadastro. Nunca compartilhe sua senha!</p>
-                <p>Essa senha só pode ser alterada pela equipe de suporte.</p>
                 <Input
                     placeholder="Matrícula"
                     name="matricula"
                     value={professionalCredentials.matricula}
                     onChange={handleCredentialChange}
+                    style={{ marginBottom: '.6rem' }}
                 />
                 <Input.Password
                     placeholder="Senha"
@@ -884,10 +1043,17 @@ const ClientDetails = () => {
                     value={professionalCredentials.senha}
                     onChange={handleCredentialChange}
                 />
+                <Button
+                    type='link'
+                    onClick={() => setIsResetDoctorModalVisible(true)}
+                    style={{ marginTop: '1rem' }}
+                >
+                    Esqueci a senha 😥
+                </Button>
             </Modal>
             <Modal
                 title="Prontuário Eletrônico 📝"
-                visible={isModalInsertNotesVisible}
+                open={isModalInsertNotesVisible}
                 onOk={handleSaveNotes}
                 onCancel={handleCancel}
                 okText="Salvar"
@@ -929,6 +1095,17 @@ const ClientDetails = () => {
                 <p><strong>Informação Completa: </strong>{fullNoteDetails.notes}</p>
                 <div className='divider-line'></div>
             </Modal>
+            <CameraCaptureModal
+                isOpen={isCameraModalOpen}
+                onClose={() => setIsCameraModalOpen(false)}
+                onCapture={handleCapture}
+            />
+            {isResetDoctorModalVisible && (
+                <ResetDoctorPasswordModal
+                    isResetDoctorModalVisible={isResetDoctorModalVisible}
+                    onResetDoctorModalClose={() => setIsResetDoctorModalVisible(false)}
+                />
+            )}
         </div>
     );
 }

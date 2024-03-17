@@ -428,7 +428,7 @@ const AuthModal = ({ isVisible, onClose, onLoginSuccess, selectedService }) => {
         <>
             <Modal
                 title="Cadastre-se / Entrar"
-                visible={isVisible}
+                open={isVisible}
                 onCancel={onClose}
                 footer={null}
             >
@@ -439,7 +439,7 @@ const AuthModal = ({ isVisible, onClose, onLoginSuccess, selectedService }) => {
             </Modal>
             <Modal
                 title="Teste Grátis 😮"
-                visible={showTrialModal}
+                open={showTrialModal}
                 onCancel={() => setShowTrialModal(false)}
                 footer={null}
             >

@@ -21,6 +21,7 @@ import PlanCard from 'components/SelerCads';
 import AddClientsModal from './AddClientsModal';
 import { useAuth } from 'context/AuthContext';
 import CryptoJS from 'crypto-js';
+import { suggestEmails } from 'utils/commonMailDomains';
 
 
 const { Option } = Select;
@@ -45,6 +46,18 @@ const ScheduleModal = ({ isModalAgendaVisible, handleCancel, start, end }) => {
     const { authData } = useAuth();
     const companyID = authData.companyID;
     const userSpecialties = authData.userSpecialties || [];
+    const [emailSuggestions, setEmailSuggestions] = useState([]);
+
+    const handleEmailChange = (event) => {
+        const emailInput = event.target.value;
+        const suggestions = suggestEmails(emailInput);
+        setEmailSuggestions(suggestions);
+    };
+
+    const handleEmailSelect = (email) => {
+        form.setFieldsValue({ email });
+        setEmailSuggestions([]);
+    };
 
 
     const onSearchPatientName = async (searchText) => {
@@ -82,7 +95,7 @@ const ScheduleModal = ({ isModalAgendaVisible, handleCancel, start, end }) => {
     const onSelectPatient = (value, option) => {
         setSelectedPatient(option?.data);
         form.setFieldsValue({
-            cpf: option.data?.cpf,
+            email: option.data?.client_email,
             celular: option.data?.celular,
             planodental: option.data?.planodental,
         });
@@ -219,12 +232,13 @@ const ScheduleModal = ({ isModalAgendaVisible, handleCancel, start, end }) => {
         }
     }, [ignoreDisabledHours, bookedHours, form]);
 
+
     const onFinish = async (values) => {
         setLoading(true);
         try {
             const clientData = {
                 nome: values.nome,
-                cpf: values.cpf.replace(/\D/g, ''),
+                client_email: values.email,
                 celular: values.celular.replace(/\D/g, ''),
                 planodental: values.planodental,
                 company_id: companyID
@@ -243,7 +257,7 @@ const ScheduleModal = ({ isModalAgendaVisible, handleCancel, start, end }) => {
                 company_id: companyID
             };
 
-            let clientResponse = await api.get(`/clients/cpf/${clientData.cpf}?company_id=${clientData.company_id}`).catch(error => error.response);
+            let clientResponse = await api.get(`/clients/email/${clientData.client_email}?company_id=${clientData.company_id}`).catch(error => error.response);
 
             if (clientResponse && clientResponse.status === 404) {
                 clientResponse = await api.post('/clients', clientData);
@@ -270,40 +284,6 @@ const ScheduleModal = ({ isModalAgendaVisible, handleCancel, start, end }) => {
             setLoading(false);
         }
     };
-
-    function validaCPF(cpf) {
-        if (typeof cpf !== 'string') return false;
-        cpf = cpf.replace(/[\s.-]*/gim, '');
-        if (
-            !cpf ||
-            cpf.length !== 11 ||
-            cpf === '00000000000' ||
-            cpf === '11111111111' ||
-            cpf === '22222222222' ||
-            cpf === '33333333333' ||
-            cpf === '44444444444' ||
-            cpf === '55555555555' ||
-            cpf === '66666666666' ||
-            cpf === '77777777777' ||
-            cpf === '88888888888' ||
-            cpf === '99999999999'
-        ) {
-            return false;
-        }
-        var soma = 0;
-        var resto;
-        for (var i = 1; i <= 9; i++) soma = soma + parseInt(cpf.substring(i - 1, i)) * (11 - i);
-        resto = (soma * 10) % 11;
-        if (resto === 10 || resto === 11) resto = 0;
-        if (resto !== parseInt(cpf.substring(9, 10))) return false;
-        soma = 0;
-        for (var i = 1; i <= 10; i++) soma = soma + parseInt(cpf.substring(i - 1, i)) * (12 - i);
-        resto = (soma * 10) % 11;
-        if (resto === 10 || resto === 11) resto = 0;
-        if (resto !== parseInt(cpf.substring(10, 11))) return false;
-        return true;
-    }
-
 
     const [disabledDatesInfo, setDisabledDatesInfo] = useState([]);
     useEffect(() => {
@@ -345,7 +325,7 @@ const ScheduleModal = ({ isModalAgendaVisible, handleCancel, start, end }) => {
     };
 
     const resetAndCloseModal = () => {
-        form.resetFields(['data', 'horario', 'nome', 'cpf', 'celular', 'planodental', 'motivo', 'end_time']);
+        form.resetFields(['data', 'horario', 'nome', 'email', 'celular', 'planodental', 'motivo', 'end_time']);
         setIgnoreDisabledHours(false);
         setDisabledHours([]);
         setBookedHours([]);
@@ -457,7 +437,7 @@ const ScheduleModal = ({ isModalAgendaVisible, handleCancel, start, end }) => {
     return (
         <StyledModal
             title="Agendar Consulta Para Paciente 👩‍⚕️"
-            visible={isModalAgendaVisible}
+            open={isModalAgendaVisible}
             onCancel={onCancelModal}
             footer={[
                 <Button key="back" onClick={resetAndCloseModal}>
@@ -499,17 +479,24 @@ const ScheduleModal = ({ isModalAgendaVisible, handleCancel, start, end }) => {
 */}
                 </StyledFormItemName>
                 <StyledFormItem
-                    name="cpf"
-                    label="CPF"
+                    name="email"
+                    label="E-mail"
                     rules={[
-                        { required: true, message: 'Por favor, insira seu CPF!' },
-                        { validator: (_, value) => validaCPF(value) ? Promise.resolve() : Promise.reject('CPF inválido!') }
+                        { required: true, message: 'Por favor, insira seu e-mail!' },
+                        { type: 'email', message: 'Por favor, insira um e-mail válido!' }
                     ]}
                 >
-                    <ReactInputMask mask="999.999.999-99" placeholder="000.000.000-00">
-                        {(inputProps) => <Input {...inputProps} type="text" />}
-                    </ReactInputMask>
+                    <Input placeholder="Seu e-mail" onChange={handleEmailChange} />
                 </StyledFormItem>
+                {emailSuggestions.length > 0 && (
+                    <div style={{ marginTop: '0.5rem', background: '#f7f7f7', padding: '0.5rem' }}>
+                        {emailSuggestions.map((suggestion, index) => (
+                            <div key={index} onClick={() => handleEmailSelect(suggestion)} style={{ cursor: 'pointer', padding: '0.5rem' }}>
+                                {suggestion}
+                            </div>
+                        ))}
+                    </div>
+                )}
                 <StyledSelect
                     showSearch
                     style={{ width: 200, marginBottom: 20 }}
@@ -661,7 +648,7 @@ const ScheduleModal = ({ isModalAgendaVisible, handleCancel, start, end }) => {
             </Form>
             <Modal
                 title="Limite de Profissionais Atingido"
-                visible={upgradeModalVisible}
+                open={upgradeModalVisible}
                 onCancel={closeUpgradeModal}
                 footer={[
                     <Button key="back" onClick={closeUpgradeModal}>

@@ -145,7 +145,7 @@ const CompanyDataModal = ({ isVisible, onClose }) => {
     return (
         <Modal
             title="Dados da Empresa"
-            visible={isVisible}
+            open={isVisible}
             onCancel={onClose}
             footer={[
                 <Button key="cancel" onClick={onClose}>Cancelar</Button>,

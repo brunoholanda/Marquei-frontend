@@ -433,7 +433,7 @@ const Contabilidade = () => {
         onClose={closeModal}
         onSubmit={handleTransactionSubmit}
       />
-      <Tabs defaultActiveKey="1">
+      <Tabs defaultActiveKey="1" type='card' style={{margin: '2rem 0 0 0'}}>
         {tabList.map(tab => (
           <Tabs.TabPane tab={tab.tab} key={tab.key}>
             {tab.content}

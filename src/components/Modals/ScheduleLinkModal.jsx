@@ -25,7 +25,7 @@ const ScheduleLinkModal = ({ isLinkModalVisible, onLinkModalClose }) => {
   return (
     <Modal
       title="Link do Agendamento Para Clientes !"
-      visible={isLinkModalVisible}
+      open={isLinkModalVisible}
       onOk={handleCopyLink}
       onCancel={onLinkModalClose}
       footer={[

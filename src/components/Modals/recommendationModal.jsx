@@ -48,7 +48,7 @@ const RecommendationModal = ({ modalRecommendationisVisible, modalRecommendation
         <>
             <Modal
                 title="Indique um amigo(a) 🤝"
-                visible={modalRecommendationisVisible}
+                open={modalRecommendationisVisible}
                 onCancel={() => {
                     setSelectedOption(null);
                     setInputName('');
@@ -97,7 +97,7 @@ const RecommendationModal = ({ modalRecommendationisVisible, modalRecommendation
 
             <Modal
                 title="Indicação Efetivada"
-                visible={isSuccessModalVisible}
+                open={isSuccessModalVisible}
                 onCancel={() => setIsSuccessModalVisible(false)}
                 footer={null}
             >

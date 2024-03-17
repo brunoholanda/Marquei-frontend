@@ -88,7 +88,7 @@ const ContactPage = () => {
       {modalVisible && (
         <Modal
   title="Mensagem Enviada"
-  visible={modalVisible}
+  open={modalVisible}
   onCancel={() => setModalVisible(false)}
   footer={[
     <Btn key="fechar" onClick={() => { setModalVisible(false); navigate('/'); }}>

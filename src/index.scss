@@ -117,10 +117,13 @@ body {
     flex-direction: row;
   }
 
-.ant-tabs .ant-tabs-tab .ant-tabs-tab-active .ant-tabs-tab-btn {
-  color: var(--azul) !important;
+.ant-tabs-card.ant-tabs-top >.ant-tabs-nav .ant-tabs-tab-active {
+  border-bottom-color: var(--azul) !important;
 }
 
+.ant-tabs .ant-tabs-tab.ant-tabs-tab-active .ant-tabs-tab-btn {
+  color: var(--azul) !important;
+}
 
   @media (max-width: 768px) {
     .tabela {

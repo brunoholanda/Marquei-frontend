@@ -124,7 +124,7 @@ const ChamadosTable = () => {
             <Table dataSource={chamados} columns={columns} rowKey="id" />;
             <Modal
                 title="Atender Chamado"
-                visible={isModalActionsVisible}
+                open={isModalActionsVisible}
                 okText='Salvar'
                 onOk={handleOk}
                 onCancel={() => setIsModalActionsVisible(false)}

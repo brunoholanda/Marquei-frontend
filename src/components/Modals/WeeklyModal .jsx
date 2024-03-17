@@ -197,7 +197,7 @@ const WeeklyModal = ({ isVisible, setIsVisible, selectedProfessional }) => {
     return (
         <Modal
             title="Padrão Semanal de Atendimento"
-            visible={isVisible}
+            open={isVisible}
             onCancel={() => setIsVisible(false)}
             footer={[
                 <Button key="back" onClick={() => setIsVisible(false)}>

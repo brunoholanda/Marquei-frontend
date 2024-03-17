@@ -7,8 +7,9 @@ import api from '../api/api';
 import { StyledFormItem, StyledModal, StyledTextLine } from './Styles';
 import { WarningOutlined } from '@ant-design/icons';
 import { useAuth } from 'context/AuthContext';
+import { suggestEmails } from 'utils/commonMailDomains';
 
-function ProfessionalModal({ isVisible, onClose, initialData }) {
+function ProfessionalModal({ isVisible, onClose, initialData, onProfessionalSaved }) {
     const [isEditMode, setIsEditMode] = useState(false);
 
     const [nome, setNome] = useState("");
@@ -30,9 +31,22 @@ function ProfessionalModal({ isVisible, onClose, initialData }) {
     const [currentStep, setCurrentStep] = useState(0);
     const [isModalVisible, setIsModalVisible] = useState(isVisible);
     const [form] = useForm();
+    const [emailSuggestions, setEmailSuggestions] = useState([]);
+
     const { authData } = useAuth();
     const companyID = authData.companyID;
     const userSpecialties = authData.userSpecialties || [];
+
+    const handleEmailChange = (event) => {
+        const emailInput = event.target.value;
+        const suggestions = suggestEmails(emailInput);
+        setEmailSuggestions(suggestions);
+    };
+
+    const handleEmailSelect = (email) => {
+        form.setFieldsValue({ email });
+        setEmailSuggestions([]);
+    };
 
 
     const getRegistroOptions = () => {
@@ -52,9 +66,12 @@ function ProfessionalModal({ isVisible, onClose, initialData }) {
         if (userSpecialties?.includes(5)) {
             options.push(<Select.Option value="CRN">CRN</Select.Option>);
         }
+        if (userSpecialties?.includes(6)) {
+            options.push(<Select.Option value="CFFA">CFFA</Select.Option>);
+        }
         return options;
     };
-
+    
     const nextStep = () => {
         if (currentStep < 3) {
             setCurrentStep(prev => prev + 1);
@@ -184,7 +201,20 @@ function ProfessionalModal({ isVisible, onClose, initialData }) {
                                 {(inputProps) => <Input {...inputProps} type="tel" />}
                             </ReactInputMask>
                         </Form.Item>
-
+                        <Form.Item name="email" label="E-Mail"
+                            rules={[{ required: true, message: 'Por favor, insira o email!' }]}
+                        >
+                            <Input onChange={handleEmailChange} />
+                        </Form.Item>
+                        {emailSuggestions.length > 0 && (
+                            <div style={{ marginTop: '0.5rem', background: '#f7f7f7', padding: '0.5rem' }}>
+                                {emailSuggestions.map((suggestion, index) => (
+                                    <div key={index} onClick={() => handleEmailSelect(suggestion)} style={{ cursor: 'pointer', padding: '0.5rem' }}>
+                                        {suggestion}
+                                    </div>
+                                ))}
+                            </div>
+                        )}
                     </>
                 );
             case 1:
@@ -252,7 +282,7 @@ function ProfessionalModal({ isVisible, onClose, initialData }) {
                 return (
                     <>
                         <StyledTextLine>
-                            <WarningOutlined style={{color: 'red', fontSize: '18px'}}/>
+                            <WarningOutlined style={{ color: 'red', fontSize: '18px' }} />
                             <p> O login e senha criados a seguir serão usados para emitir atestados e declarações em seu nome, portanto não compartilhe essa senha!</p>
                         </StyledTextLine>
                         <Form.Item
@@ -359,24 +389,30 @@ function ProfessionalModal({ isVisible, onClose, initialData }) {
                 titulo,
                 assinatura: signatureBase64,
                 estado: estadoSelecionado,
-                planosaude_id: selectedPlanosIds, // Adicionado array de IDs dos planos de saúde
+                planosaude_id: selectedPlanosIds,
                 company_id: companyID,
                 login,
-                senha
+                senha,
+                email: form.getFieldValue('email')
             };
 
-            if (isEditMode) {
-                await api.put(`/professionals/${initialData.id}`, professionalData);
+            let savedProfessional;
+            if (isEditMode && initialData) {
+                const response = await api.put(`/professionals/${initialData.id}`, professionalData);
                 message.success('Profissional atualizado com sucesso!');
+                savedProfessional = response.data;
+                onProfessionalSaved(savedProfessional);
             } else {
                 const response = await api.post('/professionals', professionalData);
                 if (response.status === 400 && response.data.error === 'Nome de usuário não está disponível!') {
                     message.error('Nome de usuário não está disponível!');
                 } else {
                     message.success('Profissional salvo com sucesso!');
-                    onClose();
+                    savedProfessional = response.data;
+                    onProfessionalSaved(savedProfessional);
                 }
             }
+            onClose();
         } catch (error) {
             console.error("Erro ao salvar profissional:", error);
             if (error.response) {
@@ -386,6 +422,7 @@ function ProfessionalModal({ isVisible, onClose, initialData }) {
             }
         }
     };
+
 
 
     const [signatureData, setSignatureData] = useState("");
@@ -447,11 +484,31 @@ function ProfessionalModal({ isVisible, onClose, initialData }) {
         fetchPlanosDeSaude();
     }, []);
 
+    useEffect(() => {
+        if (!isModalVisible) {
+            form.resetFields();
+            setNome("");
+            setCpf("");
+            setDataNascimento(null);
+            setRegistro("");
+            setNumeroRegistro("");
+            setEstadoSelecionado(null);
+            setEstadoProffisionalSelecionado(null);
+            setTitulo(null);
+            setCelular('');
+            setLogin("");
+            setSenha("");
+            setConfirmacaoSenha("");
+            setSelectedPlanosIds([]);
+            setLoginExistente(false);
+            setCurrentStep(0);
+        }
+    }, [isModalVisible, form]);
 
     return (
         <StyledModal
             title={initialData ? 'Editar Profissional' : 'Adicionar Profissional'}
-            visible={isModalVisible}
+            open={isModalVisible}
             onCancel={onClose}
             footer={null}
             width={800}

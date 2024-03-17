@@ -133,7 +133,7 @@ function ClientResearch() {
             </Form>
             <Modal
                 title="Feedback Recebido!"
-                visible={isModalVisible}
+                open={isModalVisible}
                 onOk={handleOk}
                 cancelButtonProps={{ style: { display: 'none' } }}
                 footer={null}

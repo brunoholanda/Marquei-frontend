@@ -16,6 +16,8 @@ import { Layout, Menu, theme } from 'antd';
 import ReactJoyride from 'react-joyride';
 import './Sidebar.css';
 import { useAuth } from 'context/AuthContext';
+import logo from '../../public/logo-branca-2.webp';
+import logoLetra from '../../public/logo-letra-branca.png';
 
 const { Header, Sider } = Layout;
 
@@ -74,15 +76,15 @@ const Sidebar = () => {
   } = theme.useToken();
 
   const isAuthenticated = !!sessionStorage.getItem('authToken');
-  
+
   if (!isAuthenticated) {
     return null;
   }
 
   const handleLogout = () => {
-    logout(); 
+    logout();
     navigate('/login');
-};
+  };
 
   const onMenuClick = (e) => {
     if (e.key === 'logout') {
@@ -111,6 +113,12 @@ const Sidebar = () => {
     return null;
   }
 
+  const customLocale = {
+    next: 'Proceed',
+    last: 'Blz 😃',
+    skip: 'Not Now',
+    close: 'Close',
+};
 
 
   return (
@@ -120,9 +128,15 @@ const Sidebar = () => {
         collapsed={collapsed}
         onCollapse={setCollapsed}
         className="sidebar"
-
       >
-        <div className="demo-logo-vertical" />
+        <div className="demo-logo-vertical">
+          <img
+            src={collapsed ? logoLetra : logo}
+            alt="logo do sistema marquei"
+            className={collapsed ? "collapsed" : ""}
+          />
+        </div>
+
         <Menu
           theme="dark"
           defaultSelectedKeys={['1']}
@@ -143,6 +157,8 @@ const Sidebar = () => {
         steps={steps}
         continuous={true}
         showSkipButton={true}
+        locale={customLocale}
+
         styles={{
           options: {
             zIndex: 10000,

@@ -202,7 +202,7 @@ const StockControlPage = () => {
             {isModalVisible && (
                 <Modal
                     title="Editar Item"
-                    visible={isModalVisible}
+                    open={isModalVisible}
                     onCancel={closeModal} // Chame closeModal aqui
                     onOk={() => form.submit()}
                 >

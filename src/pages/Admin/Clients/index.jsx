@@ -196,7 +196,7 @@ const CompaniesTable = () => {
         <h2>Administralção de clientes</h2>
         <Table columns={columns} dataSource={companies} loading={loading} />
       </StyledTableCompanies>
-      <Modal title="Editar Empresa" visible={isModalVisible} onOk={handleOk} onCancel={handleCancel}>
+      <Modal title="Editar Empresa" open={isModalVisible} onOk={handleOk} onCancel={handleCancel}>
         <Form
           form={form}
           labelCol={{ span: 8 }}

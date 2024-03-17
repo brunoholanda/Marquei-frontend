@@ -8,6 +8,36 @@
 
 }
 
+.foto-client {
+    position: relative;
+    width: 180px;
+    height: 180px;
+    border-radius: 50%;
+    overflow: hidden;
+    border: 2px solid #fff;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.4);
+    margin: 2rem 3rem 0 0;
+}
+
+.foto-client img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.ant-upload {
+    color: var(--branco);
+}
+
+
+.upload-btn {
+    position: absolute;
+    bottom: -15px;
+    right: 67px;
+    padding: 5px 10px;
+    border-radius: 20px;
+    cursor: pointer;
+}
 
 .clienteDetails h1 {
     color: var(--cinza-texto);
@@ -48,6 +78,16 @@
     width: 100%;
 }
 
+.dadosPessoaisTab {
+    display: flex;
+    flex-direction: row;
+    justify-content: start;
+}
+
+.dadosPessoaisTab button {
+    width: 100%;
+}
+
 @media (max-width: 768px) {
     .clienteDetails {
         margin: 2rem 1.5rem;
@@ -60,6 +100,8 @@
 
     .dadosPessoaisTab {
         width: 17.5rem;
+        flex-direction: column;
+        align-items: center;
     }
 
     .historicoConsultasTab,

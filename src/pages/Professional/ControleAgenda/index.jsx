@@ -46,7 +46,12 @@ const ControleAgenda = () => {
         }
     ]);
 
-
+    const customLocale = {
+        next: 'Próximo ➡️',
+        last: 'Blz 😊',
+        skip: 'Fazer depois 😞',
+        close: 'Close',
+    };
 
     useEffect(() => {
         const fetchProfessionals = async () => {
@@ -391,6 +396,7 @@ const ControleAgenda = () => {
                 callback={handleJoyrideCallback}
                 continuous={true}
                 showProgress={true}
+                locale={customLocale}
                 showSkipButton={true}
                 styles={{ options: { zIndex: 10000 } }}
             />

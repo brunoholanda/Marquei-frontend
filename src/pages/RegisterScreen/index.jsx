@@ -457,7 +457,7 @@ const RegisterScreen = () => {
           <Form.Item>
             <Tooltip
               title="Por favor, preencha todos os campos obrigatórios antes de submeter."
-              visible={showTooltip}
+              open={showTooltip}
               placement="top"
             >
               <Button
@@ -473,7 +473,7 @@ const RegisterScreen = () => {
         </Form>
         <Modal
           title="Cadastro Atendido Com Sucesso :)"
-          visible={isModalVisible}
+          open={isModalVisible}
           onOk={() => {
             setModalVisible(false);
             navigate('/login');

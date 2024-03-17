@@ -18,7 +18,7 @@ const AddClientsModal = ({ isModalAddClientsVisible, onCloseAddClients, onClient
     const [emailSuggestions, setEmailSuggestions] = useState([]);
     const { authData } = useAuth();
     const companyID = authData.companyID;
-    
+
     const handleEmailChange = (event) => {
         const emailInput = event.target.value;
         const suggestions = suggestEmails(emailInput);
@@ -105,7 +105,7 @@ const AddClientsModal = ({ isModalAddClientsVisible, onCloseAddClients, onClient
     return (
         <StyledClientModal
             title={<ModalTitle>Cadastrar Novo Cliente</ModalTitle>}
-            visible={isModalAddClientsVisible}
+            open={isModalAddClientsVisible}
             onCancel={onCloseAddClients}
             footer={null}
             width={750}
@@ -132,7 +132,6 @@ const AddClientsModal = ({ isModalAddClientsVisible, onCloseAddClients, onClient
                     </Form.Item>
                 </ModalClientRow>
                 <ModalClientRow>
-
                     <Form.Item name="client_email" label="E-Mail"
                         rules={[{ required: true, message: 'Por favor, insira o email!' }]}
                         className='emailinput'
@@ -140,13 +139,13 @@ const AddClientsModal = ({ isModalAddClientsVisible, onCloseAddClients, onClient
                         <Input onChange={handleEmailChange} />
                     </Form.Item>
                     {emailSuggestions.length > 0 && (
-                        <ul style={{ listStyleType: "none", padding: 0 }}>
+                        <div style={{ marginTop: '0.5rem', background: '#f7f7f7', padding: '0.5rem' }}>
                             {emailSuggestions.map((suggestion, index) => (
-                                <li key={index} onClick={() => handleEmailSelect(suggestion)} style={{ cursor: "pointer" }}>
+                                <div key={index} onClick={() => handleEmailSelect(suggestion)} style={{ cursor: 'pointer', padding: '0.5rem' }}>
                                     {suggestion}
-                                </li>
+                                </div>
                             ))}
-                        </ul>
+                        </div>
                     )}
                     <Form.Item name="planodental" label="Plano"
                         rules={[{ required: true, message: 'Por favor, insira a forma de pagamento!' }]}

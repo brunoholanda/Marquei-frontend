@@ -1,9 +1,23 @@
 .sidebar {
-    width: 250px; /* Largura do menu */
+    width: 250px; 
     background-color: #f4f4f4; 
     height: 100%; 
   }
+
+  .demo-logo-vertical {
+    display: flex;
+    justify-content: center;
+    margin: 18px 0 5px 0;
+  }
   
+  .demo-logo-vertical img {
+    width: 150px;
+  }
+  
+  .demo-logo-vertical img.collapsed {
+    width: 35px;
+    margin-bottom: 5px;
+  }
   .sidebar-list {
     list-style: none; 
     padding: 0;
