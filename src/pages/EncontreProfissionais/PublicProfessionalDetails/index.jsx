@@ -38,17 +38,7 @@ const ProfessionalDetailPage = () => {
             default: return 'Não informado';
         }
     };
-
-    const cleanPlanosQueAtende = (planos) => {
-        // Divide a string em duas partes usando '","' como separador.
-        const parts = planos.split('","');
-        // A segunda parte da divisão contém os nomes dos planos de saúde.
-        // Remove aspas extras do início e do fim, se existirem.
-        const nomesPlanos = parts.length > 1 ? parts[1].replace(/^"|"$/g, '').replace(/"}$/g, '') : '';
-        return nomesPlanos;
-    };
-    
-    
+ 
 
     return (
         <StyledPublicDetailPage>
@@ -69,7 +59,7 @@ const ProfessionalDetailPage = () => {
                 </div>
                 <div className='doctors-infos-card'>
                     <p><CompassOutlined /> {professional.endereco}, {professional.numero}, {professional.bairro}, {professional.cidade} - {professional.uf}</p>
-                    <p><strong>Planos que atende:</strong> {cleanPlanosQueAtende(professional.planos_que_atende)}</p>
+                    <p><strong>Planos que atende:</strong>{professional.planos_que_atende}</p>
                     <Button type='primary'>{getAtendimentoDescricao(professional.atendimento)}</Button>
                 </div>
                 <div className='doctors-infos-agendar'>

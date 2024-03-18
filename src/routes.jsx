@@ -4,7 +4,6 @@ import { useLocation } from "react-router-dom";
 
 import Loading from "components/Loading";
 import { AuthProvider, useAuth } from "context/AuthContext";
-import ResetDoctorPassword from "pages/ResetPassword/ResetDoctorPassword";
 
 const NotFound = lazy(() => import('pages/NotFound'));
 const PageBody = lazy(() => import('components/PageBody'));
@@ -42,6 +41,7 @@ const ClientResearch = lazy(() => import('pages/NpsSystem/ClientResearch'));
 const SearchProfessionals = lazy(() => import('pages/EncontreProfissionais'));
 const ProfessionalDetailPage = lazy(() => import('pages/EncontreProfissionais/PublicProfessionalDetails'));
 const ConfirmAppointmentPage = lazy(() => import('pages/ConfirmConsulta'));
+const ResetDoctorPassword = lazy(() => import('pages/ResetPassword/ResetDoctorPassword'));
 
 function ScrollToTop() {
     const { pathname } = useLocation();

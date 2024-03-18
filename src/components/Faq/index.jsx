@@ -66,6 +66,14 @@ const faqItems = [
         title: 'Tem contrato de fidelidade?',
         content: 'Estamos livres de compromissos de longo prazo, refletindo nossa confiança no valor do serviço que fornecemos. O cancelamento está ao seu alcance sempre, contanto que não existam débitos em aberto. Qualquer dado ou informação no sistema pode ser requisitado e será fornecido com total segurança.',
     },
+    {
+        title: 'Como funciona a pesquisa NPS?',
+        content: 'O Net Promoter Score (NPS), criado por Fred Reicheld nos EUA, é uma ferramenta simples e eficaz usada mundialmente por empresas para medir a lealdade dos consumidores. Baseando-se na probabilidade de recomendação da empresa a amigos, o NPS correlaciona altas pontuações com maior lealdade do cliente e crescimento empresarial. Estudos demonstram que empresas com altos NPS crescem significativamente mais que concorrentes, evidenciando a importância da satisfação do cliente para o sucesso empresarial.',
+    },
+    {
+        title: 'Como funciona a publicalção de perfis?',
+        content: 'Esta plataforma conecta pacientes a profissionais da saúde, permitindo o compatilhanmento de informações de contato, endereços e disponibilidade. Os usuários podem buscar profissionais por especialidade ou localização e agendar consultas diretamente, facilitando o acesso a serviços de saúde. A plataforma oferece uma agenda integrada para marcações e envia lembretes automáticos, tornando a busca e o agendamento de atendimentos mais eficientes e acessíveis.',
+    },
 ];
 
 function Faq() {

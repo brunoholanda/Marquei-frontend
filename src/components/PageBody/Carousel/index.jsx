@@ -1,9 +1,11 @@
 import React, { useState, useEffect, useCallback, memo } from 'react';
 import './Carousel.css'; // Make sure to create an appropriate CSS file to style the components
-import imagea from '../../../public/carrossel/1.webp';
+import imagea from '../../../public/carrossel/7.webp';
 import imageb from '../../../public/home/mens.webp';
 import imagec from '../../../public/carrossel/3.webp';
 import imaged from '../../../public/carrossel/2.webp';
+import imagee from '../../../public/carrossel/6.webp';
+
 import { ClockCircleOutlined, ControlOutlined, FormOutlined, HeartOutlined } from '@ant-design/icons';
 import Btn from 'components/Btn';
 import { useNavigate } from 'react-router-dom';
@@ -12,7 +14,7 @@ const carouselData = [
     {
         title: "Gerencie sua clínica",
         description: "Gestão clínica simplificada para você focar no seu paciente.",
-        imageUrl: imagea,
+        imageUrl: imagee,
         icon: <ControlOutlined />,
     },
     {
@@ -32,7 +34,13 @@ const carouselData = [
         description: "Simplifique o agendamento para seus pacientes e automatize os processos repetitivos da sua clínica.",
         imageUrl: imaged,
         icon: <ClockCircleOutlined />
-    }
+    },
+    {
+        title: "Pesquisa NPS",
+        description: " A métrica que sua clínica precisa para reter clientes",
+        imageUrl: imagea,
+        icon: <ControlOutlined />,
+    },
 ];
 
 const CarouselItem = memo(({ slide, isActive, onClick }) => (

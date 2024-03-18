@@ -19,12 +19,16 @@ const Pacientes = () => {
     const [initialLoad, setInitialLoad] = useState(true);
     const [nomeConsultorio, setNomeConsultorio] = useState('');
     const [showAddClientModal, setShowAddClientModal] = useState(false);
+    const [currentPage, setCurrentPage] = useState(1);
+    const [totalPages, setTotalPages] = useState(0);
+    const [totalClientes, setTotalClientes] = useState(0);
+
     const { authData } = useAuth();
     const companyID = authData.companyID;
     const handleOpenAddClientsModal = () => {
-         setShowAddClientModal(true);
-     };
- 
+        setShowAddClientModal(true);
+    };
+
     useEffect(() => {
         const fetchNomeConsultorio = async () => {
             if (companyID) {
@@ -193,41 +197,39 @@ const Pacientes = () => {
     };
 
     useEffect(() => {
-        if (initialLoad) {
-            setLoading(true);
+        setLoading(true);
 
-
-            if (!companyID) {
-                setLoading(false);
-                showNotification('error', 'Erro ao identificar a empresa. Por favor, faça login novamente.');
-                return;
-            }
-
-            api.get('/clients', {
-                params: {
-                    company_id: companyID,
-                },
-            })
-                .then((response) => {
-                    const sortedClients = [...response.data].sort((a, b) => a.nome.localeCompare(b.nome));
-                    setClientes(sortedClients);
-                })
-                .catch((error) => {
-                    console.error('Erro ao buscar clientes:', error);
-                    showNotification('error', 'Erro ao buscar clientes.');
-                })
-                .finally(() => {
-                    setLoading(false);
-                    setInitialLoad(false);
-                });
+        if (!companyID) {
+            setLoading(false);
+            showNotification('error', 'Erro ao identificar a empresa. Por favor, faça login novamente.');
+            return;
         }
-    }, [initialLoad, companyID]);
+
+        api.get('/clients', {
+            params: {
+                company_id: companyID,
+                page: currentPage,
+            },
+        })
+            .then((response) => {
+                setClientes(response.data.data);
+                setTotalClientes(response.data.total); // Atualize aqui com o total retornado pela API
+                setLoading(false);
+            })
+            .catch((error) => {
+                console.error('Erro ao buscar clientes:', error);
+                showNotification('error', 'Erro ao buscar clientes.');
+                setLoading(false);
+            });
+    }, [currentPage, companyID]);
+
+
 
     useEffect(() => {
         const fetchAppointmentHistory = async () => {
             if (selectedClient && selectedClient.id) {
                 try {
-                    const historyResponse = await api.get(`/todos-agendamentos`, {
+                    const historyResponse = await api.get(`/todos-agendamentos-hard`, {
                         params: {
                             client_id: selectedClient.id,
                             company_id: companyID,
@@ -270,10 +272,10 @@ const Pacientes = () => {
             <Search
                 placeholder="Digite o nome ou CPF"
                 onSearch={onSearch}
-                style={{ width: isMobile ? '100%' : '50%', marginBottom: 20 }} 
+                style={{ width: isMobile ? '100%' : '50%', marginBottom: 20 }}
             />
             <Button
-                style={{marginLeft: '15px'}}
+                style={{ marginLeft: '15px' }}
                 type='primary'
                 onClick={handleOpenAddClientsModal}
             >
@@ -284,8 +286,17 @@ const Pacientes = () => {
                 dataSource={clientes}
                 rowKey="id"
                 loading={loading}
+                pagination={{
+                    current: currentPage,
+                    pageSize: 10, // Número de itens por página
+                    total: totalClientes, // Total de itens para a paginação
+                    onChange: (page) => {
+                        setCurrentPage(page); // Atualiza a página atual quando o usuário muda de página
+                    },
+                }}
             />
-            <AddClientsModal 
+
+            <AddClientsModal
                 isModalAddClientsVisible={showAddClientModal}
                 onCloseAddClients={() => setShowAddClientModal(false)}
                 onClientAdded={onClientAdded}

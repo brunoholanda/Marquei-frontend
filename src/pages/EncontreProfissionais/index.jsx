@@ -14,6 +14,7 @@ const SearchProfessionals = () => {
     const [specialtySearchTerm, setSpecialtySearchTerm] = useState('');
     const [citySearchTerm, setCitySearchTerm] = useState('');
     const [isLoading, setIsLoading] = useState(false);
+    const [searchAttempted, setSearchAttempted] = useState(false); // Novo estado para controlar se uma busca foi realizada
 
     const handleSearch = async () => {
         if (!specialtySearchTerm && !citySearchTerm) {
@@ -23,6 +24,7 @@ const SearchProfessionals = () => {
             return;
         }
         setIsLoading(true);
+        setSearchAttempted(true);
 
         try {
             const response = await api.get('/publicProfessionals/search', {
@@ -44,6 +46,16 @@ const SearchProfessionals = () => {
         }
     };
 
+    const handleSpecialtyFocus = () => {
+        setCitySearchTerm('');
+    };
+
+    const handleCityFocus = () => {
+        setSpecialtySearchTerm('');
+    };
+
+
+
     return (
         <StyledEncontreContainer>
             <h2>Pesquise por profissionais na sua localidade ou por Especialidade.</h2>
@@ -55,6 +67,7 @@ const SearchProfessionals = () => {
                         placeholder="Ex. Fisioterapeuta"
                         value={specialtySearchTerm}
                         onChange={e => setSpecialtySearchTerm(e.target.value)}
+                        onFocus={handleSpecialtyFocus}
                     />
                 </div>
                 <div className="input-group">
@@ -64,6 +77,7 @@ const SearchProfessionals = () => {
                         placeholder="Cidade"
                         value={citySearchTerm}
                         onChange={e => setCitySearchTerm(e.target.value)}
+                        onFocus={handleCityFocus}
                     />
                 </div>
                 <div className="search-button">
@@ -77,8 +91,8 @@ const SearchProfessionals = () => {
             </StyledInputsEncontre>
             {isLoading ? <LoadingOverlay><Loading /> </LoadingOverlay> : (
                 <StyledDoctorsContainer>
-                    {professionals.length > 0 ? professionals.map((prof) => (
-                        <div className='doctors-card' key={prof.id}>
+                    {professionals.length > 0 ? (
+                        professionals.map((prof) => (<div className='doctors-card' key={prof.id}>
                             {prof.foto && (
                                 <img src={`${BASE_URL}/${prof.foto}`} alt="Perfil" />
                             )}
@@ -95,10 +109,13 @@ const SearchProfessionals = () => {
                                 </Link>
                             </div>
                         </div>
-                    )) : <p>Nenhum profissional encontrado.</p>}
+                        ))
+                    ) : (
+                        searchAttempted && <p>Nenhum profissional encontrado.</p> // Exibe a mensagem apenas se uma busca foi realizada
+                    )}
                 </StyledDoctorsContainer>
             )}
-        </StyledEncontreContainer>);
+        </StyledEncontreContainer >);
 };
 
 export default SearchProfessionals;

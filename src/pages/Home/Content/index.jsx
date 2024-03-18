@@ -1,6 +1,6 @@
 import React, { useRef } from 'react';
 import styles from '../Home.module.scss';
-import horas from '../../../public/home/woman.webp';
+import horas from '../../../public/home/nps-doctor.webp';
 import controle from '../../../public/home/woman-2.webp';
 import digital from '../../../public/home/digital.webp';
 import Btn from 'components/Btn';
@@ -40,12 +40,12 @@ function ContentHome() {
                 </div>
             </section>
             <section className={styles.controle}>
-            <div className={styles.controle__img} ref={controleImgRef}>
+                <div className={styles.controle__img} ref={controleImgRef}>
                     {isControleImgVisible && <img src={controle} alt="homem de branco serio olhando para voce" />}
                 </div>
                 <div className={styles.controle__texto}>
                     <h2>Controle da clínica de ponta a ponta !</h2>
-                    <p>Reduza até 38% das ausências de pacientes nos atendimentos.</p>
+                    <p>Reduza ausências de pacientes nos atendimentos.</p>
                     <ul>
                         <li>Agenda inteligente com confirmação automática de consulta</li>
                         <li>Gestão de estoque com controle de entradas e saídas</li>
@@ -57,7 +57,12 @@ function ContentHome() {
             <section className={styles.analogica}>
                 <div className={styles.analogica__texto}>
                     <h2>Sua Clínica precisa deixar de ser analógica !</h2>
-                    <p>Se você está exausto de lidar com planilhas complexas ou se perder em montanhas de papéis, e busca uma maneira eficiente de prevenir sobreposições nos agendamentos dos seus pacientes, o "Marquei" é a solução perfeita para a sua clínica, independentemente do seu tamanho. Com o nosso software de gestão de agendas, simplifique seu dia a dia e concentre-se no que realmente importa: cuidar da saúde dos seus pacientes!</p>
+                    <p>Se você está cansado de lidar com planilhas e papéis, o "Marquei" é a solução ideal para sua clínica. Simplifique sua rotina com nosso software de gestão de agendas e foque no cuidado dos pacientes!</p>
+                    <ul>
+                        <li>Pesquisa de satisfação automatizada.</li>
+                        <li>Prontuário eletrônico.</li>
+                        <li>Seu perfil médico pode ser compartilhado com o mundo.</li>
+                    </ul>
                     <Btn onClick={goToSignUp}>DEIXAR DE SER ANALOGICA</Btn>
                 </div>
                 <div className={styles.analogica__img} ref={horasImgRef}>

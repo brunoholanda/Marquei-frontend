@@ -28,8 +28,8 @@ function MenuLinks() {
             <Link to="./planos">
                 Planos
             </Link>
-            <Link to="./sobre">
-                Como Funciona
+            <Link to="/search-professionals">
+               Encontre o profissionais
             </Link>
             <Link to="./cadastro">
                 Contrate

@@ -273,7 +273,7 @@ const DoctorDetails = () => {
                     <p><b>Telefone:</b> <Input value={editedDetails.celular || professionalDetails.celular} onChange={(e) => handleInputChange('celular', e.target.value)} /></p>
                     <p><b>Nascimento:</b> <Input value={editedDetails.data_de_nascimento || professionalDetails.data_de_nascimento} onChange={e => handleInputChange('data_de_nascimento', e.target.value)} /></p>
                     <p><b>Email:</b> <Input value={editedDetails.email || professionalDetails.email} onChange={(e) => handleInputChange('email', e.target.value)} disabled={emailSaved} /></p>
-                    <p><b>CPF:</b> <Input value={editedDetails.cpf || professionalDetails.cpf} onChange={e => handleInputChange('cpf', e.target.value)} /></p>
+                    <p><b>CPF:</b> <Input value={editedDetails.cpf || professionalDetails.cpf} onChange={e => handleInputChange('cpf', e.target.value)} disabled={true}/></p>
                     <Button onClick={handleSaveChanges} type='primary'>Salvar</Button>
                 </>
             ),
@@ -639,7 +639,7 @@ const DoctorDetails = () => {
 
     return (
         <div className='tabela'>
-            <h1>Detalhes do Proffisional <UserOutlined /></h1>
+            <h1>Detalhes do Profissional <UserOutlined /></h1>
             <Button onClick={handleGoBack} type='primary' style={{ marginRight: '1rem' }}>Voltar</Button>
             <Button onClick={handleAuthModalOpen} type='primary'>
                 {isProfilePublished ? 'Atualizar Perfil Público' : 'Tornar Público'}<ShareAltOutlined />

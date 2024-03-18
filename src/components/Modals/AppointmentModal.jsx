@@ -23,7 +23,7 @@ const AppointmentModal = ({
     };
 
     const handleReschedule = () => {
-        setIsRescheduleModalVisible(true); 
+        setIsRescheduleModalVisible(true);
     };
 
     const closeDeleteConfirmModal = () => {
@@ -173,9 +173,9 @@ const AppointmentModal = ({
                             <b>Horário:</b> {currentAppointment.horario}<br />
                             <b>Plano:</b> {currentAppointment.planodental}
                         </p>
-                        <Button key="delete" title="Excluir agendamento" className="button-red modal-btn" onClick={showDeleteConfirmModal}>
+                        {/*   <Button key="delete" title="Excluir agendamento" className="button-red modal-btn" onClick={showDeleteConfirmModal}>
                             <DeleteOutlined />
-                        </Button>
+                        </Button>*/}
                     </StyledModalContent>
                 )}
                 <StyledButtonsAgendamento>

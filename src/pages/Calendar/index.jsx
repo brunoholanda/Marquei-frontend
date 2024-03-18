@@ -87,7 +87,7 @@ const CalendarPage = () => {
         }
         setLoading(true);
         try {
-            const response = await api.get('/todos-agendamentos', {
+            const response = await api.get('/todos-agendamentos-hard', {
                 params: { professional_id: professionalId }
             });
 
@@ -223,16 +223,16 @@ const CalendarPage = () => {
             )}
             <h1>Visualização por Calendário <CalendarOutlined /></h1>
             <div className="status-indicators">
-                <div class="indicator">
-                    <div class="square yellow"></div>
+                <div className="indicator">
+                    <div className="square yellow"></div>
                     <span>A confirmar</span>
                 </div>
-                <div class="indicator">
-                    <div class="square red"></div>
+                <div className="indicator">
+                    <div className="square red"></div>
                     <span>Cancelado</span>
                 </div>
-                <div class="indicator">
-                    <div class="square green"></div>
+                <div className="indicator">
+                    <div className="square green"></div>
                     <span>Confirmado</span>
                 </div>
             </div>

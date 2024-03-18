@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { message, Button, Tabs, Input, InputNumber, DatePicker, Modal, Table, TimePicker, Select, notification, Tooltip, Upload, Dropdown, Menu } from 'antd';
+import { message, Button, Tabs, Input, InputNumber, DatePicker, Modal, Table, TimePicker, Select, notification, Tooltip, Dropdown, Menu } from 'antd';
 import api from 'components/api/api';
 import { useParams, useNavigate, useLocation } from 'react-router-dom';
 import './ClientDetails.css';
@@ -36,7 +36,6 @@ const ClientDetails = () => {
     const [isAuthModalVisible, setIsAuthModalVisible] = useState(false);
     const [professionalCredentials, setProfessionalCredentials] = useState({ matricula: '', senha: '' });
     const [professionalId, setProfessionalId] = useState(null);
-    const [clientNotes, setClientNotes] = useState('');
     const [clientId, setClientId] = useState(null);
     const [searchResults, setSearchResults] = useState([]);
     const [isDeclarationModalVisible, setIsDeclarationModalVisible] = useState(false);
@@ -274,8 +273,6 @@ const ClientDetails = () => {
                 return dateB - dateA;
             });
         };
-
-
         const fetchAppointmentHistory = async () => {
 
             if (!clientId) {
@@ -284,7 +281,7 @@ const ClientDetails = () => {
             }
             try {
 
-                const historyResponse = await api.get(`/todos-agendamentos?client_id=${clientId}&company_id=${companyID}`);
+                const historyResponse = await api.get(`/todos-agendamentos-hard?client_id=${clientId}&company_id=${companyID}`);
 
                 const filteredAppointments = historyResponse.data.filter(appointment => appointment.status === 1);
 
@@ -597,16 +594,14 @@ const ClientDetails = () => {
 
 
     const handleDateChange = (value) => {
-        if (value.length === 10) {
-            const parts = value.split('/');
-            if (parts.length === 3) {
-                const isoDate = `${parts[2]}-${parts[1]}-${parts[0]}`;
-                handleInputChange('data_nascimento', isoDate);
-            }
-        } else {
-            handleInputChange('data_nascimento', value);
+        const parts = value.split('/');
+        if (parts.length === 3) {
+            const [day, month, year] = parts;
+            const formattedDate = `${year}-${month}-${day}`;
+            handleInputChange('data_nascimento', formattedDate);
         }
     };
+    
 
     function validateEmail(email) {
         const re = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,6}$/;
@@ -777,11 +772,12 @@ const ClientDetails = () => {
                         <p><b>Data de Nascimento:</b>
                             <ReactInputMask
                                 mask="99/99/9999"
-                                value={formatDate(editedDetails.data_nascimento)}
+                                value={editedDetails.data_nascimento ? formatDate(editedDetails.data_nascimento) : ''}
                                 onChange={(e) => handleDateChange(e.target.value)}
                             >
                                 {(inputProps) => <Input {...inputProps} />}
                             </ReactInputMask>
+
                         </p>
                         <p><b>Telefone:</b>
                             <ReactInputMask
@@ -1096,7 +1092,7 @@ const ClientDetails = () => {
                 <div className='divider-line'></div>
             </Modal>
             <CameraCaptureModal
-                isOpen={isCameraModalOpen}
+                isOpenCameraModal={isCameraModalOpen}
                 onClose={() => setIsCameraModalOpen(false)}
                 onCapture={handleCapture}
             />

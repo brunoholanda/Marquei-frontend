@@ -11,13 +11,14 @@ const AllAppointments = () => {
     const [filteredAppointments, setFilteredAppointments] = useState([]);
     const { authData } = useAuth();
     const companyID = authData.companyID;
+    const [pagination, setPagination] = useState({ current: 1, pageSize: 10, total: 0 });
 
-    const fetchAllAppointments = async () => {
+    const fetchAllAppointments = async (page = 1) => {
         setLoading(true);
         
         if (companyID && authData.authToken) {
             try {
-                const response = await api.get(`/todos-agendamentos?company_id=${companyID}`, {
+                const response = await api.get(`/todos-agendamentos?company_id=${companyID}&page=${page}&limit=${pagination.pageSize}`, {
                     headers: {
                         'Authorization': `Bearer ${authData.authToken}`
                     },
@@ -25,7 +26,8 @@ const AllAppointments = () => {
                 if (response.status !== 200) {
                     throw new Error('Falha ao buscar dados da clinica');
                 }
-                setAppointments(response.data);
+                setAppointments(response.data.data);
+                setPagination({ ...pagination, current: page, total: response.data.total });
                 setLoading(false);
             } catch (error) {
                 console.error("Erro ao buscar todos os agendamentos", error);
@@ -35,6 +37,10 @@ const AllAppointments = () => {
         } else {
             console.error('Company ID or auth token not found in local storage');
         }
+    };
+
+    const handlePageChange = (page) => {
+        fetchAllAppointments(page);
     };
 
     let searchInput;
@@ -174,7 +180,7 @@ const AllAppointments = () => {
         <div className='tabela'>
             <h1>Histórico  de Agendamentos  <HistoryOutlined /></h1>
             <p>Utilize a lupa para pesquisar por Nome ou CPF <WarningFilled /></p>
-            <Table columns={columns} dataSource={filteredAppointments.length > 0 ? filteredAppointments : appointments} rowKey="id" loading={loading} />
+            <Table columns={columns} dataSource={filteredAppointments.length > 0 ? filteredAppointments : appointments} rowKey="id" loading={loading} pagination={{ ...pagination, onChange: handlePageChange }} />
         </div>
     );
 };

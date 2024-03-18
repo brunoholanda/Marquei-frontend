@@ -24,7 +24,18 @@
 
 <body>
   <noscript>Você precisa habilitar o JavaScript para rodar este app. Visite [link de como habilitar JavaScript] para instruções.</noscript>
+  <div id="loadingScreen" style="position:fixed; top:0; left:0; width:100%; height:100%; background:white; z-index:9999; display:flex; align-items:center; justify-content:center;">
+    <img src="/loading_icon.gif" alt="Carregando..." style="width:350px; height:250px;">
+  </div>
   <div id="root"></div>
 </body>
+<script>
+  document.addEventListener("DOMContentLoaded", function() {
+    var loadingScreen = document.getElementById("loadingScreen");
+    if (loadingScreen) {
+      loadingScreen.style.display = "none";
+    }
+  });
+</script>
 <script src="https://www.google.com/recaptcha/api.js?hl=pt" defer></script>
 </html>

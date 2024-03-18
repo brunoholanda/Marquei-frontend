@@ -23,7 +23,7 @@ export default function MenuMobile() {
                 <StyledLink to="/" onClick={() => setIsOpen(false)}>Home</StyledLink>
                 <StyledLink to="/resources" onClick={() => setIsOpen(false)}>Recursos</StyledLink>
                 <StyledLink to="/planos" onClick={() => setIsOpen(false)}>Planos</StyledLink>
-                <StyledLink to="/sobre" onClick={() => setIsOpen(false)}>Como Funciona?</StyledLink>
+                <StyledLink to="/search-professionals" onClick={() => setIsOpen(false)}>Encontre o profissionais</StyledLink>
                 <StyledLink to="/cadastro" onClick={() => setIsOpen(false)}>Contrate!</StyledLink>
             </StyledNav>
         </StyledHeader>
