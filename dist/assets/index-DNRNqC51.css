@@ -1,0 +1,1 @@
+.floating-button{position:fixed;bottom:30px;right:50px;z-index:9999;transition:.5s ease}.floating-button:hover{transform:scale(1.2)}.floating-button img{width:60px;height:60px;border-radius:50%;box-shadow:0 2px 5px #0003}

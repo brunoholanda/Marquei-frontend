@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
+import './RegisterScreen.css';
 import { Form, Input, Select, Button, message, Checkbox, Modal, Tooltip } from 'antd';
-import styles from './RegisterScreen.css';
 import { BASE_URL } from 'config';
 import { Link, useNavigate } from 'react-router-dom';
 import ReactInputMask from 'react-input-mask';
@@ -8,7 +8,6 @@ import logo from '../../public/logo.webp'
 import { CheckOutlined, CloseOutlined } from '@ant-design/icons';
 import computerPhone from '../../public/computerPhone.png';
 const { Option } = Select;
-
 
 const RegisterScreen = () => {
   const [form] = Form.useForm();
@@ -444,11 +443,11 @@ const RegisterScreen = () => {
           <Form.Item name="agreement" valuePropName="checked">
             <Checkbox checked={isAgreed} onChange={onAgreementChange}>
               Li e aceito os{' '}
-              <Link to="/terms-of-use" className={styles.link} target="_blank">
+              <Link to="/terms-of-use" className='link' target="_blank">
                 Termos de Uso
               </Link>{' '}
               e{' '}
-              <Link to="/privacy-policy" className={styles.link} target="_blank">
+              <Link to="/privacy-policy" className='link' target="_blank">
                 Política de Privacidade
               </Link>
             </Checkbox>

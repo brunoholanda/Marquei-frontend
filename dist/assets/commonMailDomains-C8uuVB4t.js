@@ -1,0 +1,1 @@
+const m=/^[^\s@]+@[^\s@]+\.[^\s@]+$/,e=["gmail.com","yahoo.com","hotmail.com","outlook.com","live.com","aol.com","icloud.com"],l=o=>{if(!o||!o.includes("@"))return[];const[c,t]=o.split("@");return m.test(o)?[]:e.filter(s=>s.startsWith(t)&&s!==t).map(s=>`${c}@${s}`)};export{l as s};

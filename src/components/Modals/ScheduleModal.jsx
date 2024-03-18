@@ -344,7 +344,7 @@ const ScheduleModal = ({ isModalAgendaVisible, handleCancel, start, end }) => {
                 if (response.status !== 200) {
                     throw new Error('Falha ao buscar dados dos profissionais');
                 }
-                const secretKey = process.env.REACT_APP_SECRET_KEY;
+                const secretKey = import.meta.env.VITE_APP_SECRET_KEY;
                 const bytes = CryptoJS.AES.decrypt(response.data, secretKey);
                 const decryptedData = JSON.parse(bytes.toString(CryptoJS.enc.Utf8));
 

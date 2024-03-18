@@ -1,0 +1,1 @@
+const o="_highHeader_5xcz7_1",_="_footer_5xcz7_20",e="_footer__topicos_5xcz7_26",t="_footer__dev_5xcz7_58",c="_link_5xcz7_68",r={highHeader:o,footer:_,footer__topicos:e,footer__dev:t,link:c};export{r as s};
