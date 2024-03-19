@@ -52,3 +52,9 @@ export const StyledLink = styled(Link)`
   color: var(--branco);
 `;
 
+// Dentro do seu arquivo de estilos
+export const LogoImage = styled.img`
+  height: 50px; // Ajuste conforme necessário
+  width: auto; // Mantém a proporção da imagem
+  display: block; // Garante que a imagem será exibida
+`;

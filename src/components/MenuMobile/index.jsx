@@ -17,7 +17,7 @@ export default function MenuMobile() {
             <MenuIcon onClick={() => setIsOpen(!isOpen)}>&#9776;</MenuIcon>
             <StyledNav {...handlers} isOpen={isOpen}>
                 <MenuBar>
-                    <MenuText>Menu</MenuText>
+                    <MenuText>Marquei</MenuText>
                     <CloseIcon onClick={() => setIsOpen(false)}>&times;</CloseIcon>
                 </MenuBar>
                 <StyledLink to="/" onClick={() => setIsOpen(false)}>Home</StyledLink>

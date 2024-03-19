@@ -198,30 +198,35 @@ const Pacientes = () => {
 
     useEffect(() => {
         setLoading(true);
-
+    
         if (!companyID) {
             setLoading(false);
             showNotification('error', 'Erro ao identificar a empresa. Por favor, faça login novamente.');
             return;
         }
-
+    
         api.get('/clients', {
             params: {
                 company_id: companyID,
                 page: currentPage,
             },
         })
-            .then((response) => {
-                setClientes(response.data.data);
-                setTotalClientes(response.data.total); // Atualize aqui com o total retornado pela API
-                setLoading(false);
-            })
-            .catch((error) => {
-                console.error('Erro ao buscar clientes:', error);
-                showNotification('error', 'Erro ao buscar clientes.');
-                setLoading(false);
+        .then((response) => {
+            const sortedClientes = response.data.data.sort((a, b) => {
+                return a.nome.localeCompare(b.nome);
             });
+    
+            setClientes(sortedClientes);
+            setTotalClientes(response.data.total);
+            setLoading(false);
+        })
+        .catch((error) => {
+            console.error('Erro ao buscar clientes:', error);
+            showNotification('error', 'Erro ao buscar clientes.');
+            setLoading(false);
+        });
     }, [currentPage, companyID]);
+    
 
 
 

@@ -162,7 +162,7 @@ function ProfessionalModal({ isVisible, onClose, initialData, onProfessionalSave
                             <ReactInputMask
                                 mask="999.999.999-99"
                                 value={cpf}
-                                onChange={e => setCpf(e.target.value)}
+                                onChange={e => setCpf(e.target.value.replace(/_/g, ''))}
                                 beforeMaskedValueChange={(newState, oldState, userInput) => {
                                     var { value } = newState;
                                     var selection = newState.selection;
@@ -195,7 +195,7 @@ function ProfessionalModal({ isVisible, onClose, initialData, onProfessionalSave
                             <ReactInputMask
                                 mask="(99) 9 9999-9999"
                                 value={celular}
-                                onChange={e => setCelular(e.target.value)}
+                                onChange={e => setCelular(e.target.value.replace(/_/g, ''))}
                                 placeholder="(99) 9 9999-9999"
                             >
                                 {(inputProps) => <Input {...inputProps} type="tel" />}

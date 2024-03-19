@@ -76,6 +76,7 @@ const ClientDetails = () => {
     const [perfilPictureFile, setPerfilPictureFile] = useState(null);
     const [isCameraModalOpen, setIsCameraModalOpen] = useState(false);
     const [isResetDoctorModalVisible, setIsResetDoctorModalVisible] = useState(false);
+    const [cpfSaved, setCpfSaved] = useState(false);
 
     const openCameraModal = () => {
         setIsCameraModalOpen(true);
@@ -85,19 +86,12 @@ const ClientDetails = () => {
         fetch(imageUrl)
             .then(res => res.blob())
             .then(blob => {
-                // Converte o Blob em um File
                 const initialFile = new File([blob], "captured-image.jpg", { type: "image/jpeg" });
 
-                // Chama a função resizeImage para redimensionar a imagem
                 resizeImage(initialFile, 300, 300, 0.7, resizedFile => {
-                    // Obtém a URL da imagem redimensionada
                     const previewUrl = URL.createObjectURL(resizedFile);
-
-                    // Define a URL da imagem redimensionada para visualização e o arquivo para upload
                     setPerfilPictureUrl(previewUrl);
                     setPerfilPictureFile(resizedFile);
-
-                    // Fecha o modal da câmera
                     setIsCameraModalOpen(false);
                 });
             })
@@ -234,12 +228,15 @@ const ClientDetails = () => {
 
                 const clientResponse = await api.get(`/clients/${clientId}`);
                 const clientData = clientResponse.data;
-
                 if (clientData.client_foto) {
                     const imageUrl = `${BASE_URL}${clientData.client_foto}`;
                     setPerfilPictureUrl(imageUrl);
                 } else {
                     setPerfilPictureUrl(null);
+                }
+
+                if (clientResponse.data.cpf) {
+                    setCpfSaved(true);
                 }
 
                 setClientId(clientId);
@@ -256,14 +253,10 @@ const ClientDetails = () => {
         fetchDetails();
     }, [id, location.state]);
 
-
-
-
     const convertDate = (dateStr) => {
         const parts = dateStr.split("/");
         return new Date(parts[2], parts[1] - 1, parts[0]);
     };
-
 
     useEffect(() => {
         const orderByDate = (appointments) => {
@@ -307,8 +300,6 @@ const ClientDetails = () => {
             if (!clientId) {
                 throw new Error("ID do cliente não encontrado");
             }
-
-            // Criando um objeto FormData
             const formData = new FormData();
 
             Object.keys(editedDetails).forEach(key => {
@@ -325,6 +316,10 @@ const ClientDetails = () => {
             if (response.status === 200) {
                 notification.success({ message: 'Detalhes atualizados com sucesso!' })
                 setAppointmentDetails(prevState => ({ ...prevState, ...editedDetails }));
+
+                if (editedDetails.cpf) {
+                    setCpfSaved(true);
+                }
             } else {
                 throw new Error("Falha ao atualizar detalhes do cliente");
             }
@@ -335,12 +330,15 @@ const ClientDetails = () => {
     }
 
 
-
-    const handleInputChange = (key, value) => {
+    const handleInputChange = (key, value, field) => {
         setEditedDetails(prevDetails => ({
             ...prevDetails,
             [key]: value
         }));
+
+        if (field === 'cpf' && professionalDetails.data.cpf && !editedDetails.cpf) {
+            setCpfSaved(true);
+        }
     }
 
     const handleGoBack = () => {
@@ -367,7 +365,7 @@ const ClientDetails = () => {
     };
 
     const handleShowFullNoteModal = (record) => {
-        setFullNoteDetails(record); // Agora, armazena todo o registro
+        setFullNoteDetails(record);
         setIsFullNoteModalVisible(true);
     };
 
@@ -456,10 +454,9 @@ const ClientDetails = () => {
             if (response.data.autenticado) {
                 setProfessionalId(response.data.professional_id);
 
-                // Atualize os detalhes do profissional autenticado
                 const professionalInfo = professionals.find(p => p.id === response.data.professional_id);
                 if (professionalInfo) {
-                    setProfessionalDetails(professionalInfo); // Assumindo que setProfessionalDetails é uma função de atualização de estado
+                    setProfessionalDetails(professionalInfo);
                 } else {
                     const professionalDetailsResponse = await api.get(`/professionals/${response.data.professional_id}`);
                     setProfessionalDetails(professionalDetailsResponse.data);
@@ -574,7 +571,7 @@ const ClientDetails = () => {
             const response = await sendLogToBackend('declaration', professionalDetails, patientName, null, date, startTime, endTime);
             const logId = response.data.id;
             setQrCodeUrl(`https://marquei.com.br/#/confirm-declaration/${logId}`);
-            setShouldPrint(true); // Certifique-se de que este estado está sendo utilizado de maneira apropriada para a declaração
+            setShouldPrint(true);
         } catch (error) {
             console.error("Erro ao emitir declaração:", error);
             message.error("Ocorreu um erro ao emitir a declaração. Por favor, tente novamente.");
@@ -592,7 +589,6 @@ const ClientDetails = () => {
         return `${day}/${month}/${year}`;
     };
 
-
     const handleDateChange = (value) => {
         const parts = value.split('/');
         if (parts.length === 3) {
@@ -601,7 +597,7 @@ const ClientDetails = () => {
             handleInputChange('data_nascimento', formattedDate);
         }
     };
-    
+
 
     function validateEmail(email) {
         const re = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,6}$/;
@@ -649,9 +645,9 @@ const ClientDetails = () => {
         const [endHour, endMinute] = endTimeString.split(':').map(Number);
 
         if (endHour < startHour || (endHour === startHour && endMinute < startMinute)) {
-            return false; // A hora de fim é menor que a hora de início
+            return false;
         }
-        return true; // A hora de fim é válida
+        return true;
     };
 
     function resizeImage(file, maxWidth, maxHeight, quality, callback) {
@@ -737,6 +733,22 @@ const ClientDetails = () => {
     );
 
 
+    const isDisabled = !isEmailValid || !editedDetails.data_nascimento || editedDetails.data_nascimento.length === 0;
+    const SaveButtonWithTooltip = () => (
+        <Tooltip title={isDisabled ? "Antes de salvar, preencha todos os campos." : ""}>
+          <span 
+            style={isDisabled ? { display: 'inline-block', cursor: 'not-allowed', width: '100%' } : { display: 'inline-block', width: '100%'  }}
+          >
+            <Button 
+              onClick={handleSaveChanges} 
+              type='primary' 
+              disabled={isDisabled}
+            >
+              Salvar
+            </Button>
+          </span>
+        </Tooltip>
+      );
     const tabList = [
         {
             key: '1',
@@ -796,12 +808,13 @@ const ClientDetails = () => {
                                 mask="999.999.999-99"
                                 value={editedDetails.cpf || appointmentDetails.cpf}
                                 onChange={(e) => handleInputChange('cpf', e.target.value)}
+                                disabled={cpfSaved}
                             >
                                 {(inputProps) => <Input {...inputProps} />}
                             </ReactInputMask>
                         </p>
                         {!isEmailValid && <p style={{ color: 'red' }}>{emailErrorMessage}</p>}
-                        <Button onClick={handleSaveChanges} type='primary' disabled={!isEmailValid}>Salvar</Button>
+                        <SaveButtonWithTooltip />
                     </div>
                 </div>
             ),
