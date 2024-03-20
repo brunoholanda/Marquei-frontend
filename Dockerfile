@@ -1,6 +1,6 @@
 #Rodar esse comando antes
-#docker build -f Dockerfile.base.npm -t base.npm:latest .
-FROM base.npm:latest as build
+#docker build --no-cache -f Dockerfile.base.npm -t base-marquei-frontend.npm:latest .
+FROM base-marquei-frontend.npm:latest as build
 WORKDIR /app
 COPY . .
 RUN npm run build
