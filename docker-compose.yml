@@ -1,0 +1,8 @@
+version: '3.3'
+services:
+  react-app:
+    build: .
+    image: marquei-frontend
+    ports:
+      - "80:80"
+
