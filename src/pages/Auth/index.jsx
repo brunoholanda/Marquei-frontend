@@ -3,13 +3,13 @@ import { Link, useNavigate } from 'react-router-dom';
 import { Button, Input, Modal, message } from 'antd';
 import { LockOutlined } from '@ant-design/icons';
 import styles from './Auth.module.scss';
-import { BASE_URL } from 'config';
 import Btn from 'components/Btn';
 import PlanCard from 'components/SelerCads';
 import { useAuth } from 'context/AuthContext';
 import ReCAPTCHAUtil from 'utils/ReCAPTCHAUtil';
 import { LoadingOverlay } from 'pages/ContactPage/styles';
 import Loading from 'components/Loading';
+import api from 'components/api/api';
 
 const Authentication = () => {
   const [username, setUsername] = useState('');
@@ -26,7 +26,6 @@ const Authentication = () => {
   const navigate = useNavigate();
   const { updateAuthData } = useAuth();
 
-
   const handleLogin = async (e) => {
     e.preventDefault();
     setLoginError('');
@@ -37,52 +36,40 @@ const Authentication = () => {
     }
     setIsLoading(true);
     try {
-      const response = await fetch(`${BASE_URL}/auth/login`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ username, password, recaptchaToken }),
+      const response = await api.post('/auth/login', {
+        username,
+        password,
+        recaptchaToken,
       });
 
-      if (!response.ok) {
-        const error = await response.json();
+      const { token, company_id, user_specialties } = response.data;
+
+      if (typeof company_id === 'undefined') {
         setIsLoading(false);
-        if (error.message === "Token inválido ou expirado") {
-          setExpiredTokenModalVisible(true);
-          setExpiredTokenMessage('Seu período de teste chegou ao fim, mas não fique triste, fique à vontade para contratar um dos nossos planos clicando aqui!');
-        } else {
-          throw new Error(error.message || 'Erro ao fazer login.');
-        }
-      } else {
-        const { token, company_id, user_specialties } = await response.json();
-
-        if (typeof company_id === 'undefined') {
-          setIsLoading(false);
-          throw new Error('Informações do usuário ou da empresa não estão disponíveis.');
-        }
-
-        updateAuthData({
-          authToken: token,
-          companyID: company_id,
-          userSpecialties: user_specialties,
-        });
-
-        setUsername('');
-        setPassword('');
-        setRecaptchaToken('');
-        navigate('/calendario');
+        throw new Error('Informações do usuário ou da empresa não estão disponíveis.');
       }
+
+      updateAuthData({
+        authToken: token,
+        companyID: company_id,
+        userSpecialties: user_specialties,
+      });
+
+      setUsername('');
+      setPassword('');
+      setRecaptchaToken('');
+      navigate('/calendario');
     } catch (error) {
       setIsLoading(false);
-      setLoginError(error.message || 'Erro ao fazer login.');
-      message.error(error.message);
+      const errorMessage = error.response?.data?.message || 'Erro ao fazer login.';
+      setLoginError(errorMessage);
+      message.error(errorMessage);
       if (recaptchaRef.current) {
-        recaptchaRef.current.reset(); 
+        recaptchaRef.current.reset();
       }
     }
-
   };
+
 
   const handlePasswordReset = async () => {
     if (!recaptchaToken) {
@@ -91,21 +78,18 @@ const Authentication = () => {
     }
 
     try {
-      const response = await fetch(`${BASE_URL}/auth/password-reset`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ email: resetEmail, recaptchaToken }),
+      const response = await api.post('/auth/password-reset', {
+        email: resetEmail,
+        recaptchaToken,
       });
-
-      if (response.ok) {
+      if (response.status >= 200 && response.status < 300) {
         message.success('Se um email corresponder à sua conta, enviaremos um link de redefinição de senha.');
       } else {
         throw new Error('Algo deu errado, por favor tente novamente.');
       }
     } catch (error) {
-      message.error(error.message);
+      const errorMessage = error.response?.data?.message || 'Algo deu errado, por favor tente novamente.';
+      message.error(errorMessage);
     } finally {
       setPasswordResetModalVisible(false);
     }

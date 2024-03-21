@@ -1,5 +1,5 @@
+import api from 'components/api/api';
 import React, { createContext, useState, useEffect, useContext } from 'react';
-import { BASE_URL } from 'config';
 
 const AuthContext = createContext();
 
@@ -20,14 +20,9 @@ export const AuthProvider = ({ children }) => {
 
     const fetchCompanyDetails = async (token) => {
         try {
-            const response = await fetch(`${BASE_URL}/auth/company-log-details`, {
-                method: 'GET',
-                headers: {
-                    Authorization: `Bearer ${token}`,
-                },
-            });
-            if (response.ok) {
-                const { company_id, user_specialties } = await response.json();
+            const response = await api.get('/auth/company-log-details');
+            if (response.status >= 200 && response.status < 300) {
+                const { company_id, user_specialties } = response.data;
                 setAuthData({ authToken: token, companyID: company_id, userSpecialties: user_specialties });
             } else if (response.status === 401) { 
                 logout(); 
@@ -47,7 +42,7 @@ export const AuthProvider = ({ children }) => {
     const logout = () => {
         setAuthData({ authToken: null, companyID: null, userSpecialties: [] });
         sessionStorage.removeItem('authToken');
-        window.location = '/#login'; // Redireciona para a página de login
+        window.location = '/#login'; 
     };
 
     return (
