@@ -10,6 +10,7 @@ import {
   AppleOutlined,
   SettingOutlined,
   PieChartOutlined,
+  LockOutlined,
 } from '@ant-design/icons';
 import { Link, useNavigate } from 'react-router-dom';
 import { Layout, Menu, theme } from 'antd';
@@ -18,10 +19,21 @@ import './Sidebar.css';
 import { useAuth } from 'context/AuthContext';
 import logo from '../../public/logo-branca-2.webp';
 import logoLetra from '../../public/logo-letra-branca.png';
+import PasswordResetModal from 'components/Modals/PasswordResetModal';
 
 const { Header, Sider } = Layout;
 
-function getItem(label, key, icon, children, url) {
+function getItem(label, key, icon, children, url, type) {
+  // Se for um dropdown, retorne uma estrutura de submenu
+  if (type === 'dropdown') {
+    return {
+      key,
+      icon,
+      label, // Label agora pode ser um elemento React
+      children, // Itens do dropdown
+    };
+  }
+  // Para itens normais
   return {
     key,
     icon,
@@ -30,17 +42,31 @@ function getItem(label, key, icon, children, url) {
   };
 }
 
+
+
 const Sidebar = () => {
   const [isMobile, setIsMobile] = useState(window.innerWidth < 768);
   const { authData, logout } = useAuth();
   const userSpecialties = authData.userSpecialties || [];
   const [runTutorial, setRunTutorial] = useState(false);
+  const [isPasswordModalVisible, setIsPasswordModalVisible] = useState(false);
+
   const [steps, setSteps] = useState([
     {
       target: '.custom-menu .ant-menu-item:nth-child(6)',
       content: 'Clique aqui para acessar as configurações do sistema.',
     },
   ]);
+
+  const showPasswordModal = () => {
+    setIsPasswordModalVisible(true);
+  };
+  
+  const handlePasswordModalClose = () => {
+    setIsPasswordModalVisible(false);
+  };
+  
+
 
   useEffect(() => {
     if (!localStorage.getItem('tutorialShown')) {
@@ -105,8 +131,10 @@ const Sidebar = () => {
     !isMobile && getItem('Estoque', '7', <BarChartOutlined style={{ fontSize: iconSize }} />, null, '/estoque'),
     getItem('Contabilidade', '8', <CalculatorOutlined style={{ fontSize: iconSize }} />, null, '/contabilidade'),
     userSpecialties?.includes(5) && getItem('Plano Alimentar', '9', <AppleOutlined style={{ fontSize: iconSize }} />, null, '/plano_alimentar'),
-    isAuthenticated && getItem('Sair do Sistema', 'logout', <LogoutOutlined style={{ fontSize: iconSize }} />, null, null), // Conditional item
-    authData.companyID === 1 && getItem('Administrador', '11', <SettingOutlined style={{ fontSize: iconSize }} />, null, '/adminpanel'),
+    getItem('Sair +', 'logout', <LogoutOutlined style={{ fontSize: iconSize }} />, [
+      { label: 'Sair', key: 'logout-system', icon: <LogoutOutlined />, onClick: handleLogout },
+      { label: 'Alterar Senha', key: 'change-password', icon: <LockOutlined />, onClick: showPasswordModal },
+    ], null, 'dropdown'), authData.companyID === 1 && getItem('Administrador', '11', <SettingOutlined style={{ fontSize: iconSize }} />, null, '/adminpanel'),
   ].filter(Boolean);
 
   if (!isAuthenticated) {
@@ -118,7 +146,7 @@ const Sidebar = () => {
     last: 'Blz 😃',
     skip: 'Not Now',
     close: 'Close',
-};
+  };
 
 
   return (
@@ -164,6 +192,10 @@ const Sidebar = () => {
             zIndex: 10000,
           },
         }}
+      />
+      <PasswordResetModal
+        isResetPassVisible={isPasswordModalVisible}
+        onResetPassClose={handlePasswordModalClose}
       />
     </Layout>
   );

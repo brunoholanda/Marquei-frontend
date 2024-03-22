@@ -28,7 +28,7 @@ const ResetPassword = () => {
     const handlePasswordChange = (e) => {
         const password = e.target.value;
         setPasswordCriteria({
-            minLength: password.length >= 8,
+            minLength: password.length >= 10,
             upperCase: /[A-Z]/.test(password),
             lowerCase: /[a-z]/.test(password),
             specialChar: /[^A-Za-z0-9]/.test(password),
@@ -87,7 +87,7 @@ const ResetPassword = () => {
                     required
                 />
                 <div className='passwordCriteria'>
-                    <CheckOrCloseOutlined isCriteriaMet={passwordCriteria.minLength} text="A senha deve conter pelo menos 8 dígitos" />
+                    <CheckOrCloseOutlined isCriteriaMet={passwordCriteria.minLength} text="A senha deve conter pelo menos 10 dígitos" />
                     <CheckOrCloseOutlined isCriteriaMet={passwordCriteria.upperCase} text="Deve conter pelo menos uma letra maiúscula" />
                     <CheckOrCloseOutlined isCriteriaMet={passwordCriteria.lowerCase} text="Deve conter pelo menos uma letra minúscula" />
                     <CheckOrCloseOutlined isCriteriaMet={passwordCriteria.specialChar} text="Deve conter pelo menos um caractere especial" />
