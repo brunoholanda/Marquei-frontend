@@ -438,7 +438,7 @@ const Schedule = () => {
               ✓
             </div>
           </div>
-          Seu agendamento foi recebido com sucesso! Agora é só aguardar que entraremos em contato com você em até 24 horas antes da consulta. Fique à vontade para entrar em contato em nosso número (83) 9 9631-1573.
+          Seu agendamento foi recebido com sucesso! Agora é só aguardar que entraremos em contato com você em até 24 horas antes da consulta. Fique à vontade para entrar em contato com a clínica.
         </Modal>
       </Form>
     </StyledFormClient>
