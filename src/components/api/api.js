@@ -1,9 +1,13 @@
 import axios from 'axios';
+import { BASE_URL } from '../../config'; // Importa BASE_URL de config.js
 
+// Cria uma instância do axios com o baseURL obtido de config.js
 const api = axios.create({
-  baseURL: 'http://3.145.178.55:3333/api/',
+  baseURL: BASE_URL, // Utiliza BASE_URL importado
 });
 
+// Configura um interceptor de requisição para adicionar o token de autenticação
+// ao cabeçalho de Authorization, se o token existir.
 api.interceptors.request.use(config => {
   const token = sessionStorage.getItem('authToken');
   
@@ -17,6 +21,7 @@ api.interceptors.request.use(config => {
 });
 
 export default api;
+
 
 /*const api = axios.create({
   baseURL: 'https://marquei.com.br/api/',

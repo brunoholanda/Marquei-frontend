@@ -68,7 +68,7 @@ const ScheduleModal = ({ isModalAgendaVisible, handleCancel, start, end }) => {
 
         try {
             if (companyID) {
-                const response = await api.get('/clients', {
+                const response = await api.get('/clients-name', {
                     params: {
                         company_id: companyID,
                     },
