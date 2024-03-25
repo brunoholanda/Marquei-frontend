@@ -11,7 +11,6 @@ import { suggestEmails } from 'utils/commonMailDomains';
 
 function ProfessionalModal({ isVisible, onClose, initialData, onProfessionalSaved }) {
     const [isEditMode, setIsEditMode] = useState(false);
-
     const [nome, setNome] = useState("");
     const [cpf, setCpf] = useState("");
     const [dataNascimento, setDataNascimento] = useState(null);
@@ -253,7 +252,7 @@ function ProfessionalModal({ isVisible, onClose, initialData, onProfessionalSave
                         </Form.Item>
                         <Form.Item
                             name="titulo"
-                            label="Título"
+                            label="Especialidade"
                             rules={[{ required: true, message: 'Por favor, insira um Título, Ex. Cirugião Plástico' }]}
                         >
                             <Input value={titulo} onChange={e => setTitulo(e.target.value)} />

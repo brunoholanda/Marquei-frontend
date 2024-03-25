@@ -11,6 +11,7 @@ import { StyledPublicModalContato, StyledPublicPicture, StyledSubContainerPublic
 import { BASE_URL } from 'config';
 import { useAuth } from 'context/AuthContext';
 import ResetDoctorPasswordModal from 'components/Modals/resetDoctorPassword';
+import EnderecoComponent from './EnderecoComponent';
 
 const DoctorDetails = () => {
     const [isMobile, setIsMobile] = useState(window.innerWidth < 768);
@@ -55,7 +56,7 @@ const DoctorDetails = () => {
                 setProfessionalDetails(response.data);
                 setEditedDetails(response.data);
                 setCep(response.data.cep || "");
-                
+
                 if (response.data.email) {
                     setEmailSaved(true);
                 }
@@ -107,7 +108,6 @@ const DoctorDetails = () => {
                 }
                 setTodosPlanos(responsePlanos.data);
 
-                // Carregar os planos de saúde associados ao profissional
                 const responseProfissionalPlanos = await api.get(`/professionals/${id}/planos`);
                 const selectedPlanosIds = responseProfissionalPlanos.data.map(plano => plano.id);
                 setPlanosSelecionados(selectedPlanosIds);
@@ -148,7 +148,6 @@ const DoctorDetails = () => {
 
                     setEstadoSelecionado(data.uf || '');
 
-                    // Atualiza editedDetails com os novos valores
                     handleInputChange('endereco', data.logradouro || '');
                     handleInputChange('numero', data.numero || '');
                     handleInputChange('bairro', data.bairro || '');
@@ -273,7 +272,7 @@ const DoctorDetails = () => {
                     <p><b>Telefone:</b> <Input value={editedDetails.celular || professionalDetails.celular} onChange={(e) => handleInputChange('celular', e.target.value)} /></p>
                     <p><b>Nascimento:</b> <Input value={editedDetails.data_de_nascimento || professionalDetails.data_de_nascimento} onChange={e => handleInputChange('data_de_nascimento', e.target.value)} /></p>
                     <p><b>Email:</b> <Input value={editedDetails.email || professionalDetails.email} onChange={(e) => handleInputChange('email', e.target.value)} disabled={emailSaved} /></p>
-                    <p><b>CPF:</b> <Input value={editedDetails.cpf || professionalDetails.cpf} onChange={e => handleInputChange('cpf', e.target.value)} disabled={true}/></p>
+                    <p><b>CPF:</b> <Input value={editedDetails.cpf || professionalDetails.cpf} onChange={e => handleInputChange('cpf', e.target.value)} disabled={true} /></p>
                     <Button onClick={handleSaveChanges} type='primary'>Salvar</Button>
                 </>
             ),
@@ -284,7 +283,7 @@ const DoctorDetails = () => {
             content: (
                 <>
                     <p><b>Registro Profissional:</b> <Input value={editedDetails.registro_profissional || professionalDetails.registro_profissional} onChange={(e) => handleInputChange('registro_profissional', e.target.value)} /></p>
-                    <p><b>Título:</b> <Input value={editedDetails.titulo || professionalDetails.titulo} onChange={(e) => handleInputChange('titulo', e.target.value)} /></p>
+                    <p><b>Especialidade:</b> <Input value={editedDetails.titulo || professionalDetails.titulo} onChange={(e) => handleInputChange('titulo', e.target.value)} /></p>
                     <p><b>Planos que atende:</b>
                         {todosPlanos && (
                             <Select
@@ -300,64 +299,17 @@ const DoctorDetails = () => {
                             </Select>
                         )}
                     </p>
-                    <Button onClick={handleSaveChanges} type='primary'>Salvar</Button>                </>
+                    <Button onClick={handleSaveChanges} type='primary'>Salvar</Button>
+                </>
             ),
         },
         {
             key: '3',
-            tab: isMobile ? 'End. Prof' : 'Endereço Profissional', // Nome da tab ajustado para mobile
+            tab: isMobile ? 'End. Prof' : 'Endereço Profissional',
             content: (
                 <>
-                    <p>
-                        <b>CEP:</b>
-                        <Input
-                            value={cep}
-                            onChange={handleCEPChange}
-                        />
-                    </p>
-                    <p>
-                        <b>Rua:</b>
-                        <Input
-                            value={editedDetails.endereco || endereco}
-                            onChange={(e) => handleInputChange('endereco', e.target.value)}
-                        />
-                    </p>
-                    <p>
-                        <b>Número:</b>
-                        <Input
-                            value={editedDetails.numero || numero}
-                            onChange={(e) => handleInputChange('numero', e.target.value)}
-                        />
-                    </p>
-                    <p>
-                        <b>Referência:</b>
-                        <Input
-                            value={editedDetails.referencia || referencia}
-                            onChange={(e) => handleInputChange('referencia', e.target.value)}
-                        />
-                    </p>
-                    <p>
-                        <b>Estado:</b>
-                        <Input
-                            value={editedDetails.estado || estadoSelecionado}
-                            onChange={(e) => handleInputChange('estado', e.target.value)}
-                        />
-                    </p>
-                    <p>
-                        <b>Cidade:</b>
-                        <Input
-                            value={editedDetails.cidade || cidade}
-                            onChange={(e) => handleInputChange('cidade', e.target.value)}
-                        />
-                    </p>
-                    <p>
-                        <b>Bairro:</b>
-                        <Input
-                            value={editedDetails.bairro || bairro}
-                            onChange={(e) => handleInputChange('bairro', e.target.value)}
-                        />
-                    </p>
-                    <Button onClick={handleSaveChanges} type='primary'>Salvar</Button>                </>
+                    <EnderecoComponent />
+                </>
             ),
         },
         {
@@ -375,7 +327,7 @@ const DoctorDetails = () => {
                                 height: 'auto'
                             }}
                         />)}
-                    <p><b>Você pode assinar novamnete para atualizar:</b></p>
+                    <p><b>Você pode assinar novamente para atualizar:</b></p>
 
                     <div style={{
                         border: '1px solid black',
@@ -620,6 +572,11 @@ const DoctorDetails = () => {
             publicProfileDetails.especialidade &&
             publicProfileDetails.telefone &&
             publicProfileDetails.atendimento &&
+            publicProfileDetails.endereco &&
+            publicProfileDetails.numero &&
+            publicProfileDetails.bairro &&
+            publicProfileDetails.cidade &&
+            publicProfileDetails.uf &&
             perfilPictureUrl
         );
     };
@@ -742,7 +699,7 @@ const DoctorDetails = () => {
                 </StyledPublicModalContato>
                 <StyledPublicModalContato>
                     <Input
-                        placeholder="Especialidade"
+                        placeholder="Área de atuação"
                         value={publicProfileDetails.especialidade}
                         onChange={(e) => setPublicProfileDetails({ ...publicProfileDetails, especialidade: e.target.value })}
                     />
@@ -752,7 +709,7 @@ const DoctorDetails = () => {
                         onChange={(e) => setPublicProfileDetails({ ...publicProfileDetails, registro_profissional: e.target.value })}
                     />
                     <Input
-                        placeholder="Título"
+                        placeholder="Especialidade"
                         value={publicProfileDetails.titulo}
                         onChange={(e) => setPublicProfileDetails({ ...publicProfileDetails, titulo: e.target.value })}
                     />
@@ -802,7 +759,6 @@ const DoctorDetails = () => {
                         onChange={(e) => setPublicProfileDetails({ ...publicProfileDetails, bairro: e.target.value })}
                     />
                 </StyledPublicModalContato>
-
                 <StyledPublicModalContato>
                     <Input
                         placeholder="Cidade"

@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Button, Modal, TimePicker, message } from 'antd';
+import { Button, Checkbox, Divider, Modal, TimePicker, message } from 'antd';
 import moment from 'moment';
 import api from '../api/api';
 
@@ -8,11 +8,14 @@ const WeeklyModal = ({ isVisible, setIsVisible, selectedProfessional }) => {
     const orderedDays = ["Segunda", "Terça", "Quarta", "Quinta", "Sexta", "Sábado", "Domingo"];
     const [timeIntervals, setTimeIntervals] = useState({});
     const [interval, setInterval] = useState(null);
+    const [selectedEndereco, setSelectedEndereco] = useState(null);
+    const [enderecos, setEnderecos] = useState([]);
+    const [selectedEnderecos, setSelectedEnderecos] = useState({});
 
     const handleIntervalChange = (value) => {
         setInterval(value ? value.format('HH:mm') : null);
     };
-    
+
     const transformToTimeIntervals = (days) => {
         let intervals = {};
         days.forEach(day => {
@@ -35,6 +38,12 @@ const WeeklyModal = ({ isVisible, setIsVisible, selectedProfessional }) => {
         }));
     };
 
+    const handleEnderecoSelection = (dayId, enderecoId) => {
+        setSelectedEnderecos(prev => ({
+            ...prev,
+            [dayId]: enderecoId
+        }));
+    };
 
     useEffect(() => {
         const fetchDaysOfWeek = async () => {
@@ -92,6 +101,32 @@ const WeeklyModal = ({ isVisible, setIsVisible, selectedProfessional }) => {
     }, [selectedProfessional]);
 
     useEffect(() => {
+        const fetchDaysOfWeekAndAddresses = async () => {
+            try {
+                const response = await api.get(`/dias-semanais/?professional_id=${selectedProfessional}`);
+                setDaysOfWeek(response.data);
+
+                const addressSelections = response.data.reduce((acc, day) => {
+                    if (day.endereco_id) {
+                        acc[day.id] = day.endereco_id;
+                    }
+                    return acc;
+                }, {});
+
+                setSelectedEnderecos(addressSelections);
+                setTimeIntervals(transformToTimeIntervals(response.data));
+            } catch (error) {
+                console.error('Erro ao buscar dias da semana', error);
+            }
+        };
+
+        if (isVisible && selectedProfessional) {
+            fetchDaysOfWeekAndAddresses();
+        }
+    }, [isVisible, selectedProfessional]);
+
+
+    useEffect(() => {
         const fetchInterval = async () => {
             try {
                 const response = await api.get(`/professional-intervals/professional/${selectedProfessional}`);
@@ -110,20 +145,58 @@ const WeeklyModal = ({ isVisible, setIsVisible, selectedProfessional }) => {
                 }
             }
         };
-    
+
         if (isVisible && selectedProfessional) {
             fetchInterval();
         }
     }, [isVisible, selectedProfessional]);
 
+    useEffect(() => {
+        const fetchEnderecos = async () => {
+            try {
+                const response = await api.get(`/enderecos/professional/${selectedProfessional}`);
+                const fetchedEnderecos = response.data || [];
+                setEnderecos(fetchedEnderecos);
+
+                // Se houver apenas um endereço, selecione-o automaticamente para todos os dias da semana
+                if (fetchedEnderecos.length === 1) {
+                    const uniqueEnderecoId = fetchedEnderecos[0].id;
+                    const updatedSelectedEnderecos = daysOfWeek.reduce((acc, day) => {
+                        acc[day.id] = uniqueEnderecoId;
+                        return acc;
+                    }, {});
+
+                    setSelectedEnderecos(updatedSelectedEnderecos);
+                }
+            } catch (error) {
+                console.error('Erro ao carregar endereços:', error);
+                message.error('Erro ao carregar endereços.');
+            }
+        };
+
+        if (selectedProfessional) {
+            fetchEnderecos();
+        }
+    }, [selectedProfessional, daysOfWeek]); // Adicione daysOfWeek como dependência para garantir a atualização
+
+
+
     const handleSaveDaysStatus = async () => {
-        const updates = [];
+        // Verifica se pelo menos um endereço foi selecionado para os dias ativos
+        // ou se não há endereços disponíveis
+        const hasSelectedAddress = daysOfWeek.some(day => day.ativo && selectedEnderecos[day.id]);
+        const areAddressesAvailable = enderecos.length > 0;
     
+        if (areAddressesAvailable && !hasSelectedAddress) {
+            message.error("Por favor, selecione pelo menos um endereço para os dias ativos.");
+            return;
+        }
+    
+        const updates = [];
         let hasError = false;
     
         for (const day of daysOfWeek) {
             const intervalsForDay = timeIntervals[day.id];
-    
             if (day.ativo && (!intervalsForDay || !intervalsForDay.startam || !intervalsForDay.endam || !intervalsForDay.startpm || !intervalsForDay.endpm)) {
                 hasError = true;
                 message.error(`Por favor, defina todos os intervalos de tempo para ${day.dia}.`);
@@ -132,6 +205,7 @@ const WeeklyModal = ({ isVisible, setIsVisible, selectedProfessional }) => {
     
             const payload = {
                 ativo: day.ativo,
+                endereco_id: selectedEnderecos[day.id],
                 ...timeIntervals[day.id]
             };
     
@@ -143,7 +217,6 @@ const WeeklyModal = ({ isVisible, setIsVisible, selectedProfessional }) => {
     
         if (hasError) return;
     
-        // Em seguida, processa a atualização ou criação do intervalo de atendimento
         if (!interval) {
             message.error("Por favor, selecione um intervalo de tempo entre atendimentos.");
             return;
@@ -154,7 +227,6 @@ const WeeklyModal = ({ isVisible, setIsVisible, selectedProfessional }) => {
             intervalo: interval,
         };
     
-        // Inclui a chamada para criar/atualizar o intervalo no array de promessas
         updates.push(api.post('/professional-intervals', intervalPayload));
     
         try {
@@ -169,6 +241,8 @@ const WeeklyModal = ({ isVisible, setIsVisible, selectedProfessional }) => {
     };
     
 
+
+
     const handleTimeIntervalChange = (dayId, period, value) => {
         setTimeIntervals(prev => ({
             ...prev,
@@ -182,16 +256,16 @@ const WeeklyModal = ({ isVisible, setIsVisible, selectedProfessional }) => {
     const replicateTimeIntervals = () => {
         const firstDayId = daysOfWeek.find(day => day.ativo).id;
         const firstDayIntervals = timeIntervals[firstDayId];
-      
+
         const newTimeIntervals = { ...timeIntervals };
         daysOfWeek.forEach(day => {
-          if (day.id !== firstDayId) {
-            newTimeIntervals[day.id] = { ...firstDayIntervals };
-          }
+            if (day.id !== firstDayId) {
+                newTimeIntervals[day.id] = { ...firstDayIntervals };
+            }
         });
-      
+
         setTimeIntervals(newTimeIntervals);
-      };
+    };
 
 
     return (
@@ -207,19 +281,32 @@ const WeeklyModal = ({ isVisible, setIsVisible, selectedProfessional }) => {
                     Salvar
                 </Button>
             ]}
+            bodyStyle={{ maxHeight: '60vh', overflowY: 'auto' }} 
         >
             <p>Aqui você configura os dias da semana e intervalos de tempo que sua agenda estará disponível para seus clientes:</p>
-            <Button type='primary' onClick={replicateTimeIntervals} style={{marginBottom: '10px', width: '100%'}}>Replicar Horários</Button>
+            <Button type='primary' onClick={replicateTimeIntervals} style={{ marginBottom: '10px', width: '100%' }}>Replicar Horários</Button>
             <div>
                 {sortedDaysOfWeek.map(day => (
-                    <div key={day.id}>
+                    <div key={day.id} style={{ marginBottom: '20px' }}>
                         <div style={{ display: 'flex', alignItems: 'center', marginBottom: '10px' }}>
-                            <input
+                            <Checkbox
                                 type="checkbox"
                                 checked={day.ativo}
                                 onChange={() => toggleDayActiveStatus(day.id, !day.ativo)}
                             />
                             <span style={{ marginLeft: '10px' }}>{day.dia}</span>
+                        </div>
+                        <div style={{ margin: '10px 0' }}>
+                            {enderecos.map(endereco => (
+                                <Checkbox
+                                    key={endereco.id}
+                                    checked={selectedEnderecos[day.id] === endereco.id}
+                                    onChange={() => handleEnderecoSelection(day.id, endereco.id)}
+                                >
+                                    {`${endereco.rua}, ${endereco.numero} - ${endereco.cidade}/${endereco.uf}`}
+                                </Checkbox>
+
+                            ))}
                         </div>
                         <div style={{ display: 'flex', justifyContent: 'space-between' }}>
                             <TimePicker
@@ -268,6 +355,7 @@ const WeeklyModal = ({ isVisible, setIsVisible, selectedProfessional }) => {
                     value={interval ? moment(interval, 'HH:mm') : null}
                 />
             </div>
+            <Divider />
         </Modal>
     );
 }

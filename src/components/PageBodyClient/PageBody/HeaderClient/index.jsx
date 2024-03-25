@@ -15,11 +15,10 @@ function MenuLinksClient() {
                 Planos
             </Link>
             <Link to="/search-professionals">
-               Encontre o profissionais
+               Encontre profissionais
             </Link>
-
-            <Link to="./cadastro">
-                Contrate
+            <Link to="./como-usar">
+                Como usar?
             </Link>
         </div>
     )

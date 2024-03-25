@@ -24,6 +24,7 @@ export default function MenuMobile() {
                 <StyledLink to="/resources" onClick={() => setIsOpen(false)}>Recursos</StyledLink>
                 <StyledLink to="/planos" onClick={() => setIsOpen(false)}>Planos</StyledLink>
                 <StyledLink to="/search-professionals" onClick={() => setIsOpen(false)}>Encontre o profissionais</StyledLink>
+                <StyledLink to="/como-usar" onClick={() => setIsOpen(false)}>Como usar?</StyledLink>
                 <StyledLink to="/cadastro" onClick={() => setIsOpen(false)}>Contrate!</StyledLink>
             </StyledNav>
         </StyledHeader>

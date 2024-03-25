@@ -1,1 +1,0 @@
-import{j as e}from"./index-BjWOWftK.js";import r from"./index-gE6DTCwG.js";function s(){return e.jsx("div",{children:e.jsxs("section",{children:[e.jsx("h2",{style:{textAlign:"center",marginTop:"2rem"},children:"Perguntas frequentes"}),e.jsx(r,{})]})})}export{s as default};

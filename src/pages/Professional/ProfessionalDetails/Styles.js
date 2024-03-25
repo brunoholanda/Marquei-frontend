@@ -1,3 +1,4 @@
+import { Card } from 'antd';
 import styled from 'styled-components';
 
 export const StyledPublicModalContato = styled.div`
@@ -55,5 +56,40 @@ export const StyledSubContainerPublic = styled.div`
 
     input {
         width: 320px;
+    }
+`;
+
+export const StyledCardLine = styled.div`
+  display: grid;
+  grid-template-columns: 30% 50% 20%;
+  margin: 0;
+`;
+
+export const StyledCardLineModal = styled.div`
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  margin: 0;
+`;
+
+
+export const StyledCardEndereco = styled(Card)`
+  margin-bottom: 1rem;
+  width: 600px;
+
+  p {
+    font-size: 14px;
+    color: var(--cinza-texto);
+    margin-block-start: 0em;
+    margin-block-end: .2em;
+  }
+
+  button {
+    margin-top: 1rem;
+  }
+
+  @media (max-width: 768px) { 
+    width: 350px;
+
     }
 `;

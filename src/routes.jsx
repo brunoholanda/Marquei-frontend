@@ -4,6 +4,7 @@ import { useLocation } from "react-router-dom";
 
 import Loading from "components/Loading";
 import { AuthProvider, useAuth } from "context/AuthContext";
+import ComoUsar from "pages/ComoUsar";
 
 const NotFound = lazy(() => import('pages/NotFound'));
 const PageBody = lazy(() => import('components/PageBody'));
@@ -90,7 +91,7 @@ function AppRoutes() {
                             <Route path="/terms-of-use" element={<TermsOfUse />} />
                             <Route path="/privacy-policy" element={<PrivacyPolicy />} />
                             <Route path="/contato" element={<ContactPage />} />
-                            <Route path="/loading" element={<Loading />} />
+                            <Route path="/como-usar" element={<ComoUsar />} />                            
                             <Route path="/confirm-certificate/:id" element={<AtestadoInfoPage />} />
                             <Route path="/confirm-declaration/:id" element={<DeclationInfoPage />} />
                             <Route path="/reset-password/:token" element={<ResetPassword />} />
