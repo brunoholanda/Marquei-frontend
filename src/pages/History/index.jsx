@@ -89,22 +89,22 @@ const AllAppointments = () => {
           render: (text) => isMobile ? formatName(text) : text,
         },
         {
-            title: 'CPF',
-            dataIndex: 'cpf',
-            key: 'cpf',
+            title: 'Email',
+            dataIndex: 'email',
+            key: 'email',
             filterDropdown: ({ setSelectedKeys, selectedKeys, confirm, clearFilters }) => (
                 <div style={{ padding: 8 }}>
                     <Input
                         ref={node => { searchInput = node; }}
-                        placeholder={`Pesquisar CPF`}
+                        placeholder={`Pesquisar Email`}
                         value={selectedKeys[0]}
                         onChange={e => setSelectedKeys(e.target.value ? [e.target.value] : [])}
-                        onPressEnter={() => handleSearch(selectedKeys, confirm, 'cpf')}
+                        onPressEnter={() => handleSearch(selectedKeys, confirm, 'email')}
                         style={{ marginBottom: 8, display: 'block' }}
                     />
                     <Button
                         type="primary"
-                        onClick={() => handleSearch(selectedKeys, confirm, 'cpf')}
+                        onClick={() => handleSearch(selectedKeys, confirm, 'email')}
                         size="small"
                         style={{ width: 90, marginRight: 8 }}
                     >
@@ -116,13 +116,14 @@ const AllAppointments = () => {
                 </div>
             ),
             filterIcon: filtered => <SearchOutlined style={{ color: filtered ? '#1890ff' : undefined }} />,
-            onFilter: (value, record) => record.cpf.includes(value),
+            onFilter: (value, record) => record.email ? record.email.toString().toLowerCase().includes(value.toLowerCase()) : '',
             onFilterDropdownVisibleChange: visible => {
                 if (visible) {
                     setTimeout(() => searchInput.select(), 100);
                 }
             },
-        },
+          },
+          
         {
           title: 'Data',
           dataIndex: 'data',
@@ -159,18 +160,6 @@ const AllAppointments = () => {
             dataIndex: 'data',
             key: 'data',
         },
-
-        {
-            title: 'Convênio',
-            dataIndex: 'planodental',
-            key: 'planoDental',
-        },
-        {
-            title: 'Motivo',
-            dataIndex: 'motivo',
-            key: 'motivo',
-        },
-       
     ];
 
     const columns = isMobile ? commonColumns : [...commonColumns, ...desktopColumns];

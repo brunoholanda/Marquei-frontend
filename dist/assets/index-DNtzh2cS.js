@@ -1,0 +1,1 @@
+import{j as t}from"./index-DtAKxO-I.js";const s="/assets/wp-page-RX8Xakus.png",a=()=>t.jsx("div",{className:"floating-button",children:t.jsx("a",{href:"https://api.whatsapp.com/send?phone=551151946100",target:"_blank",rel:"noreferrer",children:t.jsx("img",{src:s,alt:"WhatsApp"})})}),p=a;export{p as F};

@@ -4,7 +4,7 @@ import { useLocation } from "react-router-dom";
 
 import Loading from "components/Loading";
 import { AuthProvider, useAuth } from "context/AuthContext";
-import ComoUsar from "pages/ComoUsar";
+
 
 const NotFound = lazy(() => import('pages/NotFound'));
 const PageBody = lazy(() => import('components/PageBody'));
@@ -43,6 +43,8 @@ const SearchProfessionals = lazy(() => import('pages/EncontreProfissionais'));
 const ProfessionalDetailPage = lazy(() => import('pages/EncontreProfissionais/PublicProfessionalDetails'));
 const ConfirmAppointmentPage = lazy(() => import('pages/ConfirmConsulta'));
 const ResetDoctorPassword = lazy(() => import('pages/ResetPassword/ResetDoctorPassword'));
+const ComoUsar = lazy(() => import('pages/ComoUsar'));
+const Forbidden = lazy(() => import('pages/Forbidden'));
 
 function ScrollToTop() {
     const { pathname } = useLocation();
@@ -120,6 +122,7 @@ function AppRoutes() {
                             <Route path="/planos" element={<ProtectedRoute element={<MyPlan />} />} />
                             <Route path="/nps-system" element={<ProtectedRoute element={<NpsSystem />} />} />
                             <Route path="/adminpanel" element={<ProtectedRoute element={<AdminMaster />} allowedCompanyIds={[1]} />} />
+                            <Route path="/forbidden" element={<ProtectedRoute element={<Forbidden />} />} />
                             <Route path="*" element={<NotFound />} />
                         </Route>
                     </Routes>

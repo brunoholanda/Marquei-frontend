@@ -53,23 +53,27 @@ const DoctorDetails = () => {
         const fetchDetails = async () => {
             try {
                 const response = await api.get(`/professionals/${id}`);
-                setProfessionalDetails(response.data);
-                setEditedDetails(response.data);
-                setCep(response.data.cep || "");
-
-                if (response.data.email) {
-                    setEmailSaved(true);
+                const professionalCompanyID = response.data.company_id;
+    
+                if (professionalCompanyID !== companyID) {
+                    navigate('/forbidden');
+                } else {
+                    setProfessionalDetails(response.data);
+                    setEditedDetails(response.data);
+                    setCep(response.data.cep || "");
+    
+                    if (response.data.email) {
+                        setEmailSaved(true);
+                    }
                 }
-
             } catch (error) {
                 console.error("Erro ao buscar detalhes", error);
                 message.error("Erro ao buscar detalhes");
             }
         };
-
+    
         fetchDetails();
-    }, [id]);
-
+    }, [id, companyID, navigate]);
     useEffect(() => {
         const checkIfProfilePublished = async () => {
             try {
