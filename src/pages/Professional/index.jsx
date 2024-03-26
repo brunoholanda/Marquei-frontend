@@ -87,12 +87,15 @@ function Configs() {
                         }
                     });
                     const serviceId = companyResponse.data.service_id;
+                    console.log('servico', serviceId);
                     const serviceResponse = await api.get(`/service_details/${serviceId}`, {
                         headers: {
                             'Authorization': `Bearer ${authData.authToken}`
                         }
                     });
                     setMaxProfessionals(serviceResponse.data.persons);
+                    console.log('persons', serviceResponse.data.persons);
+
                 } catch (error) {
                     console.error('Erro ao buscar o número máximo de profissionais:', error);
                     message.error('Erro ao buscar informações do serviço');
@@ -293,9 +296,6 @@ function Configs() {
                         footer={[
                             <Button key="back" onClick={closeUpgradeModal}>
                                 Cancelar
-                            </Button>,
-                            <Button key="submit" type="primary" onClick={handleUpgrade}>
-                                Fazer Upgrade
                             </Button>,
                         ]}
                     >

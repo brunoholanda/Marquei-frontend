@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Form, Input, Button, TimePicker, DatePicker, Select, message, Modal } from 'antd';
+import { Form, Input, Button, TimePicker, DatePicker, Select, message, Modal, Checkbox, Radio } from 'antd';
 import moment from 'moment';
 import ReactInputMask from 'react-input-mask';
 import './schedule.css';
@@ -24,6 +24,15 @@ const Schedule = () => {
   const [professionalInterval, setProfessionalInterval] = useState(0);
   const { company_id } = useParams();
   const [emailSuggestions, setEmailSuggestions] = useState([]);
+  const [enderecos, setEnderecos] = useState([]);
+  const [selectedEnderecos, setSelectedEnderecos] = useState({});
+  const [daysOfWeek, setDaysOfWeek] = useState([]);
+  const [selectedEnderecoId, setSelectedEnderecoId] = useState(null);
+
+
+  const handleEnderecoSelection = (e) => {
+    setSelectedEnderecoId(e.target.value);
+  };
 
   const handleEmailChange = (event) => {
     const emailInput = event.target.value;
@@ -61,19 +70,28 @@ const Schedule = () => {
   };
 
   useEffect(() => {
-    if (selectedProfessional) {
-      const fetchDiasSemana = async () => {
-        try {
-          const response = await api.get(`/dias-semanais?professional_id=${selectedProfessional}`);
-          setDiasSemana(response.data);
-        } catch (error) {
-          console.error('Erro ao buscar dias da semana', error);
+    const fetchDiasSemana = async () => {
+      try {
+        // Define os parâmetros base para a requisição
+        let params = { professional_id: selectedProfessional };
+  
+        // Se houver endereços cadastrados e um endereço foi selecionado, adiciona o filtro de endereço_id
+        if (enderecos.length > 0 && selectedEnderecoId) {
+          params.endereco_id = selectedEnderecoId;
         }
-      };
-
+  
+        const response = await api.get(`/dias-semanais`, { params });
+        setDiasSemana(response.data);
+      } catch (error) {
+        console.error('Erro ao buscar dias da semana', error);
+      }
+    };
+  
+    if (selectedProfessional) {
       fetchDiasSemana();
     }
-  }, [selectedProfessional]);
+  }, [selectedProfessional, selectedEnderecoId, enderecos.length]);
+  
 
 
   const isWeekend = (date) => {
@@ -82,6 +100,8 @@ const Schedule = () => {
     if (!dia || !dia.ativo) return true;
     return isHoliday(date);
   };
+
+
 
   useEffect(() => {
     if (selectedProfessional) {
@@ -97,6 +117,33 @@ const Schedule = () => {
       fetchProfessionalInterval();
     }
   }, [selectedProfessional]);
+
+  useEffect(() => {
+    const fetchEnderecos = async () => {
+      try {
+        const response = await api.get(`/enderecos/professional/${selectedProfessional}`);
+        const fetchedEnderecos = response.data || [];
+        setEnderecos(fetchedEnderecos);
+
+        if (fetchedEnderecos.length === 1) {
+          const uniqueEnderecoId = fetchedEnderecos[0].id;
+          const updatedSelectedEnderecos = daysOfWeek.reduce((acc, day) => {
+            acc[day.id] = uniqueEnderecoId;
+            return acc;
+          }, {});
+
+          setSelectedEnderecos(updatedSelectedEnderecos);
+        }
+      } catch (error) {
+        console.error('Erro ao carregar endereços:', error);
+        message.error('Erro ao carregar endereços.');
+      }
+    };
+
+    if (selectedProfessional) {
+      fetchEnderecos();
+    }
+  }, [selectedProfessional, daysOfWeek]);
 
   const getDisabledHours = (selectedDate, bookedHours, professionalInterval) => {
     if (!selectedDate) return [];
@@ -356,7 +403,18 @@ const Schedule = () => {
             </Option>
           ))}
         </Select>
-
+        <div style={{ margin: '10px 0' }}>
+          <Radio.Group onChange={handleEnderecoSelection} value={selectedEnderecoId}>
+            {enderecos.map(endereco => (
+              <Radio
+                key={endereco.id}
+                value={endereco.id} 
+              >
+                {`${endereco.rua}, ${endereco.numero} - ${endereco.cidade}/${endereco.uf}`}
+              </Radio>
+            ))}
+          </Radio.Group>
+        </div>
         <Form.Item
           name="data"
           label="Data"

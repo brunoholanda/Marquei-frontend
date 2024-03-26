@@ -118,6 +118,23 @@ body {
     flex-direction: row;
   }
 
+  .ant-modal-body::-webkit-scrollbar {
+    width: 5px;
+}
+
+.ant-modal-body::-webkit-scrollbar-track {
+    background: #f1f1f1;
+}
+
+.ant-modal-body::-webkit-scrollbar-thumb {
+    background: var(--azul); 
+    border-radius: 8px;
+}
+
+.ant-modal-body::-webkit-scrollbar-thumb:hover {
+    background: #1677ff;    
+}
+
 .ant-tabs-card.ant-tabs-top >.ant-tabs-nav .ant-tabs-tab-active {
   border-bottom-color: var(--azul) !important;
 }

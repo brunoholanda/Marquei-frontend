@@ -8,7 +8,6 @@ const WeeklyModal = ({ isVisible, setIsVisible, selectedProfessional }) => {
     const orderedDays = ["Segunda", "Terça", "Quarta", "Quinta", "Sexta", "Sábado", "Domingo"];
     const [timeIntervals, setTimeIntervals] = useState({});
     const [interval, setInterval] = useState(null);
-    const [selectedEndereco, setSelectedEndereco] = useState(null);
     const [enderecos, setEnderecos] = useState([]);
     const [selectedEnderecos, setSelectedEnderecos] = useState({});
 
@@ -182,8 +181,6 @@ const WeeklyModal = ({ isVisible, setIsVisible, selectedProfessional }) => {
 
 
     const handleSaveDaysStatus = async () => {
-        // Verifica se pelo menos um endereço foi selecionado para os dias ativos
-        // ou se não há endereços disponíveis
         const hasSelectedAddress = daysOfWeek.some(day => day.ativo && selectedEnderecos[day.id]);
         const areAddressesAvailable = enderecos.length > 0;
     
@@ -281,9 +278,10 @@ const WeeklyModal = ({ isVisible, setIsVisible, selectedProfessional }) => {
                     Salvar
                 </Button>
             ]}
-            bodyStyle={{ maxHeight: '60vh', overflowY: 'auto' }} 
+            width={600}
+            bodyStyle={{ maxHeight: '60vh', overflowY: 'auto', padding: '0 10px 0 0' }} 
         >
-            <p>Aqui você configura os dias da semana e intervalos de tempo que sua agenda estará disponível para seus clientes:</p>
+            <p>Aqui você configura os dias da semana, locais e intervalos de tempo que sua agenda estará disponível para seus clientes:</p>
             <Button type='primary' onClick={replicateTimeIntervals} style={{ marginBottom: '10px', width: '100%' }}>Replicar Horários</Button>
             <div>
                 {sortedDaysOfWeek.map(day => (
@@ -346,7 +344,7 @@ const WeeklyModal = ({ isVisible, setIsVisible, selectedProfessional }) => {
                 ))}
             </div>
             <div style={{ marginTop: '20px' }}>
-                <label style={{ marginRight: '15px' }}>Intervalo de tempo entre um atendimento e outro:</label>
+                <label style={{ marginRight: '40px' }}>Intervalo de tempo entre um atendimento e outro:</label>
                 <TimePicker
                     format="HH:mm"
                     placeholder="Selecione o intervalo"

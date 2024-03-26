@@ -1,15 +1,22 @@
 import React, { useState, useEffect } from 'react';
 import { Button, Form, Input, message, Modal, Card, notification, Divider } from 'antd';
-import { useParams } from 'react-router-dom';
+import { Navigate, useParams } from 'react-router-dom';
 import api from 'components/api/api';
 import { StyledCardEndereco, StyledCardLine, StyledCardLineModal } from '../Styles';
 import { DeleteOutlined } from '@ant-design/icons';
+import { useAuth } from 'context/AuthContext';
+import PlanCard from 'components/SelerCads';
 
 function EnderecoComponent() {
     const [form] = Form.useForm();
     const { id } = useParams();
     const [isModalVisible, setIsModalVisible] = useState(false);
     const [enderecos, setEnderecos] = useState([]);
+    const [serviceId, setServiceId] = useState(null);
+    const [maxEnderecosPermitidos, setMaxEnderecosPermitidos] = useState(0);
+    const { authData } = useAuth();
+    const companyID = authData.companyID;
+    const [upgradeModalVisible, setUpgradeModalVisible] = useState(false); // Novo estado para controlar a visibilidade do modal de upgrade
 
     useEffect(() => {
         carregarEnderecos();
@@ -32,12 +39,17 @@ function EnderecoComponent() {
 
 
     const showModal = () => {
-        setIsModalVisible(true);
+        if (enderecos.length < maxEnderecosPermitidos) {
+            setIsModalVisible(true);
+        } else {
+            setUpgradeModalVisible(true);
+        }
     };
+    
+
     const handleOk = async () => {
         try {
             const values = await form.validateFields();
-            // Se a validação passar, executa a chamada da API
             await api.post('/enderecos', {
                 professional_id: id,
                 rua: values.endereco,
@@ -53,12 +65,19 @@ function EnderecoComponent() {
             form.resetFields();
             notification.success({ message: 'Endereço adicionado com sucesso!' });
         } catch (error) {
-            // Erros de validação serão capturados aqui
-            console.log('Erro ao salvar endereço:', error);
             notification.error({ message: 'Erro ao salvar endereço. Por favor, preencha todos os campos obrigatórios.' });
         }
     };
-    
+
+
+    const handleUpgrade = () => {
+        Navigate('/upgrade');
+        setUpgradeModalVisible(false);
+    };
+
+    const closeUpgradeModal = () => {
+        setUpgradeModalVisible(false);
+    };
 
 
     const handleCancel = () => {
@@ -111,6 +130,34 @@ function EnderecoComponent() {
             }
         }
     };
+
+    useEffect(() => {
+        const fetchServiceId = async () => {
+            try {
+                const companyResponse = await api.get(`/companies/${companyID}`, {
+                    headers: {
+                        'Authorization': `Bearer ${authData.authToken}`
+                    }
+                });
+                const serviceId = companyResponse.data.service_id;
+                setServiceId(serviceId);
+
+                switch (serviceId) {
+                    case 1: setMaxEnderecosPermitidos(1); break;
+                    case 2: setMaxEnderecosPermitidos(3); break;
+                    case 3: setMaxEnderecosPermitidos(5); break;
+                    case 4: setMaxEnderecosPermitidos(1); break;
+                    default: setMaxEnderecosPermitidos(0); // Caso não identificado
+                }
+            } catch (error) {
+                console.error('Erro ao buscar service_id da companhia:', error);
+                message.error('Erro ao carregar informações da companhia.');
+            }
+        };
+
+        fetchServiceId();
+    }, [companyID]); // Dependendo do ID do profissional
+
 
     return (
         <>
@@ -176,6 +223,19 @@ function EnderecoComponent() {
                     </StyledCardLineModal>
                     <Divider />
                 </Form>
+            </Modal>
+            <Modal
+                title="Limite de Profissionais Atingido 😱"
+                visible={upgradeModalVisible}
+                onCancel={closeUpgradeModal}
+                footer={[
+                    <Button key="back" onClick={closeUpgradeModal}>
+                        Cancelar
+                    </Button>,
+                ]}
+            >
+                <p>Seu plano contratado só permite até {maxEnderecosPermitidos} endereço(s). Caso sua clínica esteja crescendo, faça um upgrade do seu plano.</p>
+                <PlanCard maxEnderecosPermitidos={maxEnderecosPermitidos} />
             </Modal>
         </>
     );

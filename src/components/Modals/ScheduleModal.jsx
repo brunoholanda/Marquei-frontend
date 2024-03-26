@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Form, Input, Button, Select, message, Checkbox, AutoComplete, Modal, notification } from 'antd';
+import { Form, Input, Button, Select, message, Checkbox, AutoComplete, Modal, notification, Radio } from 'antd';
 import moment from 'moment';
 import ReactInputMask from 'react-input-mask';
 import api from 'components/api/api';
@@ -47,7 +47,10 @@ const ScheduleModal = ({ isModalAgendaVisible, handleCancel, start, end }) => {
     const companyID = authData.companyID;
     const userSpecialties = authData.userSpecialties || [];
     const [emailSuggestions, setEmailSuggestions] = useState([]);
-
+    const [selectedEnderecoId, setSelectedEnderecoId] = useState(null);
+    const [enderecos, setEnderecos] = useState([]);
+    const [selectedEnderecos, setSelectedEnderecos] = useState({});
+    const [daysOfWeek, setDaysOfWeek] = useState([]);
     const handleEmailChange = (event) => {
         const emailInput = event.target.value;
         const suggestions = suggestEmails(emailInput);
@@ -142,19 +145,27 @@ const ScheduleModal = ({ isModalAgendaVisible, handleCancel, start, end }) => {
 
 
     useEffect(() => {
+        const fetchDiasSemana = async () => {
+          try {
+            let params = { professional_id: selectedProfessional };
+      
+            if (enderecos.length > 0 && selectedEnderecoId) {
+              params.endereco_id = selectedEnderecoId;
+            }
+      
+            const response = await api.get(`/dias-semanais`, { params });
+            setDiasSemana(response.data);
+          } catch (error) {
+            console.error('Erro ao buscar dias da semana', error);
+          }
+        };
+      
         if (selectedProfessional) {
-            const fetchDiasSemana = async () => {
-                try {
-                    const response = await api.get(`/dias-semanais?professional_id=${selectedProfessional}`);
-                    setDiasSemana(response.data);
-                } catch (error) {
-                    console.error('Erro ao buscar dias da semana', error);
-                }
-            };
-
-            fetchDiasSemana();
+          fetchDiasSemana();
         }
-    }, [selectedProfessional]);
+      }, [selectedProfessional, selectedEnderecoId, enderecos.length]);
+      
+    
 
     const handleUpgrade = () => {
         Navigate('/upgrade');
@@ -232,6 +243,33 @@ const ScheduleModal = ({ isModalAgendaVisible, handleCancel, start, end }) => {
         }
     }, [ignoreDisabledHours, bookedHours, form]);
 
+    useEffect(() => {
+        const fetchEnderecos = async () => {
+          try {
+            const response = await api.get(`/enderecos/professional/${selectedProfessional}`);
+            const fetchedEnderecos = response.data || [];
+            setEnderecos(fetchedEnderecos);
+    
+            if (fetchedEnderecos.length === 1) {
+              const uniqueEnderecoId = fetchedEnderecos[0].id;
+              const updatedSelectedEnderecos = daysOfWeek.reduce((acc, day) => {
+                acc[day.id] = uniqueEnderecoId;
+                return acc;
+              }, {});
+    
+              setSelectedEnderecos(updatedSelectedEnderecos);
+            }
+          } catch (error) {
+            console.error('Erro ao carregar endereços:', error);
+            message.error('Erro ao carregar endereços.');
+          }
+        };
+    
+        if (selectedProfessional) {
+          fetchEnderecos();
+        }
+      }, [selectedProfessional, daysOfWeek]);
+    
 
     const onFinish = async (values) => {
         setLoading(true);
@@ -434,6 +472,10 @@ const ScheduleModal = ({ isModalAgendaVisible, handleCancel, start, end }) => {
         handleCancel();
     };
 
+    const handleEnderecoSelection = (e) => {
+        setSelectedEnderecoId(e.target.value);
+      };
+
     return (
         <StyledModal
             title="Agendar Consulta Para Paciente 👩‍⚕️"
@@ -524,6 +566,18 @@ const ScheduleModal = ({ isModalAgendaVisible, handleCancel, start, end }) => {
                 <Button style={{ margin: '0 10px 10px 10px' }} type="primary" onClick={openModalProfessional}>
                     <UserAddOutlined />Adicionar Profissional
                 </Button>
+                <div style={{ margin: '10px 0' }}>
+                    <Radio.Group onChange={handleEnderecoSelection} value={selectedEnderecoId}>
+                        {enderecos.map(endereco => (
+                            <Radio
+                                key={endereco.id}
+                                value={endereco.id}
+                            >
+                                {`${endereco.rua}, ${endereco.numero} - ${endereco.cidade}/${endereco.uf}`}
+                            </Radio>
+                        ))}
+                    </Radio.Group>
+                </div>
                 <ProfessionalModal
                     isVisible={isModalProfessionalVisible}
                     onClose={closeModalProfessional}

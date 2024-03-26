@@ -1,0 +1,5 @@
+import{s as r}from"./index-xvO6EYLJ.js";const m=r.div`
+    margin: 15rem 3rem 8rem 3rem;
+`,i=r.div`
+    margin: 15rem 3rem 8rem 3rem;
+`;export{m as S,i as a};

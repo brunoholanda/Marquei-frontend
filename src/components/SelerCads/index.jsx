@@ -3,7 +3,7 @@ import styles from './SelerCards.module.scss';
 import api from '../../components/api/api';
 import AuthModal from 'components/Modals/AuthModal';
 
-const PlanCard = memo(({ maxProfessionals }) => {
+const PlanCard = memo(({ maxProfessionals, maxEnderecosPermitidos }) => {
   const [plans, setPlans] = useState([]);
   const [showAuthModal, setShowAuthModal] = useState(false);
   const [selectedService, setSelectedService] = useState({ servicePlan: '', servicePrice: 0, serviceId: '' });
@@ -30,6 +30,16 @@ const PlanCard = memo(({ maxProfessionals }) => {
       filteredPlans = filteredPlans.filter(plan => plan.plan === 'Premium');
     } // Não é necessário um else para outros valores, pois já filtramos o plano "Teste"
 
+    if (maxEnderecosPermitidos === 1) {
+      // Permite Plus, Pro, e Premium
+      filteredPlans = filteredPlans.filter(plan => ['Plus', 'Pro', 'Premium'].includes(plan.plan));
+    } else if (maxEnderecosPermitidos === 2) {
+      // Permite Pro e Premium
+      filteredPlans = filteredPlans.filter(plan => ['Pro', 'Premium'].includes(plan.plan));
+    } else if (maxEnderecosPermitidos === 3) {
+      // Permite apenas Premium
+      filteredPlans = filteredPlans.filter(plan => plan.plan === 'Premium');
+    }
     return filteredPlans.sort((a, b) => {
       if (a.plan === 'Plus') return -1;  // Plus sempre em primeiro
       if (b.plan === 'Plus') return 1;
@@ -50,7 +60,7 @@ const PlanCard = memo(({ maxProfessionals }) => {
   const fetchPlans = async () => {
     try {
       const response = await api.get('/services');
-      const sortedAndFilteredPlans = sortAndFilterPlans(response.data, maxProfessionals);
+      const sortedAndFilteredPlans = sortAndFilterPlans(response.data, maxProfessionals, maxEnderecosPermitidos);
       setPlans(sortedAndFilteredPlans);
     } catch (error) {
       console.error("Erro ao buscar os planos:", error);
