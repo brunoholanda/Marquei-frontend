@@ -33,10 +33,10 @@ const PlanCard = memo(({ maxProfessionals, maxEnderecosPermitidos }) => {
     if (maxEnderecosPermitidos === 1) {
       // Permite Plus, Pro, e Premium
       filteredPlans = filteredPlans.filter(plan => ['Plus', 'Pro', 'Premium'].includes(plan.plan));
-    } else if (maxEnderecosPermitidos === 2) {
+    } else if (maxEnderecosPermitidos === 3) {
       // Permite Pro e Premium
       filteredPlans = filteredPlans.filter(plan => ['Pro', 'Premium'].includes(plan.plan));
-    } else if (maxEnderecosPermitidos === 3) {
+    } else if (maxEnderecosPermitidos === 5) {
       // Permite apenas Premium
       filteredPlans = filteredPlans.filter(plan => plan.plan === 'Premium');
     }
@@ -60,12 +60,19 @@ const PlanCard = memo(({ maxProfessionals, maxEnderecosPermitidos }) => {
   const fetchPlans = async () => {
     try {
       const response = await api.get('/services');
-      const sortedAndFilteredPlans = sortAndFilterPlans(response.data, maxProfessionals, maxEnderecosPermitidos);
+      let sortedAndFilteredPlans = sortAndFilterPlans(response.data);
+  
+      sortedAndFilteredPlans = sortedAndFilteredPlans.map(plan => ({
+        ...plan,
+        mostSold: plan.plan === 'Pro' 
+      }));
+  
       setPlans(sortedAndFilteredPlans);
     } catch (error) {
       console.error("Erro ao buscar os planos:", error);
     }
   };
+  
 
   useEffect(() => {
     fetchPlans();

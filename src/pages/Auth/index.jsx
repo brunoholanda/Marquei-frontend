@@ -29,7 +29,7 @@ const Authentication = () => {
   const handleLogin = async (e) => {
     e.preventDefault();
     setLoginError('');
-
+  
     if (!recaptchaToken) {
       setLoginError('Por favor, confirme que você não é um robô.');
       return;
@@ -41,20 +41,20 @@ const Authentication = () => {
         password,
         recaptchaToken,
       });
-
+  
       const { token, company_id, user_specialties } = response.data;
-
+  
       if (typeof company_id === 'undefined') {
         setIsLoading(false);
         throw new Error('Informações do usuário ou da empresa não estão disponíveis.');
       }
-
+  
       updateAuthData({
         authToken: token,
         companyID: company_id,
         userSpecialties: user_specialties,
       });
-
+  
       setUsername('');
       setPassword('');
       setRecaptchaToken('');
@@ -67,8 +67,14 @@ const Authentication = () => {
       if (recaptchaRef.current) {
         recaptchaRef.current.reset();
       }
+  
+      if (errorMessage === "Token inválido ou expirado") {
+        setExpiredTokenMessage('Seu período de teste expirou. Por favor, considere contratar um plano para continuar utilizando nossos serviços.');
+        setExpiredTokenModalVisible(true);
+      }
     }
   };
+  
 
 
   const handlePasswordReset = async () => {
@@ -157,11 +163,11 @@ const Authentication = () => {
         title="Período de teste chegou ao Fim :("
         open={expiredTokenModalVisible}
         onOk={() => {
-          navigate('/contratar-plano');
+          navigate('/planos');
           setExpiredTokenModalVisible(false);
         }}
         onCancel={() => setExpiredTokenModalVisible(false)}
-        okText="Consulte outros planos..."
+        okText="Saber mais..."
         cancelButtonProps={{ style: { display: 'none' } }}
       >
         <p>{expiredTokenMessage}</p>

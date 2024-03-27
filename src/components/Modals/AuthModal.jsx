@@ -16,7 +16,6 @@ const commonDomains = ["gmail.com", "yahoo.com", "hotmail.com", "outlook.com", "
 
 
 const AuthModal = ({ isVisible, onClose, onLoginSuccess, selectedService }) => {
-
     const [username, setUsername] = useState('');
     const [password, setPassword] = useState('');
     const [isUserExist, setIsUserExist] = useState(null);
@@ -107,12 +106,14 @@ const AuthModal = ({ isVisible, onClose, onLoginSuccess, selectedService }) => {
     const handleLogin = async (e) => {
         e.preventDefault();
         setIsLoading(true);
-
+    
         if (!recaptchaToken) {
+            // Altere para definir uma mensagem de erro mais amigável e genérica, se necessário
             setLoginError('Por favor, confirme que você não é um robô.');
+            setIsLoading(false); // Certifique-se de parar o carregamento se não passar no ReCAPTCHA
             return;
         }
-
+    
         try {
             const response = await fetch(`${BASE_URL}/auth/login`, {
                 method: 'POST',
@@ -121,7 +122,7 @@ const AuthModal = ({ isVisible, onClose, onLoginSuccess, selectedService }) => {
                 },
                 body: JSON.stringify({ username, password, recaptchaToken }),
             });
-
+    
             const data = await response.json();
             if (response.ok) {
                 sessionStorage.setItem('authToken', data.token);
@@ -129,18 +130,23 @@ const AuthModal = ({ isVisible, onClose, onLoginSuccess, selectedService }) => {
                 onLoginSuccess(data);
                 loadServiceDetails(selectedService.serviceId);
             } else {
-                message.error(data.message || 'Failed to login. Please check your credentials.');
+                if (data.message === "Token inválido ou expirado") {
+                    setIsLoggedIn(true);
+                    setPaymentType(null); 
+                } else {
+                    setLoginError('Não foi possível entrar. Verifique suas credenciais ou tente novamente mais tarde.');
+                }
                 setRecaptchaToken('');
-
             }
         } catch (error) {
-            message.error('An error occurred while trying to log in: ' + error.message);
+            setLoginError('Ocorreu um problema. Por favor, tente novamente mais tarde.');
             if (recaptchaRef.current) {
                 recaptchaRef.current.reset();
             }
         }
         setIsLoading(false);
     };
+    
 
 
     useEffect(() => {

@@ -225,7 +225,7 @@ function EnderecoComponent() {
                 </Form>
             </Modal>
             <Modal
-                title="Limite de Profissionais Atingido 😱"
+                title="Limite de Endereçoes Atingido 😱"
                 visible={upgradeModalVisible}
                 onCancel={closeUpgradeModal}
                 footer={[

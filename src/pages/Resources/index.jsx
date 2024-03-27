@@ -20,7 +20,9 @@ import {
     ClockCircleOutlined,
     SnippetsOutlined,
     BarChartOutlined,
-    PhoneOutlined
+    PhoneOutlined,
+    LineChartOutlined,
+    PieChartOutlined
 } from '@ant-design/icons';
 import { useNavigate } from 'react-router-dom';
 import Btn from 'components/Btn';
@@ -49,9 +51,19 @@ const services = [
         description: "Agilize a criação e gestão de documentos essenciais, como declarações, atestados, receitas médicas e orçamentos."
     },
     {
+        Icon: LineChartOutlined,
+        title: "Pesquisa de satisfação",
+        description: "O Marquei incorpora um sistema de pesquisa Net Promoter Score (NPS) automatizado, uma funcionalidade avançada projetada para medir a satisfação do cliente e a lealdade à sua marca de maneira eficiente e contínua."
+    },
+    {
         Icon: BellOutlined,
         title: "Alertas de Compromisso Automatizados",
-        description: "Minimize as ausências inesperadas com alertas automáticos por e-mail e SMS, diminuindo faltas em até 70%."
+        description: "Minimize as ausências inesperadas com alertas automáticos por e-mail, diminuindo faltas em até 70%."
+    },
+    {
+        Icon: PieChartOutlined,
+        title: "Relatórios de acompanhamento",
+        description: "O Marquei oferece dashboards intuitivos para o acompanhamento, apresentando dados em tempo real. Essa funcionalidade proporciona uma visão detalhada do desempenho operacional e administrativo da sua clínica."
     },
     {
         Icon: FileTextOutlined,

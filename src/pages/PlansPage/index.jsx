@@ -60,8 +60,13 @@ const PlansPage = ({ maxProfessionals }) => {
   const fetchPlans = async () => {
     try {
       const response = await api.get('/services');
-      // Passa maxProfessionals para sortAndFilterPlans
-      const sortedAndFilteredPlans = sortAndFilterPlans(response.data, maxProfessionals);
+      let sortedAndFilteredPlans = sortAndFilterPlans(response.data, maxProfessionals);
+  
+      sortedAndFilteredPlans = sortedAndFilteredPlans.map(plan => ({
+        ...plan,
+        mostSold: plan.plan === 'Pro' 
+      }));
+  
       setPlans(sortedAndFilteredPlans);
     } catch (error) {
       console.error("Erro ao buscar os planos:", error);
@@ -99,6 +104,10 @@ const PlansPage = ({ maxProfessionals }) => {
               <CheckCircleFilled style={{ fontSize: '20px', color: '#3f51b5', marginRight: '10px' }} />
               Até {service.persons} profissional(is) da saúde.
             </div>
+            <div className={styles.duration}>
+                  <CheckCircleFilled style={{ fontSize: '20px', color: '#3f51b5', marginRight: '10px' }} />
+                  Gestão de cadastro de clientes;
+                </div>
             {['Pro', 'Premium'].includes(service.plan) && (
               <>
                 <div className={styles.duration}>
@@ -108,6 +117,14 @@ const PlansPage = ({ maxProfessionals }) => {
                 <div className={styles.duration}>
                   <CheckCircleFilled style={{ fontSize: '20px', color: '#3f51b5', marginRight: '10px' }} />
                   Descontos por indicação
+                </div>
+                <div className={styles.duration}>
+                  <CheckCircleFilled style={{ fontSize: '20px', color: '#3f51b5', marginRight: '10px' }} />
+                  Multiplos endereços;
+                </div>
+                <div className={styles.duration}>
+                  <CheckCircleFilled style={{ fontSize: '20px', color: '#3f51b5', marginRight: '10px' }} />
+                  Confirmação de consulta automática;
                 </div>
               </>
             )}
@@ -121,6 +138,7 @@ const PlansPage = ({ maxProfessionals }) => {
                   <CheckCircleFilled style={{ fontSize: '20px', color: '#3f51b5', marginRight: '10px' }} />
                   Pesquisa NPS automática;
                 </div>
+        
                 <div className={styles.duration}>
                   <CheckCircleFilled style={{ fontSize: '20px', color: '#3f51b5', marginRight: '10px' }} />
                   Funções especificas da área de atuação
