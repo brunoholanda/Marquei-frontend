@@ -51,6 +51,26 @@ const ScheduleModal = ({ isModalAgendaVisible, handleCancel, start, end }) => {
     const [enderecos, setEnderecos] = useState([]);
     const [selectedEnderecos, setSelectedEnderecos] = useState({});
     const [daysOfWeek, setDaysOfWeek] = useState([]);
+    const [startTime, setStartTime] = useState(null);
+
+
+    const getDisabledEndTimeHours = () => {
+        const startTime = form.getFieldValue('horario');
+        if (!startTime) {
+            return [];
+        }
+
+        const startHour = startTime.hour();
+        const disabledHours = [];
+
+        for (let hour = 0; hour <= startHour; hour++) {
+            disabledHours.push(hour);
+        }
+
+        return disabledHours;
+    };
+
+
     const handleEmailChange = (event) => {
         const emailInput = event.target.value;
         const suggestions = suggestEmails(emailInput);
@@ -146,26 +166,26 @@ const ScheduleModal = ({ isModalAgendaVisible, handleCancel, start, end }) => {
 
     useEffect(() => {
         const fetchDiasSemana = async () => {
-          try {
-            let params = { professional_id: selectedProfessional };
-      
-            if (enderecos.length > 0 && selectedEnderecoId) {
-              params.endereco_id = selectedEnderecoId;
+            try {
+                let params = { professional_id: selectedProfessional };
+
+                if (enderecos.length > 0 && selectedEnderecoId) {
+                    params.endereco_id = selectedEnderecoId;
+                }
+
+                const response = await api.get(`/dias-semanais`, { params });
+                setDiasSemana(response.data);
+            } catch (error) {
+                console.error('Erro ao buscar dias da semana', error);
             }
-      
-            const response = await api.get(`/dias-semanais`, { params });
-            setDiasSemana(response.data);
-          } catch (error) {
-            console.error('Erro ao buscar dias da semana', error);
-          }
         };
-      
+
         if (selectedProfessional) {
-          fetchDiasSemana();
+            fetchDiasSemana();
         }
-      }, [selectedProfessional, selectedEnderecoId, enderecos.length]);
-      
-    
+    }, [selectedProfessional, selectedEnderecoId, enderecos.length]);
+
+
 
     const handleUpgrade = () => {
         Navigate('/upgrade');
@@ -245,31 +265,31 @@ const ScheduleModal = ({ isModalAgendaVisible, handleCancel, start, end }) => {
 
     useEffect(() => {
         const fetchEnderecos = async () => {
-          try {
-            const response = await api.get(`/enderecos/professional/${selectedProfessional}`);
-            const fetchedEnderecos = response.data || [];
-            setEnderecos(fetchedEnderecos);
-    
-            if (fetchedEnderecos.length === 1) {
-              const uniqueEnderecoId = fetchedEnderecos[0].id;
-              const updatedSelectedEnderecos = daysOfWeek.reduce((acc, day) => {
-                acc[day.id] = uniqueEnderecoId;
-                return acc;
-              }, {});
-    
-              setSelectedEnderecos(updatedSelectedEnderecos);
+            try {
+                const response = await api.get(`/enderecos/professional/${selectedProfessional}`);
+                const fetchedEnderecos = response.data || [];
+                setEnderecos(fetchedEnderecos);
+
+                if (fetchedEnderecos.length === 1) {
+                    const uniqueEnderecoId = fetchedEnderecos[0].id;
+                    const updatedSelectedEnderecos = daysOfWeek.reduce((acc, day) => {
+                        acc[day.id] = uniqueEnderecoId;
+                        return acc;
+                    }, {});
+
+                    setSelectedEnderecos(updatedSelectedEnderecos);
+                }
+            } catch (error) {
+                console.error('Erro ao carregar endereços:', error);
+                message.error('Erro ao carregar endereços.');
             }
-          } catch (error) {
-            console.error('Erro ao carregar endereços:', error);
-            message.error('Erro ao carregar endereços.');
-          }
         };
-    
+
         if (selectedProfessional) {
-          fetchEnderecos();
+            fetchEnderecos();
         }
-      }, [selectedProfessional, daysOfWeek]);
-    
+    }, [selectedProfessional, daysOfWeek]);
+
 
     const onFinish = async (values) => {
         setLoading(true);
@@ -474,7 +494,7 @@ const ScheduleModal = ({ isModalAgendaVisible, handleCancel, start, end }) => {
 
     const handleEnderecoSelection = (e) => {
         setSelectedEnderecoId(e.target.value);
-      };
+    };
 
     return (
         <StyledModal
@@ -616,6 +636,8 @@ const ScheduleModal = ({ isModalAgendaVisible, handleCancel, start, end }) => {
                         <StyledTimePicker
                             format="HH:mm"
                             minuteStep={5}
+                            onChange={(time) => setStartTime(time)}
+
                             disabledTime={() => ({
                                 disabledHours: () => getDisabledHours(form.getFieldValue('data'), bookedHours)
                             })}
@@ -633,35 +655,30 @@ const ScheduleModal = ({ isModalAgendaVisible, handleCancel, start, end }) => {
                             format="HH:mm"
                             minuteStep={5}
                             disabledTime={() => {
-                                const startTime = form.getFieldValue('horario');
-                                const startTimeMoment = startTime ? moment(startTime, 'HH:mm') : null;
+                                const hours = [];
+                                const minutes = [];
+                                if (startTime) {
+                                    const startHour = startTime.hour();
+                                    const startMinute = startTime.minute();
 
-                                const disabledHours = () => {
-                                    const hours = [];
-                                    for (let hour = 0; hour < 24; hour++) {
-                                        if (startTimeMoment && hour < startTimeMoment.hour()) {
-                                            hours.push(hour);
+                                    for (let i = 0; i < startHour; i++) {
+                                        hours.push(i);
+                                    }
+
+                                    if (form.getFieldValue('horario')?.hour() === startHour) {
+                                        for (let i = 0; i <= startMinute; i++) {
+                                            minutes.push(i);
                                         }
                                     }
-                                    return hours;
-                                };
-
-                                const disabledMinutes = (selectedHour) => {
-                                    const minutes = [];
-                                    if (startTimeMoment && selectedHour === startTimeMoment.hour()) {
-                                        for (let minute = 0; minute <= startTimeMoment.minute(); minute++) {
-                                            minutes.push(minute);
-                                        }
-                                    }
-                                    return minutes;
-                                };
+                                }
 
                                 return {
-                                    disabledHours: disabledHours,
-                                    disabledMinutes: disabledMinutes,
+                                    disabledHours: () => hours,
+                                    disabledMinutes: () => minutes,
                                 };
                             }}
                         />
+
                     </StyledFormItem>
                 </StyledTimeContainer>
                 <StyledFormItem

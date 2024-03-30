@@ -1,1 +1,0 @@
-import{j as e}from"./index-DtAKxO-I.js";import{s as o}from"./PageBody.module-Ca6wb2DD.js";function t(){return e.jsxs("div",{className:o.footer__dev,children:[e.jsx("p",{children:"Holanda Desenvolvimento de Software ME 50.509.731/0001-35"}),e.jsx("p",{children:"Copyright© Holanda Dev Software 2023. Todos os direitos reservados."})]})}export{t as default};
