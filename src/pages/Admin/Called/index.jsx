@@ -19,16 +19,17 @@ const ChamadosTable = () => {
     useEffect(() => {
         const fetchChamados = async () => {
             try {
-                const response = await api.get(`/chamados/${companyID}`);
+                const response = await api.get(`/chamados`);
                 console.log(response);
                 setChamados(response.data);
             } catch (error) {
                 console.error("Erro ao buscar chamados:", error);
             }
         };
-
+    
         fetchChamados();
-    }, [companyID]);
+    }, []); 
+    
 
     const showActionsModal = (chamado) => {
         setSelectedChamado(chamado);
