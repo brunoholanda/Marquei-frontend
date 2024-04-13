@@ -38,6 +38,8 @@ const CompaniesTable = () => {
       service_id: company.service_id,
       payment_confirm: company.payment_confirm,
       token_expiration: company.token_expiration || '',
+      username: company.username,
+
     });
 
     setIsModalVisible(true);
@@ -144,7 +146,7 @@ const CompaniesTable = () => {
       render: (text, record) => {
 
         const phoneNumber = text ? text.replace(/[^0-9]/g, "") : '';
-        const whatsappLink = phoneNumber ? `https://wa.me/${phoneNumber}` : 'javascript:void(0);';
+        const whatsappLink = phoneNumber ? `https://wa.me/+55${phoneNumber}` : 'javascript:void(0);';
         
         return (
           <>
@@ -161,6 +163,11 @@ const CompaniesTable = () => {
       title: 'Plano',
       dataIndex: 'service_id',
       key: 'service_id',
+    },
+    {
+      title: 'Email',
+      dataIndex: 'username',
+      key: 'username',
     },
     {
       title: 'Contrato',

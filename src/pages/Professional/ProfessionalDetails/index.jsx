@@ -283,7 +283,7 @@ const DoctorDetails = () => {
         },
         {
             key: '2',
-            tab: isMobile ? 'Profissional' : 'Informacoes Proffisionais',
+            tab: isMobile ? 'Profissional' : 'Informacoes Profisionais',
             content: (
                 <>
                     <p><b>Registro Profissional:</b> <Input value={editedDetails.registro_profissional || professionalDetails.registro_profissional} onChange={(e) => handleInputChange('registro_profissional', e.target.value)} /></p>

@@ -2,6 +2,7 @@ import React from 'react';
 import { StyledHowUsePage, StyledPageTitle, StyledVideoCard, StyledVideosContainer } from "./styles";
 
 const videos = [
+    { title: "Apresentação", src: "https://www.youtube.com/embed/Iluc8UmJWuI?si=raj9owIk8cndtuby" },
     { title: "1- Fazendo o cadastro", src: "https://www.youtube.com/embed/cmyYynuO-1s?si=orLE8YnuDEsHjzYW" },
     { title: "2- Cadastrando profissional", src: "https://www.youtube.com/embed/kWwVLKAzyro?si=mUudpUj0CkMg5YMg" },
     { title: "3- Configurando Agenda", src: "https://www.youtube.com/embed/2iEKQknGgU0?si=7m59luxsXORsnQAd" },
