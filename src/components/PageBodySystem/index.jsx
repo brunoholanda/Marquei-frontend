@@ -5,6 +5,7 @@ import Sidebar from 'components/Sidebar';
 import CalledModal from 'components/Modals/calledModal';
 import RecommendationModal from 'components/Modals/recommendationModal';
 import FreeMonthlyModal from 'components/Modals/freeMonthlyModal';
+import FloatingSystemButton from 'components/FloatingButtonSystem';
 
 export default function PageBodySystem() {
     return (
@@ -14,6 +15,7 @@ export default function PageBodySystem() {
                 <Outlet />
                 <Footer />
                 <FooterDev />
+                <FloatingSystemButton />
             </div>
         </div>
     );
