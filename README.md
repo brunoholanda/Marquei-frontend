@@ -1,65 +1,50 @@
-# Marquei - SaaS for Local Clinic Scheduling & Management
+🚀 **Marquei** is a **SaaS platform** for scheduling and managing local clinics, built entirely from scratch. This repository contains the **frontend**, developed using **React** and **Vite**.
 
 ```sh
 https://marquei.com.br/
 ```
 
-**Marquei** is a **fully custom-built SaaS** designed for scheduling and managing local clinics. This system was developed entirely from scratch, including the **frontend, backend, and database**. 
-
-🚨 **Note:** This repository is publicly accessible **only so that the CEO of Flatirons can review it**.
+⚠️ **Important Notice:** This repository is **public** only for review by the CEO of **Flatirons**.
 
 ## Features
 
-- 🏥 **Clinic Management**: Handle patient records, appointments, and services.
-- 📅 **Scheduling System**: Seamless booking experience for patients and staff.
-- 🔑 **Secure Authentication**: Role-based access control for admins and users.
-- 📊 **Dashboard & Analytics**: Track appointments, revenue, and clinic performance.
-- 💻 **Full-Stack Development**: Built with scalable and modern technologies.
+- 📅 **Appointment Scheduling**: Manage patient bookings with ease.
+- 🏥 **Clinic Management**: Handle clinic operations efficiently.
+- 🔄 **Seamless API Integration**: Fully connected to a custom-built backend.
+- 🎨 **Modern UI/UX**: Developed with React and styled for optimal user experience.
+- ⚡ **Fast and Optimized**: Powered by Vite for high performance.
 
 ## Tech Stack
 
-- **Frontend:** React, TypeScript, Tailwind CSS
-- **Backend:** NestJS, TypeORM, PostgreSQL
-- **Database:** PostgreSQL with optimized queries and migrations
-- **Authentication:** JWT with Passport.js
-- **Hosting & Deployment:** AWS (EC2, RDS, S3, CloudFront)
+- **Frontend:** React, Vite, TailwindCSS
+- **Backend:** NestJS
+- **Database:** PostgreSQL
+- **Authentication:** JWT-based security
+- **Deployment:** AWS
 
-## Installation & Setup
+## Installation
 
-To run the project locally:
+Clone the repository and install dependencies:
 
 ```sh
-git clone https://github.com/your-username/marquei.git
-cd marquei
 npm install
 ```
 
-Set up the environment variables in a `.env` file:
-
-```
-DATABASE_URL=postgres://user:password@localhost:5432/marquei_db
-JWT_SECRET=your_jwt_secret
-PORT=3000
-```
-
-Run the backend:
+## Running the Project
 
 ```sh
-npm run start:dev
+npm run dev
 ```
 
-Run the frontend:
+Then open [http://localhost:5173](http://localhost:5173) in your browser.
 
-```sh
-cd client
-npm start
-```
+## About the Project
 
-## Contact
+Marquei is a **fully independent project**, designed, developed, and deployed entirely by **Bruno Holanda**. From frontend to backend and database architecture, every aspect of this SaaS has been built from the ground up.
 
-For any inquiries, feel free to reach out.
+## License
 
-🚀 **This project is a solo development effort, built from the ground up!**
+This project is **not open source** and is available for review purposes only.
 
 
 React Aplication
